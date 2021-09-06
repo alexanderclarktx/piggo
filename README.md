@@ -1,7 +1,7 @@
 # moba-project
 
 ## building
-* install love2d
+* install [love2d](https://love2d.org/#download)
 * alias `love`
   ```
   alias love="/Applications/love.app/Contents/MacOS/love"
