@@ -119,7 +119,7 @@ function sionQ(me)
                     me.cmeta.canMove = true
 
                     -- damage
-                    Ability.hurtbox(self, "axe", 100, {
+                    Ability.hurtbox(self, "axe", 50, {
                         {x = me.cmeta.pos.x, y = me.cmeta.pos.y + 10},
                         {x = me.cmeta.pos.x - 50, y = me.cmeta.pos.y + 75},
                         {x = me.cmeta.pos.x + 50, y = me.cmeta.pos.y + 75}

@@ -8,12 +8,11 @@ gs = {
     players = {
         Player.new("player1", Sion.new({x = 600, y = 300}, 500)),
     },
-    npcs = {
-        Minion.new()
-    },
+    npcs = {},
     hurtboxes = {} -- name, damage, poly
 }
 
+-- https://love2d.org/wiki/polypoint
 function polyCheck(vertices,px,py)
     local collision = false
     local next = 1
@@ -87,6 +86,21 @@ function love.update(dt)
     for _, player in pairs(gs.players) do
         player:update(dt)
     end
+
+    -- update all npcs
+    for index, npc in pairs(gs.npcs) do
+        npc:update(dt, index)
+    end
+
+    -- if there are no npcs, spawn one
+    print("#gs.npcs", #gs.npcs)
+    if #gs.npcs == 0 then
+        table.insert(gs.npcs, Minion.new(math.ceil(math.random() * 300), {
+            x = math.ceil(math.random() * love.graphics.getWidth()),
+            y = math.ceil(math.random() * love.graphics.getHeight()),
+        }))
+    end
+
     -- for _, object in pairs(gs.objects) do
     --     object:update(dt)
     -- end
