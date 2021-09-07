@@ -37,42 +37,30 @@ function love.keypressed(key, scancode, isrepeat)
     end
 
     if key == "q" then
-        print("q")
+        -- print("q")
         gs.players[1].character:q()
     end
     if key == "w" then
-        print("w")
+        -- print("w")
         gs.players[1].character:w()
     end
     if key == "e" then
-        print("e")
+        -- print("e")
         gs.players[1].character:e()
     end
     if key == "r" then
-        print("r")
+        -- print("r")
         gs.players[1].character:r()
     end
 end
 
 function love.update(dt)
     -- player movement
-    if love.mouse.isDown(1) then
+    if love.mouse.isDown(2) then
         mouseX = love.mouse.getX()
         mouseY = love.mouse.getY()
-        characterX = gs.players[1].character.cmeta.pos.x
-        characterY = gs.players[1].character.cmeta.pos.y
 
-        if characterX < mouseX then
-            gs.players[1].character.cmeta.pos.x = characterX + 1
-        elseif characterX > mouseX then
-            gs.players[1].character.cmeta.pos.x = characterX - 1
-        end
-
-        if characterY < mouseY then
-            gs.players[1].character.cmeta.pos.y = characterY + 1
-        elseif characterY > mouseY then
-            gs.players[1].character.cmeta.pos.y = characterY - 1
-        end
+        gs.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
     end
 
     -- update all internal states

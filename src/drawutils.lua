@@ -21,4 +21,8 @@ function Drawutils.drawHealthbar(pos, hp, maxhp)
     )
 end
 
+function Drawutils.drawBox(x, y, width, height)
+    love.graphics.rectangle("line", x, y, width, height)
+end
+
 return Drawutils
