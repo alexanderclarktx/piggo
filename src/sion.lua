@@ -94,7 +94,7 @@ function sionQ(me, mousePos)
     table.insert(me.effects, {
         name = "Axe",
         drawable = true,
-        duration = 0.5,
+        duration = 2,
         dt = 0,
         segments = {
             {
@@ -128,15 +128,48 @@ function sionQ(me, mousePos)
             }
         },
         draw = function(self, me)
+            local xdiff = mousePos.x - me.cmeta.pos.x
+            local ydiff = mousePos.y - me.cmeta.pos.y
+
+            local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
+            local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+
+            local newx = me.cmeta.pos.x + 100 * xRatio
+            local newy = me.cmeta.pos.y + 100 * yRatio
+
+            -- local x3 = newx - 50 * xRatio
+            -- local y3 = newy - 50 * yRatio
+
+            -- local x4 = newx + 50 * xRatio
+            -- local y4 = newy + 50 * yRatio
+
+            -- local xComponent = 30 * xRatio
+            -- local yComponent = 30 * yRatio
+
+            local cosa, sina = math.cos(180), math.sin(180)
+
+            local dx1, dy1 = newx + 40 * cosa, newy + 40 * sina
+            local dx2, dy2 = newx + -20 * sina, newy + 20 * cosa
+
             love.graphics.setColor(1, 0.5, 0)
-            love.graphics.line(
-                {
-                    me.cmeta.pos.x, me.cmeta.pos.y,
-                    mousePos.x, mousePos.y
-                    -- me.cmeta.pos.x - 50, me.cmeta.pos.y + 75,
-                    -- me.cmeta.pos.x + 50, me.cmeta.pos.y + 75
-                }
-            )
+            love.graphics.polygon("line", {
+                me.cmeta.pos.x, me.cmeta.pos.y,
+                dx1, dy1,
+                dx2, dy2
+            })
+            local z = "dx1: %d, dy1: %d"
+            local z2 = "dx2: %d, dy2: %d"
+            love.graphics.print(z:format(dx1, dy1), dx1, dy1)
+            love.graphics.print(z2:format(dx2, dy2), dx2, dy2)
+            -- love.graphics.line(
+            --     {
+            --         me.cmeta.pos.x, me.cmeta.pos.y,
+            --         -- mousePos.x, mousePos.y
+            --         newx, newy
+            --         -- me.cmeta.pos.x - 50, me.cmeta.pos.y + 75,
+            --         -- me.cmeta.pos.x + 50, me.cmeta.pos.y + 75
+            --     }
+            -- )
         end
     })
 end

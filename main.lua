@@ -96,7 +96,6 @@ function love.update(dt)
     end
 
     -- if there are no npcs, spawn one
-    print("#gs.npcs", #gs.npcs)
     if #gs.npcs == 0 then
         table.insert(gs.npcs, Minion.new(math.ceil(math.random() * 300), {
             x = math.ceil(math.random() * love.graphics.getWidth()),
