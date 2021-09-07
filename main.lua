@@ -57,7 +57,10 @@ function love.keypressed(key, scancode, isrepeat)
 
     if key == "q" then
         -- print("q")
-        gs.players[1].character:q()
+        gs.players[1].character:q({
+            x = love.mouse.getX(),
+            y = love.mouse.getY()
+        })
     end
     if key == "w" then
         -- print("w")

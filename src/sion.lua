@@ -12,8 +12,8 @@ function Sion.new(pos, hp)
         abilities = {
             q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}
         },
-        q = function(self)
-            if self.abilities.q.dt > self.abilities.q.cd then sionQ(self) end
+        q = function(self, mousePos)
+            if self.abilities.q.dt > self.abilities.q.cd then sionQ(self, mousePos) end
         end,
         w = function(self)
             if self.abilities.w.dt > self.abilities.w.cd then sionW(self) end
@@ -89,7 +89,7 @@ function Sion.new(pos, hp)
     return sion
 end
 
-function sionQ(me)
+function sionQ(me, mousePos)
     me.abilities.q.dt = 0
     table.insert(me.effects, {
         name = "Axe",
@@ -129,11 +129,12 @@ function sionQ(me)
         },
         draw = function(self, me)
             love.graphics.setColor(1, 0.5, 0)
-            love.graphics.polygon("fill",
+            love.graphics.line(
                 {
-                    me.cmeta.pos.x, me.cmeta.pos.y + 10,
-                    me.cmeta.pos.x - 50, me.cmeta.pos.y + 75,
-                    me.cmeta.pos.x + 50, me.cmeta.pos.y + 75
+                    me.cmeta.pos.x, me.cmeta.pos.y,
+                    mousePos.x, mousePos.y
+                    -- me.cmeta.pos.x - 50, me.cmeta.pos.y + 75,
+                    -- me.cmeta.pos.x + 50, me.cmeta.pos.y + 75
                 }
             )
         end
