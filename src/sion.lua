@@ -65,6 +65,20 @@ function Sion.new(pos, hp)
             end
         end,
         draw = function(self)
+            local triangle = {100,100, 200,100, 150,200}
+            love.graphics.setColor(1, 0, 0)
+            love.graphics.polygon("line", rotate(triangle, -1 * math.pi/16))
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.polygon("line", triangle)
+            love.graphics.setColor(1, 0, 1)
+            love.graphics.polygon("line", rotate(triangle, math.pi/16))
+            love.graphics.setColor(0, 1, 1)
+            love.graphics.polygon("line", rotate(triangle, 2 * math.pi/16))
+            love.graphics.setColor(0, 1, 0)
+            love.graphics.polygon("line", rotate(triangle, 3 * math.pi/16))
+            love.graphics.setColor(0, 0, 1)
+            love.graphics.polygon("line", rotate(triangle, math.pi/16, 50, 50))
+
             -- draw my character
             love.graphics.setColor(0, 1, 0.4)
             love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, self.cmeta.size)
@@ -128,50 +142,51 @@ function sionQ(me, mousePos)
             }
         },
         draw = function(self, me)
+
             local xdiff = mousePos.x - me.cmeta.pos.x
             local ydiff = mousePos.y - me.cmeta.pos.y
 
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-            local newx = me.cmeta.pos.x + 100 * xRatio
-            local newy = me.cmeta.pos.y + 100 * yRatio
+            -- first point is on edge of my character toward star
+            local x1 = me.cmeta.pos.x + me.cmeta.size * xRatio
+            local y1 = me.cmeta.pos.y + me.cmeta.size * yRatio
 
-            -- local x3 = newx - 50 * xRatio
-            -- local y3 = newy - 50 * yRatio
+            -- star is the point toward the cursor that is X units away
+            local xstar = x1 + 100 * xRatio
+            local ystar = y1 + 100 * yRatio
+            love.graphics.setColor(1, 1, 0)
+            love.graphics.line(x1, y1, xstar, ystar)
 
-            -- local x4 = newx + 50 * xRatio
-            -- local y4 = newy + 50 * yRatio
+            -- local p2 = rotate({xstar, ystar}, math.pi/16)
+            -- local p3 = rotate({xstar, ystar}, -math.pi/16)
+            local p2 = rotate({xstar, ystar}, math.pi/16, me.cmeta.pos.x, me.cmeta.pos.y)
+            local p3 = rotate({xstar, ystar}, -math.pi/16, me.cmeta.pos.x, me.cmeta.pos.y)
 
-            -- local xComponent = 30 * xRatio
-            -- local yComponent = 30 * yRatio
-
-            local cosa, sina = math.cos(180), math.sin(180)
-
-            local dx1, dy1 = newx + 40 * cosa, newy + 40 * sina
-            local dx2, dy2 = newx + -20 * sina, newy + 20 * cosa
-
-            love.graphics.setColor(1, 0.5, 0)
+            love.graphics.setColor(1, 0, 0)
             love.graphics.polygon("line", {
-                me.cmeta.pos.x, me.cmeta.pos.y,
-                dx1, dy1,
-                dx2, dy2
+                x1, y1, -- first point on edge of character
+                p2[1], p2[2],
+                p3[1], p3[2]
             })
-            local z = "dx1: %d, dy1: %d"
-            local z2 = "dx2: %d, dy2: %d"
-            love.graphics.print(z:format(dx1, dy1), dx1, dy1)
-            love.graphics.print(z2:format(dx2, dy2), dx2, dy2)
-            -- love.graphics.line(
-            --     {
-            --         me.cmeta.pos.x, me.cmeta.pos.y,
-            --         -- mousePos.x, mousePos.y
-            --         newx, newy
-            --         -- me.cmeta.pos.x - 50, me.cmeta.pos.y + 75,
-            --         -- me.cmeta.pos.x + 50, me.cmeta.pos.y + 75
-            --     }
-            -- )
+
         end
     })
+end
+
+-- rotate({1, 1, 2, 2}, math.pi/2)
+function rotate(vertices, angle, originx, originy)
+    assert(#vertices > 0 and #vertices % 2 == 0)
+    local t = love.math.newTransform(originx or 0, originy or 0, angle or math.pi/8)
+
+    local result = {}
+    for i=1, #vertices, 2 do
+        local newx, newy = t:transformPoint(vertices[i], vertices[i+1])
+        table.insert(result, newx)
+        table.insert(result, newy)
+    end
+    return result
 end
 
 function sionW(me)
