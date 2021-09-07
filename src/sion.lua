@@ -7,7 +7,7 @@ local sionQ, sionW, sionE, sionR
 
 function Sion.new(pos, hp)
     local sion = {
-        cmeta = Cmeta.new(pos, hp, 1000, 300, 10),
+        cmeta = Cmeta.new(pos, hp, 1000, 340, 10),
         effects = {},
         abilities = {
             q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}
@@ -117,6 +117,13 @@ function sionQ(me)
                 run = function(self, me)
                     -- TODO contention here (CC from other effects)
                     me.cmeta.canMove = true
+
+                    -- damage
+                    Ability.hurtbox(self, "axe", 100, {
+                        {x = me.cmeta.pos.x, y = me.cmeta.pos.y + 10},
+                        {x = me.cmeta.pos.x - 50, y = me.cmeta.pos.y + 75},
+                        {x = me.cmeta.pos.x + 50, y = me.cmeta.pos.y + 75}
+                    })
                 end
             }
         },
@@ -167,7 +174,6 @@ function sionW(me)
         },
         draw = function(self, me)
             love.graphics.setColor(self.shield.color.r, self.shield.color.g, self.shield.color.b)
-            -- print("lineWidth", love.graphics.getLineWidth())
             love.graphics.setLineWidth(self.shield.width)
             love.graphics.circle("line", me.cmeta.pos.x, me.cmeta.pos.y, me.cmeta.size + self.shield.radius)
             love.graphics.setLineWidth(1)

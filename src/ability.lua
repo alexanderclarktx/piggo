@@ -8,4 +8,13 @@ function Ability.heal(me, hp)
     end
 end
 
+function Ability.hurtbox(me, name, damage, poly)
+    assert(damage ~= nil and damage > 0)
+    table.insert(gs.hurtboxes, {
+        name = name,
+        damage = damage,
+        poly = poly
+    })
+end
+
 return Ability

@@ -4,14 +4,34 @@ local Minion = require 'src.minion'
 local Player = require 'src.player'
 local Gui = require 'src.gui'
 
-local gs = {
+gs = {
     players = {
         Player.new("player1", Sion.new({x = 600, y = 300}, 500)),
     },
-    npc = {
-        Minion.new() -- hp, size, pos
-    }
+    npcs = {
+        Minion.new()
+    },
+    hurtboxes = {} -- name, damage, poly
 }
+
+function polyCheck(vertices,px,py)
+    local collision = false
+    local next = 1
+        for current = 1, #vertices do
+        next = current + 1
+        if (next > #vertices) then
+            next = 1
+        end
+        local vc = vertices[current]
+        local vn = vertices[next]
+        if (((vc.y >= py and vn.y < py) or (vc.y < py and vn.y >= py)) and
+                (px < (vn.x-vc.x)*(py-vc.y) / (vn.y-vc.y)+vc.x)) then
+            collision = not(collision)
+        end
+        end
+    return collision
+end
+   
 
 function love.load()
     -- love.graphics.setBackgroundColor(1, 1, 1)
@@ -24,7 +44,7 @@ function love.draw()
         player:draw()
     end
 
-    for _, npc in pairs(gs.npc) do 
+    for _, npc in pairs(gs.npcs) do 
         npc:draw()
     end
 
@@ -70,4 +90,13 @@ function love.update(dt)
     -- for _, object in pairs(gs.objects) do
     --     object:update(dt)
     -- end
+
+    -- apply all hurtboxes
+    for _, hurtbox in pairs(gs.hurtboxes) do
+        for _, npc in pairs(gs.npcs) do
+            if polyCheck(hurtbox.poly, npc.pos.x, npc.pos.y) then
+                npc.hp = npc.hp - hurtbox.damage
+            end
+        end
+    end
 end

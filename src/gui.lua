@@ -3,10 +3,10 @@ local drawutils = require 'src.drawutils'
 local Gui = {}
 
 local dim = {
-    q = {x = 500, y = 600},
-    w = {x = 555, y = 600},
-    e = {x = 610, y = 600},
-    r = {x = 665, y = 600},
+    q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.9},
+    w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.9},
+    e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.9},
+    r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.9},
     boxWidth = 50,
     boxHeight = 50,
 }
@@ -63,10 +63,10 @@ local function drawConsole(player)
 
     -- keybinds
     love.graphics.setColor(.7, .7, .2)
-    love.graphics.print("q", 505, 630)
-    love.graphics.print("w", 560, 630)
-    love.graphics.print("e", 615, 630)
-    love.graphics.print("r", 670, 630)
+    love.graphics.print("q", dim.q.x + 5, dim.q.y + 30)
+    love.graphics.print("w", dim.w.x + 5, dim.w.y + 30)
+    love.graphics.print("e", dim.e.x + 5, dim.e.y + 30)
+    love.graphics.print("r", dim.r.x + 5, dim.r.y + 30)
 end
 
 function Gui.new(player)
