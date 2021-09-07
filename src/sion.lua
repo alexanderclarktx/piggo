@@ -1,14 +1,11 @@
 local Ability = require 'src.ability'
+local Cmeta = require 'src.cmeta'
 
 local Sion = {}
 
-function Sion.new(hp, pos)
+function Sion.new(pos, hp)
     local sion = {
-        pos = pos or {x = 10, y = 10},
-        canMove = true,
-        speed = 300,
-        hp = hp or 1000,
-        maxhp = 1000,
+        cmeta = Cmeta.new(pos, hp, 1000, 300),
         effects = {},
         abilities = {
             q = {
@@ -38,6 +35,13 @@ function Sion.new(hp, pos)
                     duration = 0.5,
                     dt = 0,
                     segments = {
+                        {
+                            time = 0,
+                            done = false,
+                            run = function(self, me)
+                                me.cmeta.canMove = false
+                            end
+                        },
                         {
                             time = 0.5,
                             done = false,
@@ -89,7 +93,7 @@ function Sion.new(hp, pos)
         end,
         draw = function(self)
             love.graphics.setColor(0, 1, 0.4)
-            love.graphics.circle("fill", self.pos.x, self.pos.y, 10)
+            love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, 10)
 
             for _, effect in pairs(self.effects) do
                 if effect.drawable then

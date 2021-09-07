@@ -6,7 +6,7 @@ local Gui = require 'src.gui'
 
 local gs = {
     players = {
-        Player.new("player1", Sion.new(500, {x = 600, y = 300})),
+        Player.new("player1", Sion.new({x = 600, y = 300}, 500)),
     },
     npc = {
         Minion.new() -- hp, size, pos
@@ -59,19 +59,19 @@ function love.update(dt)
     if love.mouse.isDown(1) then
         mouseX = love.mouse.getX()
         mouseY = love.mouse.getY()
-        characterX = gs.players[1].character.pos.x
-        characterY = gs.players[1].character.pos.y
+        characterX = gs.players[1].character.cmeta.pos.x
+        characterY = gs.players[1].character.cmeta.pos.y
 
         if characterX < mouseX then
-            gs.players[1].character.pos.x = characterX + 1
+            gs.players[1].character.cmeta.pos.x = characterX + 1
         elseif characterX > mouseX then
-            gs.players[1].character.pos.x = characterX - 1
+            gs.players[1].character.cmeta.pos.x = characterX - 1
         end
 
         if characterY < mouseY then
-            gs.players[1].character.pos.y = characterY + 1
+            gs.players[1].character.cmeta.pos.y = characterY + 1
         elseif characterY > mouseY then
-            gs.players[1].character.pos.y = characterY - 1
+            gs.players[1].character.cmeta.pos.y = characterY - 1
         end
     end
 

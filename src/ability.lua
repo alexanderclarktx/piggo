@@ -1,10 +1,10 @@
 local Ability = {}
 
 function Ability.heal(me, hp)
-    if me.hp + hp >= me.maxhp then
-        me.hp = me.maxhp
+    if me.cmeta.hp + hp >= me.cmeta.maxhp then
+        me.cmeta.hp = me.cmeta.maxhp
     else
-        me.hp = me.hp + hp
+        me.cmeta.hp = me.cmeta.hp + hp
     end
 end
 

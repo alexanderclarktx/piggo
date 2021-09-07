@@ -11,7 +11,7 @@ function Player.new(name, character)
             self.character:update(dt)
         end,
         draw = function(self)
-            drawutils.drawHealthbar(self.character.pos, self.character.hp, self.character.maxhp)
+            drawutils.drawHealthbar(self.character.cmeta.pos, self.character.cmeta.hp, self.character.cmeta.maxhp)
 
             -- draw character
             self.character:draw()
