@@ -44,3 +44,9 @@
 * health indicators
 
 * ~~ability cooldown indicators~~
+
+# refactors
+
+* client/server
+
+* viewport/camera
