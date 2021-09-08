@@ -3,10 +3,6 @@ local drawutils = require 'src.drawutils'
 local Gui = {}
 
 local dim = {
-    q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.9},
-    w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.9},
-    e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.9},
-    r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.9},
     boxWidth = 50,
     boxHeight = 50,
 }
@@ -49,24 +45,29 @@ local function drawCooldownIndicator(x, y, width, height, dt, cd)
 end
 
 local function drawConsole(player)
+    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.9}
+    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.9}
+    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.9}
+    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.9}
+
     -- ability outlines
-    drawAbilityOutline(dim.q.x, dim.q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawAbilityOutline(dim.w.x, dim.w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawAbilityOutline(dim.e.x, dim.e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawAbilityOutline(dim.r.x, dim.r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
+    drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- cooldown indicators
-    drawCooldownIndicator(dim.q.x, dim.q.y, dim.boxWidth, dim.boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawCooldownIndicator(dim.w.x, dim.w.y, dim.boxWidth, dim.boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawCooldownIndicator(dim.e.x, dim.e.y, dim.boxWidth, dim.boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawCooldownIndicator(dim.r.x, dim.r.y, dim.boxWidth, dim.boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawCooldownIndicator(q.x, q.y, dim.boxWidth, dim.boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
+    drawCooldownIndicator(w.x, w.y, dim.boxWidth, dim.boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    drawCooldownIndicator(e.x, e.y, dim.boxWidth, dim.boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    drawCooldownIndicator(r.x, r.y, dim.boxWidth, dim.boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.7, .7, .2)
-    love.graphics.print("q", dim.q.x + 5, dim.q.y + 30)
-    love.graphics.print("w", dim.w.x + 5, dim.w.y + 30)
-    love.graphics.print("e", dim.e.x + 5, dim.e.y + 30)
-    love.graphics.print("r", dim.r.x + 5, dim.r.y + 30)
+    love.graphics.print("q", q.x + 5, q.y + 30)
+    love.graphics.print("w", w.x + 5, w.y + 30)
+    love.graphics.print("e", e.x + 5, e.y + 30)
+    love.graphics.print("r", r.x + 5, r.y + 30)
 end
 
 function Gui.new(player)
