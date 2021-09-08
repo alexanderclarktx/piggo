@@ -56,22 +56,18 @@ function love.keypressed(key, scancode, isrepeat)
     end
 
     if key == "q" then
-        -- print("q")
         gs.players[1].character:q({
             x = love.mouse.getX(),
             y = love.mouse.getY()
         })
     end
     if key == "w" then
-        -- print("w")
         gs.players[1].character:w()
     end
     if key == "e" then
-        -- print("e")
         gs.players[1].character:e()
     end
     if key == "r" then
-        -- print("r")
         gs.players[1].character:r()
     end
 end
@@ -108,11 +104,17 @@ function love.update(dt)
     -- end
 
     -- apply all hurtboxes
-    for _, hurtbox in pairs(gs.hurtboxes) do
+    for i, hurtbox in ipairs(gs.hurtboxes) do
+        print("hurtbox")
         for _, npc in pairs(gs.npcs) do
+            print("npc")
             if polyCheck(hurtbox.poly, npc.pos.x, npc.pos.y) then
+                print("check")
                 npc.hp = npc.hp - hurtbox.damage
+                print("hp dmg ", npc.hp, hurtbox.damage)
             end
         end
     end
+    gs.hurtboxes = {}
+    if #gs.hurtboxes > 0 then print('there are hurtboxes') end
 end

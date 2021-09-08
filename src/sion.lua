@@ -26,7 +26,7 @@ function Sion.new(pos, hp)
         end,
         update = function(self, dt)
             -- update position
-            if self.cmeta.marker then
+            if self.cmeta.marker and self.cmeta.canMove then
                 local xdiff = self.cmeta.marker.x - self.cmeta.pos.x
                 local ydiff = self.cmeta.marker.y - self.cmeta.pos.y
 
@@ -56,6 +56,7 @@ function Sion.new(pos, hp)
                 for _, segment in pairs(effect.segments) do
                     if not segment.done and segment.time <= effect.dt then
                         segment:run(self, effect)
+                        segment.done = true
                     end
                 end
 
@@ -65,20 +66,6 @@ function Sion.new(pos, hp)
             end
         end,
         draw = function(self)
-            local triangle = {100,100, 200,100, 150,200}
-            love.graphics.setColor(1, 0, 0)
-            love.graphics.polygon("line", rotate(triangle, -1 * math.pi/16))
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.polygon("line", triangle)
-            love.graphics.setColor(1, 0, 1)
-            love.graphics.polygon("line", rotate(triangle, math.pi/16))
-            love.graphics.setColor(0, 1, 1)
-            love.graphics.polygon("line", rotate(triangle, 2 * math.pi/16))
-            love.graphics.setColor(0, 1, 0)
-            love.graphics.polygon("line", rotate(triangle, 3 * math.pi/16))
-            love.graphics.setColor(0, 0, 1)
-            love.graphics.polygon("line", rotate(triangle, math.pi/16, 50, 50))
-
             -- draw my character
             love.graphics.setColor(0, 1, 0.4)
             love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, self.cmeta.size)
@@ -108,38 +95,30 @@ function sionQ(me, mousePos)
     table.insert(me.effects, {
         name = "Axe",
         drawable = true,
-        duration = 2,
+        duration = 0.5,
         dt = 0,
         hitboxDistance = 200,
         hitboxAngle = math.pi/8,
+        hitboxStyle = "line",
         segments = {
             {
                 time = 0,
                 done = false,
                 run = function(self, me)
                     me.cmeta.canMove = false
+                    me.cmeta.marker = nil
                 end
             },
             {
-                time = 0.5,
+                time = 0.47,
                 done = false,
-                run = function(self, me)
-                    Ability.heal(me, 100)
-                end
-            },
-            {
-                time = 0.5,
-                done = false,
-                run = function(self, me)
+                run = function(self, me, effect)
                     -- TODO contention here (CC from other effects)
                     me.cmeta.canMove = true
+                    effect.hitboxStyle = "fill"
 
                     -- damage
-                    Ability.hurtbox(self, "axe", 50, {
-                        {x = me.cmeta.pos.x, y = me.cmeta.pos.y + 10},
-                        {x = me.cmeta.pos.x - 50, y = me.cmeta.pos.y + 75},
-                        {x = me.cmeta.pos.x + 50, y = me.cmeta.pos.y + 75}
-                    })
+                    Ability.hurtbox(self, "axe", 140, effect.hitboxPoints)
                 end
             }
         },
@@ -149,28 +128,21 @@ function sionQ(me, mousePos)
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-            -- first point is on edge of my character toward star
-            local x1 = me.cmeta.pos.x + me.cmeta.size * xRatio
-            local y1 = me.cmeta.pos.y + me.cmeta.size * yRatio
+            -- first point is on edge of character
+            local p1 = {me.cmeta.pos.x + me.cmeta.size * xRatio, me.cmeta.pos.y + me.cmeta.size * yRatio}
 
-            -- star is the point toward the cursor that is X units away
-            -- local xstar = x1 + self.hitboxDistance * xRatio
-            -- local ystar = y1 + self.hitboxDistance * yRatio
+            -- outer points of triangle
+            local p2 = rotate({xRatio, yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p3 = rotate({xRatio, yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
-            -- stardiff is star against origin of character
-            -- local xstardiff = xstar - me.cmeta.pos.x
-            -- local ystardiff = ystar - me.cmeta.pos.y
-
-            -- rotate star left and right
-            local p2 = rotate({xRatio, yRatio}, -self.hitboxAngle, x1, y1, self.hitboxDistance)
-            local p3 = rotate({xRatio, yRatio}, self.hitboxAngle, x1, y1, self.hitboxDistance)
-
-            love.graphics.setColor(1, 0, 0)
-            love.graphics.polygon("line", {
-                x1, y1, -- first point on edge of character
+            love.graphics.setColor(1, 0, 1)
+            love.graphics.polygon(self.hitboxStyle, {
+                p1[1], p1[2],
                 p2[1], p2[2],
                 p3[1], p3[2]
             })
+
+            self.hitboxPoints = {{x = p1[1], y = p1[2]}, {x = p2[1], y = p2[2]}, {x = p3[1], y = p3[2]}}
         end
     })
 end

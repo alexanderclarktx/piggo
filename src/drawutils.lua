@@ -19,6 +19,7 @@ function Drawutils.drawHealthbar(pos, hp, maxhp)
         hp / maxhp * const.healthbar.width,
         const.healthbar.height
     )
+    love.graphics.print(hp, pos.x, pos.y - 40)
 end
 
 function Drawutils.drawBox(x, y, width, height)
