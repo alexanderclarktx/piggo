@@ -15,11 +15,9 @@
 
 ## Mechanics
 
-* damage
+* auto attacks
 
-* movement
-
-* death
+* player death
 
 * gold/resources
 
@@ -28,6 +26,12 @@
 * collision
 
 * ability targeting
+
+* ~~damage~~
+
+* ~~movement~~
+
+* ~~minion death~~
 
 ## UI
 
@@ -39,4 +43,4 @@
 
 * health indicators
 
-* ability cooldown indicators
+* ~~ability cooldown indicators~~
