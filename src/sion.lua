@@ -110,6 +110,8 @@ function sionQ(me, mousePos)
         drawable = true,
         duration = 2,
         dt = 0,
+        hitboxDistance = 200,
+        hitboxAngle = math.pi/8,
         segments = {
             {
                 time = 0,
@@ -142,10 +144,8 @@ function sionQ(me, mousePos)
             }
         },
         draw = function(self, me)
-
             local xdiff = mousePos.x - me.cmeta.pos.x
             local ydiff = mousePos.y - me.cmeta.pos.y
-
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
@@ -154,15 +154,16 @@ function sionQ(me, mousePos)
             local y1 = me.cmeta.pos.y + me.cmeta.size * yRatio
 
             -- star is the point toward the cursor that is X units away
-            local xstar = x1 + 100 * xRatio
-            local ystar = y1 + 100 * yRatio
-            love.graphics.setColor(1, 1, 0)
-            love.graphics.line(x1, y1, xstar, ystar)
+            -- local xstar = x1 + self.hitboxDistance * xRatio
+            -- local ystar = y1 + self.hitboxDistance * yRatio
 
-            -- local p2 = rotate({xstar, ystar}, math.pi/16)
-            -- local p3 = rotate({xstar, ystar}, -math.pi/16)
-            local p2 = rotate({xstar, ystar}, math.pi/16, me.cmeta.pos.x, me.cmeta.pos.y)
-            local p3 = rotate({xstar, ystar}, -math.pi/16, me.cmeta.pos.x, me.cmeta.pos.y)
+            -- stardiff is star against origin of character
+            -- local xstardiff = xstar - me.cmeta.pos.x
+            -- local ystardiff = ystar - me.cmeta.pos.y
+
+            -- rotate star left and right
+            local p2 = rotate({xRatio, yRatio}, -self.hitboxAngle, x1, y1, self.hitboxDistance)
+            local p3 = rotate({xRatio, yRatio}, self.hitboxAngle, x1, y1, self.hitboxDistance)
 
             love.graphics.setColor(1, 0, 0)
             love.graphics.polygon("line", {
@@ -170,15 +171,14 @@ function sionQ(me, mousePos)
                 p2[1], p2[2],
                 p3[1], p3[2]
             })
-
         end
     })
 end
 
 -- rotate({1, 1, 2, 2}, math.pi/2)
-function rotate(vertices, angle, originx, originy)
+function rotate(vertices, angle, originx, originy, scale)
     assert(#vertices > 0 and #vertices % 2 == 0)
-    local t = love.math.newTransform(originx or 0, originy or 0, angle or math.pi/8)
+    local t = love.math.newTransform(originx or 0, originy or 0, angle, scale or 1, scale or 1)
 
     local result = {}
     for i=1, #vertices, 2 do

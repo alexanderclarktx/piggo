@@ -34,7 +34,7 @@ end
 
 function love.load()
     -- love.graphics.setBackgroundColor(1, 1, 1)
-    love.graphics.setBackgroundColor(0,0,0)
+    love.graphics.setBackgroundColor(0.1,0.1,0.1)
     gs.gui = Gui.new(gs.players[1])
 end
 
