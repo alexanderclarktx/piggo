@@ -1,4 +1,4 @@
-local drawutils = require 'src.drawutils'
+local DrawUtils = require 'src.DrawUtils'
 
 local Gui = {}
 
@@ -68,13 +68,13 @@ function drawAbilityOutline(x, y, dt, cd)
     else
         love.graphics.setColor(1, 1, 1)
     end
-    drawutils.drawBox(x, y, boxWidth, boxHeight)
+    DrawUtils.drawBox(x, y, boxWidth, boxHeight)
 end
 
 function drawCooldownIndicator(x, y, width, height, dt, cd)
     if dt < cd then
         love.graphics.setColor(.3, .3, .3)
-        love.graphics.stencil(function() drawutils.drawBox(x, y, width, height) end)
+        love.graphics.stencil(function() DrawUtils.drawBox(x, y, width, height) end)
         love.graphics.setStencilTest("greater", 0)
         love.graphics.arc("fill", "pie", x + width / 2, y + height / 2, height, 4.71, 10.99 - 6.28 * (dt / cd) )
         love.graphics.setStencilTest()

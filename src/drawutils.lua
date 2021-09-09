@@ -1,4 +1,4 @@
-local Drawutils = {}
+local DrawUtils = {}
 
 local const = {
     healthbar = {
@@ -13,7 +13,7 @@ local const = {
     }
 }
 
-function Drawutils.drawHealthbar(pos, size, hp, maxhp)
+function DrawUtils.drawHealthbar(pos, size, hp, maxhp)
     love.graphics.setColor(1, 0 , 0)
     -- outer healthbar
     love.graphics.rectangle(
@@ -34,8 +34,8 @@ function Drawutils.drawHealthbar(pos, size, hp, maxhp)
     love.graphics.print(hp, pos.x + const.healthnumber.xoff, pos.y + const.healthnumber.yoff - size)
 end
 
-function Drawutils.drawBox(x, y, width, height)
+function DrawUtils.drawBox(x, y, width, height)
     love.graphics.rectangle("line", x, y, width, height)
 end
 
-return Drawutils
+return DrawUtils

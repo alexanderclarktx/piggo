@@ -1,9 +1,9 @@
-local Cmeta = {}
+local Character = {}
 -- character metadata and validation
 
 local posvalidate
 
-function Cmeta.new(pos, hp, maxhp, speed, size)
+function Character.new(pos, hp, maxhp, speed, size)
     assert(pos.x ~= nil and pos.x > 0)
     assert(pos.y ~= nil and pos.y > 0)
     assert(hp ~= nil and hp > 0)
@@ -21,8 +21,8 @@ function Cmeta.new(pos, hp, maxhp, speed, size)
     }
 end
 
-local function testCmetaNew()
-    assert(Cmeta.new(
+local function testCharacterNew()
+    assert(Character.new(
         {x = 15, y = 15},
         15,
         20,
@@ -30,6 +30,6 @@ local function testCmetaNew()
         20
     ))
 end
-testCmetaNew()
+testCharacterNew()
 
-return Cmeta
+return Character
