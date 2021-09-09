@@ -1,3 +1,3 @@
-local CollisionUtils = {}
+local ShapeUtils = {}
 
-return CollisionUtils
+return ShapeUtils

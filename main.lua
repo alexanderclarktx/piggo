@@ -1,8 +1,8 @@
-local Sion = require 'src.sion'
-local Minion = require 'src.minion'
-local Player = require 'src.player'
-local Gui = require 'src.gui'
-local PlayerController = require 'src.playercontroller'
+local Sion = require 'src.Sion'
+local Minion = require 'src.Minion'
+local Player = require 'src.Player'
+local Gui = require 'src.Gui'
+local PlayerController = require 'src.Playercontroller'
 
 gs = {
     players = {
