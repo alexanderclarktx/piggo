@@ -1,4 +1,3 @@
-local mlib = require 'lib.mlib'
 local ShapeUtils = require 'src.ShapeUtils'
 
 local PlayerController = {}
@@ -25,7 +24,7 @@ function update(self, dt)
     for _, npc in pairs(gs.npcs) do
         -- TODO not just NPCs
         -- todo logic for targeting CLOSEST (shift+click)
-        if mlib.circle.checkPoint(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
+        if ShapeUtils.pointInCircle(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
             self.hovering = npc
             break
         end
