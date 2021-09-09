@@ -2,12 +2,23 @@ local drawutils = require 'src.drawutils'
 
 local Gui = {}
 
-local dim = {
-    boxWidth = 50,
-    boxHeight = 50,
-}
+local draw, drawDebug, drawAbilityOutline, drawCooldownIndicator, drawConsole
 
-local function drawDebug(player)
+local boxWidth, boxHeight = 50, 50
+
+function Gui.new(player)
+    return {
+        player = player,
+        draw = draw
+    }
+end
+
+function draw(self)
+    drawDebug(self.player)
+    drawConsole(self.player)
+end
+
+function drawDebug(player)
     local debug = table.concat({
         "fps: %d",
         "hp: %s",
@@ -25,30 +36,11 @@ local function drawDebug(player)
     ), 10, 10)
 end
 
-local function drawAbilityOutline(x, y, dt, cd)
-    if dt < cd then
-        love.graphics.setColor(.8, .8, .2)
-    else
-        love.graphics.setColor(1, 1, 1)
-    end
-    drawutils.drawBox(x, y, dim.boxWidth, dim.boxHeight)
-end
-
-local function drawCooldownIndicator(x, y, width, height, dt, cd)
-    if dt < cd then
-        love.graphics.setColor(.3, .3, .3)
-        love.graphics.stencil(function() drawutils.drawBox(x, y, width, height) end)
-        love.graphics.setStencilTest("greater", 0)
-        love.graphics.arc("fill", "pie", x + width / 2, y + height / 2, height, 4.71, 10.99 - 6.28 * (dt / cd) )
-        love.graphics.setStencilTest()
-    end
-end
-
-local function drawConsole(player)
-    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.9}
-    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.9}
-    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.9}
-    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.9}
+function drawConsole(player)
+    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.75}
+    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.75}
+    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.75}
+    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.75}
 
     -- ability outlines
     drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
@@ -57,10 +49,10 @@ local function drawConsole(player)
     drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- cooldown indicators
-    drawCooldownIndicator(q.x, q.y, dim.boxWidth, dim.boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawCooldownIndicator(w.x, w.y, dim.boxWidth, dim.boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawCooldownIndicator(e.x, e.y, dim.boxWidth, dim.boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawCooldownIndicator(r.x, r.y, dim.boxWidth, dim.boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
+    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.7, .7, .2)
@@ -70,15 +62,23 @@ local function drawConsole(player)
     love.graphics.print("r", r.x + 5, r.y + 30)
 end
 
-function Gui.new(player)
-    local gui = {
-        player = player,
-        draw = function(self)
-            drawDebug(self.player)
-            drawConsole(self.player)
-        end,
-    }
-    return gui
+function drawAbilityOutline(x, y, dt, cd)
+    if dt < cd then
+        love.graphics.setColor(.8, .8, .2)
+    else
+        love.graphics.setColor(1, 1, 1)
+    end
+    drawutils.drawBox(x, y, boxWidth, boxHeight)
+end
+
+function drawCooldownIndicator(x, y, width, height, dt, cd)
+    if dt < cd then
+        love.graphics.setColor(.3, .3, .3)
+        love.graphics.stencil(function() drawutils.drawBox(x, y, width, height) end)
+        love.graphics.setStencilTest("greater", 0)
+        love.graphics.arc("fill", "pie", x + width / 2, y + height / 2, height, 4.71, 10.99 - 6.28 * (dt / cd) )
+        love.graphics.setStencilTest()
+    end
 end
 
 return Gui

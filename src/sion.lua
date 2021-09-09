@@ -3,10 +3,10 @@ local Cmeta = require 'src.cmeta'
 
 local Sion = {}
 
-local sionQ, sionW, sionE, sionR
+local update, draw, sionQ, sionW, sionE, sionR
 
 function Sion.new(pos, hp)
-    local sion = {
+    return {
         cmeta = Cmeta.new(pos, hp, 1000, 340, 20),
         effects = {},
         abilities = {
@@ -24,70 +24,73 @@ function Sion.new(pos, hp)
         r = function(self)
             if self.abilities.r.dt > self.abilities.r.cd then sionR(self) end
         end,
-        update = function(self, dt)
-            -- update position
-            if self.cmeta.marker and self.cmeta.canMove then
-                local xdiff = self.cmeta.marker.x - self.cmeta.pos.x
-                local ydiff = self.cmeta.marker.y - self.cmeta.pos.y
+        update = update,
+        draw = draw,
+    }
+end
 
-                if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
-                    self.cmeta.marker = nil
-                end
+function update(self, dt)
+    -- update position
+    if self.cmeta.marker and self.cmeta.canMove then
+        local xdiff = self.cmeta.marker.x - self.cmeta.pos.x
+        local ydiff = self.cmeta.marker.y - self.cmeta.pos.y
 
-                local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-                local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+        if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
+            self.cmeta.marker = nil
+        end
 
-                local xComponent = dt * self.cmeta.speed * xRatio
-                local yComponent = dt * self.cmeta.speed * yRatio
+        local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
+        local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-                self.cmeta.pos.x = self.cmeta.pos.x + xComponent
-                self.cmeta.pos.y = self.cmeta.pos.y + yComponent
-            end
+        local xComponent = dt * self.cmeta.speed * xRatio
+        local yComponent = dt * self.cmeta.speed * yRatio
 
-            -- increment ability dt
-            for i, ability in pairs(self.abilities) do
-                ability.dt = ability.dt + dt
-            end
+        self.cmeta.pos.x = self.cmeta.pos.x + xComponent
+        self.cmeta.pos.y = self.cmeta.pos.y + yComponent
+    end
 
-            -- update each effect
-            for i, effect in pairs(self.effects) do
-                effect.dt = effect.dt + dt
-                
-                for _, segment in pairs(effect.segments) do
-                    if not segment.done and segment.time <= effect.dt then
-                        segment:run(self, effect)
-                        segment.done = true
-                    end
-                end
+    -- increment ability dt
+    for i, ability in pairs(self.abilities) do
+        ability.dt = ability.dt + dt
+    end
 
-                if effect.dt > effect.duration then
-                    table.remove(self.effects, i)
-                end
-            end
-        end,
-        draw = function(self)
-            -- draw my character
-            love.graphics.setColor(0, 1, 0.4)
-            love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, self.cmeta.size)
-
-            -- draw line from me to marker
-            love.graphics.setColor(0.6, 0.6, 0.6)
-            if self.cmeta.marker then
-                love.graphics.line(
-                    self.cmeta.pos.x, self.cmeta.pos.y,
-                    self.cmeta.marker.x, self.cmeta.marker.y
-                )
-            end
-
-            -- draw each effect
-            for _, effect in pairs(self.effects) do
-                if effect.drawable then
-                    effect:draw(self)
-                end
+    -- update each effect
+    for i, effect in pairs(self.effects) do
+        effect.dt = effect.dt + dt
+        
+        for _, segment in pairs(effect.segments) do
+            if not segment.done and segment.time <= effect.dt then
+                segment:run(self, effect)
+                segment.done = true
             end
         end
-    }
-    return sion
+
+        if effect.dt > effect.duration then
+            table.remove(self.effects, i)
+        end
+    end
+end
+
+function draw(self)
+    -- draw my character
+    love.graphics.setColor(0, 1, 0.4)
+    love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, self.cmeta.size)
+
+    -- draw line from me to marker
+    love.graphics.setColor(0.6, 0.6, 0.6)
+    if self.cmeta.marker then
+        love.graphics.line(
+            self.cmeta.pos.x, self.cmeta.pos.y,
+            self.cmeta.marker.x, self.cmeta.marker.y
+        )
+    end
+
+    -- draw each effect
+    for _, effect in pairs(self.effects) do
+        if effect.drawable then
+            effect:draw(self)
+        end
+    end
 end
 
 function sionQ(me, mousePos)

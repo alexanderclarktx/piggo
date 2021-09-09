@@ -54,7 +54,7 @@ function love.draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    gs.playerController:keypressed(key, scancode, isrepeat)
+    gs.playerController:handleKeyPressed(key, scancode, isrepeat)
 end
 
 function love.update(dt)

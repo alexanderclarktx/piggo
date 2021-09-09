@@ -2,53 +2,56 @@ local mlib = require 'lib.mlib'
 
 local PlayerController = {}
 
-local handleKeypress
+local update, draw, handleKeypressed
 
 function PlayerController.new(player)
-    local pc = {
+    return {
         player = player,
         hovering = nil,
-        update = function(self, dt)
-            -- targeting
-            local mouseX = love.mouse.getX()
-            local mouseY = love.mouse.getY()
-
-            -- for each npc, is the player clicking on it
-            self:hover(nil)
-            for _, npc in pairs(gs.npcs) do
-                -- TODO not just NPCs
-                -- todo logic for targeting CLOSEST (shift+click)
-                if mlib.circle.checkPoint(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
-                    self:hover(npc)
-                    break
-                end
-            end
-
-            -- player movement
-            if love.mouse.isDown(2) then
-                gs.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
-            end
-        end,
-        draw = function(self, dt)
-            -- draw hover outline
-            if self.hovering then
-                love.graphics.setColor(1, 0, 0)
-                love.graphics.setLineWidth(4)
-                love.graphics.circle("line", self.hovering.pos.x, self.hovering.pos.y, self.hovering.size + 2)
-                love.graphics.setLineWidth(1)
-            end
-        end,
-        hover = function(self, entity) -- mouse is hovered over this character
-            self.hovering = entity
-        end,
-        keypressed = function(self, key, scancode, isrepeat) handleKeypress(key, scancode, isrepeat) end
+        update = update,
+        draw = draw,
+        handleKeyPressed = handleKeyPressed
     }
-
-    return pc
 end
 
-function handleKeypress(key, scancode, isrepeat)
+function update(self, dt)
+    -- targeting
+    local mouseX = love.mouse.getX()
+    local mouseY = love.mouse.getY()
 
+    -- for each npc, is the player clicking on it
+    self.hovering = nil
+    for _, npc in pairs(gs.npcs) do
+        -- TODO not just NPCs
+        -- todo logic for targeting CLOSEST (shift+click)
+        if mlib.circle.checkPoint(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
+            self.hovering = npc
+            break
+        end
+    end
+
+    -- player movement
+    if love.mouse.isDown(2) then
+        gs.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
+    end
+end
+
+function draw(self)
+    -- draw pre-targeting hover outline
+    if self.hovering then
+        love.graphics.setColor(0.7, 0.2, 0.2)
+        love.graphics.setLineWidth(4)
+        love.graphics.circle("line", self.hovering.pos.x, self.hovering.pos.y, self.hovering.size + 2)
+        love.graphics.setLineWidth(1)
+    end
+
+    -- draw targeting outline
+    if self.targeting then
+        -- TODO
+    end
+end
+
+function handleKeyPressed(self, key, scancode, isrepeat)
     if key == "space" then
         love.event.quit()
     end

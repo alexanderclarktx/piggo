@@ -2,22 +2,27 @@ local drawutils = require 'src.drawutils'
 
 local Player = {}
 
+local update, draw
+
 function Player.new(name, character)
-    local player = {
+    return {
         name = name,
         character = character,
-        update = function(self, dt)
-            -- update character
-            self.character:update(dt)
-        end,
-        draw = function(self)
-            drawutils.drawHealthbar(self.character.cmeta.pos, self.character.cmeta.size, self.character.cmeta.hp, self.character.cmeta.maxhp)
-
-            -- draw character
-            self.character:draw()
-        end,
+        update = update,
+        draw = draw
     }
-    return player
+end
+
+function update(self, dt)
+    -- update character
+    self.character:update(dt)
+end
+
+function draw(self)
+    drawutils.drawHealthbar(self.character.cmeta.pos, self.character.cmeta.size, self.character.cmeta.hp, self.character.cmeta.maxhp)
+
+    -- draw character
+    self.character:draw()
 end
 
 return Player

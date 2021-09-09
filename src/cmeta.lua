@@ -11,16 +11,14 @@ function Cmeta.new(pos, hp, maxhp, speed, size)
     assert(speed ~= nil and speed > 0)
     assert(size ~= nil and size > 0)
 
-    local cmeta = {
-        canMove = true, -- not set by constructor
+    return {
+        canMove = true, -- not passed to constructor
         pos = pos,
         hp = hp,
         maxhp = maxhp,
         speed = speed,
         size = size
     }
-
-    return cmeta
 end
 
 local function testCmetaNew()
