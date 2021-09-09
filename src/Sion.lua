@@ -1,5 +1,5 @@
-local Ability = require 'src.ability'
-local Cmeta = require 'src.cmeta'
+local Ability = require 'src.Ability'
+local Character = require 'src.Character'
 
 local Sion = {}
 
@@ -7,7 +7,7 @@ local update, draw, sionQ, sionW, sionE, sionR
 
 function Sion.new(pos, hp)
     return {
-        cmeta = Cmeta.new(pos, hp, 1000, 340, 20),
+        cmeta = Character.new(pos, hp, 1000, 340, 20),
         effects = {},
         abilities = {
             q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}
