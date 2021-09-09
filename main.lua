@@ -2,35 +2,16 @@ local Sion = require 'src.Sion'
 local Minion = require 'src.Minion'
 local Player = require 'src.Player'
 local Gui = require 'src.Gui'
-local PlayerController = require 'src.Playercontroller'
+local PlayerController = require 'src.PlayerController'
+local ShapeUtils = require 'src.ShapeUtils'
 
 gs = {
     players = {
         Player.new("player1", Sion.new({x = 600, y = 300}, 500)),
     },
     npcs = {},
-    hurtboxes = {} -- name, damage, poly
+    hurtboxes = {} -- name, damage, poly,
 }
-
--- https://love2d.org/wiki/polypoint
-function polyCheck(vertices,px,py)
-    local collision = false
-    local next = 1
-        for current = 1, #vertices do
-        next = current + 1
-        if (next > #vertices) then
-            next = 1
-        end
-        local vc = vertices[current]
-        local vn = vertices[next]
-        if (((vc.y >= py and vn.y < py) or (vc.y < py and vn.y >= py)) and
-                (px < (vn.x-vc.x)*(py-vc.y) / (vn.y-vc.y)+vc.x)) then
-            collision = not(collision)
-        end
-        end
-    return collision
-end
-   
 
 function love.load()
     -- love.graphics.setBackgroundColor(1, 1, 1)
@@ -67,7 +48,7 @@ function love.update(dt)
     -- apply all hurtboxes
     for i, hurtbox in ipairs(gs.hurtboxes) do
         for _, npc in pairs(gs.npcs) do
-            if polyCheck(hurtbox.poly, npc.pos.x, npc.pos.y) then
+            if ShapeUtils.pointInPolygon(npc.pos.x, npc.pos.y, hurtbox.poly) then
                 npc.hp = npc.hp - hurtbox.damage
             end
         end

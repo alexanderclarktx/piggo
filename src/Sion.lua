@@ -6,6 +6,9 @@ local Sion = {}
 local update, draw, sionQ, sionW, sionE, sionR
 
 function Sion.new(pos, hp)
+    -- local sion = Character.new({
+
+    -- }, pos, hp, 1000, 340, 20)
     return {
         cmeta = Character.new(pos, hp, 1000, 340, 20),
         effects = {},
