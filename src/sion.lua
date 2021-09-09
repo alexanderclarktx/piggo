@@ -7,7 +7,7 @@ local sionQ, sionW, sionE, sionR
 
 function Sion.new(pos, hp)
     local sion = {
-        cmeta = Cmeta.new(pos, hp, 1000, 340, 10),
+        cmeta = Cmeta.new(pos, hp, 1000, 340, 20),
         effects = {},
         abilities = {
             q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}

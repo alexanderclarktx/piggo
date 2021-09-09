@@ -1,8 +1,8 @@
-const = require 'src.const'
 local Sion = require 'src.sion'
 local Minion = require 'src.minion'
 local Player = require 'src.player'
 local Gui = require 'src.gui'
+local PlayerController = require 'src.playercontroller'
 
 gs = {
     players = {
@@ -36,6 +36,7 @@ function love.load()
     -- love.graphics.setBackgroundColor(1, 1, 1)
     love.graphics.setBackgroundColor(0.1,0.1,0.1)
     gs.gui = Gui.new(gs.players[1])
+    gs.playerController = PlayerController.new(gs.players[1])
 end
 
 function love.draw()
@@ -48,38 +49,31 @@ function love.draw()
     end
 
     gs.gui:draw()
+
+    gs.playerController:draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    if key == "space" then
-        love.event.quit()
-    end
-
-    if key == "q" then
-        gs.players[1].character:q({
-            x = love.mouse.getX(),
-            y = love.mouse.getY()
-        })
-    end
-    if key == "w" then
-        gs.players[1].character:w()
-    end
-    if key == "e" then
-        gs.players[1].character:e()
-    end
-    if key == "r" then
-        gs.players[1].character:r()
-    end
+    gs.playerController:keypressed(key, scancode, isrepeat)
 end
 
 function love.update(dt)
-    -- player movement
-    if love.mouse.isDown(2) then
-        mouseX = love.mouse.getX()
-        mouseY = love.mouse.getY()
+    -- update player controller
+    gs.playerController:update(dt)
 
-        gs.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
+    -- update damage controller
+    -- gs.damageController:update(dt)
+
+    -- apply all hurtboxes
+    for i, hurtbox in ipairs(gs.hurtboxes) do
+        for _, npc in pairs(gs.npcs) do
+            if polyCheck(hurtbox.poly, npc.pos.x, npc.pos.y) then
+                npc.hp = npc.hp - hurtbox.damage
+            end
+        end
     end
+    gs.hurtboxes = {}
+    if #gs.hurtboxes > 0 then print('there are hurtboxes') end
 
     -- update all internal states
     for _, player in pairs(gs.players) do
@@ -102,19 +96,4 @@ function love.update(dt)
     -- for _, object in pairs(gs.objects) do
     --     object:update(dt)
     -- end
-
-    -- apply all hurtboxes
-    for i, hurtbox in ipairs(gs.hurtboxes) do
-        print("hurtbox")
-        for _, npc in pairs(gs.npcs) do
-            print("npc")
-            if polyCheck(hurtbox.poly, npc.pos.x, npc.pos.y) then
-                print("check")
-                npc.hp = npc.hp - hurtbox.damage
-                print("hp dmg ", npc.hp, hurtbox.damage)
-            end
-        end
-    end
-    gs.hurtboxes = {}
-    if #gs.hurtboxes > 0 then print('there are hurtboxes') end
 end
