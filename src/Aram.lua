@@ -37,7 +37,6 @@ function update(self, dt)
     -- kill all npcs that are dead :)
     for i, npc in ipairs(self.state.npcs) do
         if npc.hp <= 0 then
-            -- die
             table.remove(self.state.npcs, i)
         end
     end
@@ -54,4 +53,5 @@ end
 -- function draw(self)
 --     print("draw")
 -- end
+
 return Aram

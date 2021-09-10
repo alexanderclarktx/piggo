@@ -16,7 +16,8 @@ function GameController.new(game)
         state = { -- shared with Game
             players = {},
             npcs = {},
-            hurtboxes = {}
+            hurtboxes = {},
+            objects = {}
         },
         gui = nil,
         playerController = nil,
@@ -44,19 +45,13 @@ function update(self, dt)
     self.damageController:update(dt)
 
     -- update all internal states
-    for _, player in pairs(self.state.players) do
-        player:update(dt)
-    end
+    for _, player in pairs(self.state.players) do player:update(dt) end
 
     -- update all npcs
-    for index, npc in pairs(self.state.npcs) do
-        npc:update(dt, index)
-    end
+    for index, npc in pairs(self.state.npcs) do npc:update(dt, index) end
 
     -- handle non-player non-npc objects
-    -- for _, object in pairs(self.state.objects) do
-    --     object:update(dt)
-    -- end
+    for _, object in pairs(self.state.objects) do object:update(dt) end
 
     -- update game loop
     self.game:update(dt)
@@ -64,19 +59,13 @@ end
 
 function draw(self)
     -- draw all players
-    for _, player in pairs(self.state.players) do
-        player:draw()
-    end
+    for _, player in pairs(self.state.players) do player:draw() end
 
     -- draw all npcs
-    for _, npc in pairs(self.state.npcs) do
-        npc:draw()
-    end
+    for _, npc in pairs(self.state.npcs) do npc:draw() end
 
     -- draw all non-npc objects
-    -- for _, object in pairs(self.state.objects) do
-    --     object:draw()
-    -- end
+    for _, object in pairs(self.state.objects) do object:draw() end
 
     -- draw the GUI and PlayerController indicators
     self.gui:draw()
