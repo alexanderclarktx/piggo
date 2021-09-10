@@ -4,7 +4,7 @@ local Gui = {}
 
 local draw, drawDebug, drawAbilityOutline, drawCooldownIndicator, drawConsole
 
-local boxWidth, boxHeight = 50, 50
+local boxWidth, boxHeight, consoleHeight = 50, 50, 0.95
 
 function Gui.new(player)
     return {
@@ -37,10 +37,10 @@ function drawDebug(player)
 end
 
 function drawConsole(player)
-    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * 0.75}
-    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * 0.75}
-    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * 0.75}
-    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * 0.75}
+    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * consoleHeight - boxHeight}
 
     -- ability outlines
     drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)

@@ -4,8 +4,9 @@ local PlayerController = {}
 
 local update, draw, handleKeypressed
 
-function PlayerController.new(player)
+function PlayerController.new(player, state)
     return {
+        state = state,
         player = player,
         hovering = nil,
         update = update,
@@ -21,7 +22,7 @@ function update(self, dt)
 
     -- for each npc, is the player clicking on it
     self.hovering = nil
-    for _, npc in pairs(gs.npcs) do
+    for _, npc in pairs(self.state.npcs) do
         -- TODO not just NPCs
         -- todo logic for targeting CLOSEST (shift+click)
         if ShapeUtils.pointInCircle(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
@@ -32,7 +33,7 @@ function update(self, dt)
 
     -- player movement
     if love.mouse.isDown(2) then
-        gs.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
+        self.state.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
     end
 end
 
@@ -57,19 +58,19 @@ function handleKeyPressed(self, key, scancode, isrepeat)
     end
 
     if key == "q" then
-        gs.players[1].character:q({
+        self.state.players[1].character:q({
             x = love.mouse.getX(),
             y = love.mouse.getY()
         })
     end
     if key == "w" then
-        gs.players[1].character:w()
+        self.state.players[1].character:w()
     end
     if key == "e" then
-        gs.players[1].character:e()
+        self.state.players[1].character:e()
     end
     if key == "r" then
-        gs.players[1].character:r()
+        self.state.players[1].character:r()
     end
 end
 

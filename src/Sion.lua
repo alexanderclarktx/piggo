@@ -1,16 +1,20 @@
-local Ability = require 'src.Ability'
 local Character = require 'src.Character'
+local ShapeUtils = require 'src.ShapeUtils'
 
 local Sion = {}
 
 local update, draw, sionQ, sionW, sionE, sionR
 
-function Sion.new(pos, hp)
+function Sion.new(pos, hp, damageController)
+    assert(pos)
+    assert(hp)
+    assert(damageController)
     -- local sion = Character.new({
 
     -- }, pos, hp, 1000, 340, 20)
     return {
         cmeta = Character.new(pos, hp, 1000, 340, 20),
+        damageController = damageController,
         effects = {},
         abilities = {
             q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}
@@ -124,7 +128,7 @@ function sionQ(me, mousePos)
                     effect.hitboxStyle = "fill"
 
                     -- damage
-                    Ability.hurtbox(self, "axe", 140, effect.hitboxPoints)
+                    me.damageController:submitHurtbox("axe", 140, effect.hitboxPoints)
                 end
             }
         },
@@ -138,8 +142,8 @@ function sionQ(me, mousePos)
             local p1 = {me.cmeta.pos.x + me.cmeta.size * xRatio, me.cmeta.pos.y + me.cmeta.size * yRatio}
 
             -- outer points of triangle
-            local p2 = rotate({xRatio, yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
-            local p3 = rotate({xRatio, yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p2 = ShapeUtils.rotate({xRatio, yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p3 = ShapeUtils.rotate({xRatio, yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
             love.graphics.setColor(1, 0, 1)
             love.graphics.polygon(self.hitboxStyle, {
@@ -148,23 +152,10 @@ function sionQ(me, mousePos)
                 p3[1], p3[2]
             })
 
-            self.hitboxPoints = {{x = p1[1], y = p1[2]}, {x = p2[1], y = p2[2]}, {x = p3[1], y = p3[2]}}
+            -- self.hitboxPoints = {{x = p1[1], y = p1[2]}, {x = p2[1], y = p2[2]}, {x = p3[1], y = p3[2]}}
+            self.hitboxPoints = {p1[1], p1[2], p2[1], p2[2], p3[1], p3[2]}
         end
     })
-end
-
--- rotate({1, 1, 2, 2}, math.pi/2)
-function rotate(vertices, angle, originx, originy, scale)
-    assert(#vertices > 0 and #vertices % 2 == 0)
-    local t = love.math.newTransform(originx or 0, originy or 0, angle, scale or 1, scale or 1)
-
-    local result = {}
-    for i=1, #vertices, 2 do
-        local newx, newy = t:transformPoint(vertices[i], vertices[i+1])
-        table.insert(result, newx)
-        table.insert(result, newy)
-    end
-    return result
 end
 
 function sionW(me)

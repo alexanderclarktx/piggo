@@ -18,11 +18,7 @@ function Minion.new(hp, pos)
 end
 
 function update(self, dt, index)
-    assert(index > 0)
-    if self.hp <= 0 then
-        -- die
-        table.remove(gs.npcs, index)
-    end
+    -- movement
 end
 
 function draw(self)
