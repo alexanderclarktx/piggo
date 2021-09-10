@@ -4,22 +4,19 @@ local PlayerController = {}
 
 local update, draw, handleKeypressed
 
-function PlayerController.new(player, state)
+function PlayerController.new(state)
+    assert(state, state.players[1])
     return {
-        state = state,
-        player = player,
+        state = state, player = state.players[1],
+        update = update, draw = draw, handleKeyPressed = handleKeyPressed,
         hovering = nil,
-        update = update,
-        draw = draw,
-        handleKeyPressed = handleKeyPressed
     }
 end
 
 function update(self, dt)
-    -- targeting
-    local mouseX = love.mouse.getX()
-    local mouseY = love.mouse.getY()
+    local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
 
+    -- targeting
     -- for each npc, is the player clicking on it
     self.hovering = nil
     for _, npc in pairs(self.state.npcs) do

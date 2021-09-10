@@ -6,35 +6,33 @@ local GameController = {}
 
 local load, update, draw, keypressed
 
-function GameController.new(game)
+function IGameController.new(game, state)
+    assert (game, state, state.players[1])
+
+    -- local state = GameState.new(new Player())
+    local gui = Gui.new(self.state.players[1], self.state)
+    local playerController = PlayerController.new(state)
+    local damageController = DamageController.new(selfstate)
+
     return {
-        game = game,
-        load = load,
-        update = update,
-        draw = draw,
-        keypressed = keypressed,
-        state = { -- shared with Game
-            players = {},
-            npcs = {},
-            hurtboxes = {},
-            objects = {}
-        },
-        gui = nil,
-        playerController = nil,
-        damageController = nil
+        game = game, state = state,
+        load = load, update = update, draw = draw, keypressed = keypressed,
+        damageController = ,
+        playerController = PlayerController.new(self.state.players[1], self.state)
+        gui, playerController, damageController = nil
     }
 end
 
 function load(self)
     -- initialize DamageController
-    self.damageController = DamageController.new(self.state)
+    
 
     -- initialize game loop
     self.game:load(self.state, self.damageController)
 
     -- initialize GUI, PlayerController, and DamageController
-    self.gui = Gui.new(self.state.players[1], self.state)
-    self.playerController = PlayerController.new(self.state.players[1], self.state)
+    -- self.gui = 
+    -- self.playerController = 
 end
 
 function update(self, dt)

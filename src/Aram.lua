@@ -6,28 +6,23 @@ local Aram = {}
 
 local load, update, draw
 
--- aram is a game mode with a single lane
+-- Aram is an IGameController
+-- features:
+--   * single lane
+--   * no recalling
+--   * outer tower, inhib tower, 2 base towers
 function Aram.new()
-    return {
-        state = nil,
-        damageController = nil,
-        load = load,
-        update = update,
-        draw = draw
-    }
+    return IGameController.new(self, GameState.new(), Player.new("player1", Sion.new({x = 600, y = 300}, 500, self.damageController)))
 end
 
 -- set up all assets, place characters, start timers, set up callbacks
-function load(self, state, damageController)
-    assert(state)
-    assert(damageController)
-    self.state = state
-    self.damageController = damageController
-
+function load(self)
     -- spawn all players
     table.insert(self.state.players,
-        Player.new("player1", Sion.new({x = 600, y = 300}, 500, self.damageController))
+        
     )
+
+
 
     -- love.graphics.setBackgroundColor(1, 1, 1)
     love.graphics.setBackgroundColor(0.1,0.1,0.1)

@@ -1,20 +1,19 @@
-local GameController = require 'src.GameController'
 local Aram = require 'src.Aram'
 
-local gameController = GameController.new(Aram.new())
+local game = Aram.new()
 
 function love.load()
-    gameController:load()
+    game:load()
 end
 
 function love.update(dt)
-    gameController:update(dt)
+    game:update(dt)
 end
 
 function love.draw()
-    gameController:draw()
+    game:draw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    gameController:keypressed(key, scancode, isrepeat)
+    game:keypressed(key, scancode, isrepeat)
 end
