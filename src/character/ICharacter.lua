@@ -26,7 +26,7 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
 end
 
 function update(self, dt)
-    -- update position
+    -- move toward marker
     if self.meta.marker and self.meta.canMove then
         local xdiff = self.meta.marker.x - self.meta.pos.x
         local ydiff = self.meta.marker.y - self.meta.pos.y

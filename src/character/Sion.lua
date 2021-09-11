@@ -10,7 +10,7 @@ function Sion.new(pos, hp)
 
     return ICharacter.new(
         update, draw,
-        pos, hp, 1000, 340, 20, 
+        pos, hp, 1000, 360, 20,
         {
             q = {run = sionQ, cd = 2, dt = 2},
             w = {run = sionW, cd = 4, dt = 4},
@@ -20,9 +20,7 @@ function Sion.new(pos, hp)
     )
 end
 
-function update(self, dt)
-    --
-end
+function update(self, dt) end
 
 function draw(self)
     -- draw sion
@@ -32,6 +30,13 @@ end
 
 function sionQ(me)
     me.abilities.q.dt = 0
+
+    -- calculate axe orientation
+    local xdiff = love.mouse.getX() - me.meta.pos.x
+    local ydiff = love.mouse.getY() - me.meta.pos.y
+    local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
+    local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+
     table.insert(me.effects, {
         name = "Axe",
         drawable = true,
@@ -40,14 +45,15 @@ function sionQ(me)
         hitboxDistance = 200,
         hitboxAngle = math.pi/8,
         hitboxStyle = "line",
-        mousePos = {x = love.mouse.getX(), y = love.mouse.getY()},
+        xRatio = xRatio,
+        yRatio = yRatio,
         segments = {
             {
                 time = 0,
                 done = false,
                 run = function(self, me)
-                    me.meta.canMove = false
-                    me.meta.marker = nil
+                    -- me.meta.canMove = false
+                    -- me.meta.marker = nil
                 end
             },
             {
@@ -55,7 +61,7 @@ function sionQ(me)
                 done = false,
                 run = function(self, me, effect)
                     -- TODO contention here (CC from other effects)
-                    me.meta.canMove = true
+                    -- me.meta.canMove = true
                     effect.hitboxStyle = "fill"
 
                     -- damage
@@ -64,18 +70,14 @@ function sionQ(me)
             }
         },
         draw = function(self, me)
-            local xdiff = self.mousePos.x - me.meta.pos.x
-            local ydiff = self.mousePos.y - me.meta.pos.y
-            local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-            local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
-
             -- first point is on edge of character
-            local p1 = {me.meta.pos.x + me.meta.size * xRatio, me.meta.pos.y + me.meta.size * yRatio}
+            local p1 = {me.meta.pos.x + me.meta.size * self.xRatio, me.meta.pos.y + me.meta.size * self.yRatio}
 
             -- outer points of triangle
-            local p2 = ShapeUtils.rotate({xRatio, yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
-            local p3 = ShapeUtils.rotate({xRatio, yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p2 = ShapeUtils.rotate({self.xRatio, self.yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p3 = ShapeUtils.rotate({self.xRatio, self.yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
+            -- draw axe triangle
             love.graphics.setColor(1, 0, 1)
             love.graphics.polygon(self.hitboxStyle, {
                 p1[1], p1[2],
@@ -83,7 +85,6 @@ function sionQ(me)
                 p3[1], p3[2]
             })
 
-            -- self.hitboxPoints = {{x = p1[1], y = p1[2]}, {x = p2[1], y = p2[2]}, {x = p3[1], y = p3[2]}}
             self.hitboxPoints = {p1[1], p1[2], p2[1], p2[2], p3[1], p3[2]}
         end
     })
@@ -117,7 +118,7 @@ function sionW(me)
                 time = 2,
                 done = false,
                 run = function(self, me)
-                    -- AoE damage
+                    -- TODO damage
                 end
             }
         },

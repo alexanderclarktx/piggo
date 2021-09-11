@@ -2,7 +2,7 @@ local ShapeUtils = require 'src.util.ShapeUtils'
 
 local DamageController = {}
 
-local update, draw, submitHurtbox
+local update, draw
 
 function DamageController.new(state)
     return {
@@ -33,7 +33,7 @@ function update(self, dt)
             end
         end
     end
-    self.hurtboxes = {} -- 
+    self.hurtboxes = {}
 end
 
 function draw(self, dt)

@@ -5,7 +5,7 @@ local Minion = {}
 
 local update, draw
 
-local color, defaultColor = {r = 1, g = 1, b = 0}, {r = 1, g = 1, b = 0}
+local color = {r = 1, g = 1, b = 0}
 
 function Minion.new(hp, pos)
     assert(hp, hp > 0, pos, pos.x, pos.y)
@@ -13,12 +13,16 @@ function Minion.new(hp, pos)
         update, draw,
         pos, hp, 300, 300, 15,
         {}
-        -- color =  defaultColor = ,
     )
 end
 
 function update(self, dt, index)
-    -- movement
+    if self.meta.marker == nil then
+        self.meta.marker = {
+            x = math.random() * love.graphics.getWidth(),
+            y = math.random() * love.graphics.getHeight()
+        }
+    end
 end
 
 function draw(self)

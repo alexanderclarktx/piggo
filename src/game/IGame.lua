@@ -7,9 +7,7 @@ local iGame = {}
 local load, update, draw, keypressed
 
 -- iGame is a baseclass for all games, controlling game logic, gui, player interfaces
--- state: initial state
--- gameLoad: load function of game logic
--- gameUpdate: update function of game logic
+-- the state must be initialized with a first player
 function iGame.new(gameLoad, gameUpdate, gameDraw, state)
     assert(gameLoad, gameUpdate, gameDraw, state, state.players[1])
 
@@ -18,7 +16,8 @@ function iGame.new(gameLoad, gameUpdate, gameDraw, state)
     local damageController = DamageController.new(state)
 
     return {
-        state = state, gameLoad = gameLoad, gameUpdate = gameUpdate,
+        state = state,
+        gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw, keypressed = keypressed,
         gui = gui, playerController = playerController, damageController = damageController
     }
@@ -64,6 +63,9 @@ function draw(self)
 
     -- draw player indicators
     self.playerController:draw()
+
+    -- draw game-specific things
+    self.gameDraw(self)
 end
 
 function keypressed(self, key, scancode, isrepeat)

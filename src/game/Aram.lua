@@ -8,11 +8,10 @@ local Aram = {}
 
 local load, update, draw
 
--- Aram is an IGame (technically, IGame wraps Aram)
--- features:
+-- rules:
 --   * single lane
 --   * no recalling
---   * outer tower, inhib tower, 2 base towers
+--   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
     local state = GameState.new()
 

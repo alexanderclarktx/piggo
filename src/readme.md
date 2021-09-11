@@ -3,13 +3,13 @@ lua source code
 ## OO in Lua
 Lua has no built in inheritance model, but there are a few ways it can be emulated
 
-I've decided against using any OOP library
+I've decided against using an OOP library -- instead I use these patterns
 
 ### classes
 classes (files which create instance objects)
 
 ```lua
-local MyClass = {} -- lua file exports this class as a table
+local MyClass = {} -- this class is a table
 
 local update, draw -- locally scoped methods (later attached to instance)
 
@@ -32,7 +32,25 @@ return MyClass -- export class table, only callable method is MyClass.new
 
 ### pseudo inheritance
 
-some classes are written using pseudo inheritance (see [Minion.lua](./character/Minion.lua) and [ICharacter.lua](./character/ICharacter.lua)). The mechanism is that `IBaseClass` wraps an instance of `SubClass`
+some classes are written using pseudo inheritance (see [Minion.lua](./character/Minion.lua) and [ICharacter.lua](./character/ICharacter.lua))
+
+```lua
+local SubClass = {}
+
+local update, draw
+
+function ISubClass.new()
+    return IBaseClass("a", update, draw)
+end
+
+function update(self, dt) print("updating subclass") end
+
+function draw(self) print("drawing subclass") end
+
+return SubClass
+```
+
+`IBaseClass` wraps an instance of `SubClass`
 
 ```lua
 local IBaseClass = {}
@@ -58,21 +76,6 @@ end
 return IBaseClass
 ```
 
-```lua
-local SubClass = {}
-
-local update, draw
-
-function ISubClass.new()
-    return IBaseClass("a", update, draw)
-end
-
-function update(self, dt) print("updating subclass") end
-
-function draw(self) print("drawing subclass") end
-
-return SubClass
-```
 
 ## Code Styling
 
