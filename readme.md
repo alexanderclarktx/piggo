@@ -19,11 +19,11 @@
 
 * auto attacks
 
-* player death
+* terrain
 
 * gold/resources
 
-* terrain
+* player death
 
 * collision
 
@@ -37,13 +37,17 @@
 
 ## UI
 
-* tooltips
-
 * minimap
 
 * damage indicators
 
-* health indicators
+* HUD (health, resources)
+
+* player inventory
+
+* tooltips
+
+* ~~health indicators~~
 
 * ~~ability cooldown indicators~~
 

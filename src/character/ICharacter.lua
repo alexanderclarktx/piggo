@@ -1,5 +1,4 @@
 local ICharacter = {}
--- character metadata and validation
 
 local update, draw, submitHurtbox
 
@@ -19,7 +18,7 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
             canMove = true, marker = nil
         },
         charUpdate = charUpdate, charDraw = charDraw,
-        draw = draw, update = update,
+        update = update, draw = draw,
         submitHurtbox = submitHurtbox,
         abilities = abilities, effects = {}, hurtboxes = {}
     }
