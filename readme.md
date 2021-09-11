@@ -1,6 +1,6 @@
 # moba-project
 
-![](./resources/git/img/1.png)
+![](./resources/git/img/2.png)
 
 ## building
 * install [love2d](https://love2d.org/#download)

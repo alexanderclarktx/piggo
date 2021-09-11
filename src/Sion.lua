@@ -25,13 +25,12 @@ function update(self, dt)
 end
 
 function draw(self)
-    -- draw my character
+    -- draw sion
     love.graphics.setColor(0, 1, 0.4)
     love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
-
 end
 
-function sionQ(me, mousePos)
+function sionQ(me)
     me.abilities.q.dt = 0
     table.insert(me.effects, {
         name = "Axe",
