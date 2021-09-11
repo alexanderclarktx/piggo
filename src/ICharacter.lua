@@ -71,7 +71,7 @@ end
 
 function draw(self)
     -- draw line from me to marker
-    if debug then
+    if debug() then
         love.graphics.setColor(0.6, 0.6, 0.6)
         if self.meta.marker then
             love.graphics.line(
