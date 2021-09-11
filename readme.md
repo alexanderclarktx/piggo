@@ -2,7 +2,7 @@
 
 A 2D multiplayer online battle arena
 
-![](./screenshots/2.png)
+![](./screenshots/3.png)
 
 ## building
 * install [love2d](https://love2d.org/#download)

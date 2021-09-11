@@ -12,7 +12,9 @@ function Sion.new(pos, hp)
         update, draw,
         pos, hp, 1000, 360, 20,
         {
-            q = {run = sionQ, cd = 2, dt = 2},
+            q = {run = sionQ, cd = 0, dt = 1,
+                charges = 3, maxCharges = 3, chargeCd = 2.5, chargeDt = 0
+            },
             w = {run = sionW, cd = 4, dt = 4},
             e = {run = sionE, cd = 3, dt = 3},
             r = {run = sionR, cd = 5, dt = 5}
@@ -28,17 +30,19 @@ function draw(self)
     love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
 end
 
-function sionQ(me)
-    -- if me.abilities.q.dt < me.abilities.q.cd then return end
-    me.abilities.q.dt = 0
+function sionQ(self)
+    if self.abilities.q.dt <= self.abilities.q.cd then return end
+    if self.abilities.q.charges <= 0 then return end
+    self.abilities.q.dt = 0
+    self.abilities.q.charges = self.abilities.q.charges - 1
 
     -- calculate axe orientation
-    local xdiff = love.mouse.getX() - me.meta.pos.x
-    local ydiff = love.mouse.getY() - me.meta.pos.y
+    local xdiff = love.mouse.getX() - self.meta.pos.x
+    local ydiff = love.mouse.getY() - self.meta.pos.y
     local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
     local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-    table.insert(me.effects, {
+    table.insert(self.effects, {
         name = "Axe",
         drawable = true,
         duration = 0.5,

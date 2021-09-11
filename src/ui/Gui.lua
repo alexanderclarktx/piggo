@@ -6,6 +6,8 @@ local draw, drawDebug, drawAbilityOutline, drawCooldownIndicator, drawConsole
 
 local boxWidth, boxHeight, consoleHeight = 50, 50, 0.95
 
+local chargeCounter = "%d / %d"
+
 function Gui.new(player)
     return {
         player = player,
@@ -60,6 +62,22 @@ function drawConsole(player)
     love.graphics.print("w", w.x + 5, w.y + 30)
     love.graphics.print("e", e.x + 5, e.y + 30)
     love.graphics.print("r", r.x + 5, r.y + 30)
+
+    -- charge abilities
+    love.graphics.setColor(.2, .7, .7)
+    drawCharges(player.character.abilities.q, q.x + 20, q.y + 30)
+    drawCharges(player.character.abilities.w, w.x + 35, w.y + 30)
+    drawCharges(player.character.abilities.e, e.x + 35, e.y + 30)
+    drawCharges(player.character.abilities.r, r.x + 35, r.y + 30)
+end
+
+function drawCharges(ability, x, y)
+    if ability.charges then
+        love.graphics.print(
+            chargeCounter:format(ability.charges, ability.maxCharges),
+            x, y
+        )
+    end
 end
 
 function drawAbilityOutline(x, y, dt, cd)

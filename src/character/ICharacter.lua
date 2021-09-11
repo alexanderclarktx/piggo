@@ -47,6 +47,21 @@ function update(self, dt)
     -- increment ability dt
     for i, ability in pairs(self.abilities) do
         ability.dt = ability.dt + dt
+
+        -- handle abilities with charges
+        if ability.charges and ability.maxCharges then
+
+            -- recharge
+            if ability.chargeDt >= ability.chargeCd then
+                ability.charges = ability.charges + 1
+                ability.chargeDt = 0
+            end
+
+            -- increment chargeDt if not at max
+            if ability.charges < ability.maxCharges then
+                ability.chargeDt = ability.chargeDt + dt
+            end
+        end
     end
 
     -- update each effect
