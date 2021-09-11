@@ -26,10 +26,16 @@ function update(self, dt)
     -- apply all damage from hurtboxes
     for i, hurtbox in ipairs(self.hurtboxes) do
         for _, npc in pairs(self.state.npcs) do
-            if ShapeUtils.circleInPolygon(
-                    npc.meta.pos.x, npc.meta.pos.y,
-                    npc.meta.size, hurtbox.poly) then
-                npc.meta.hp = npc.meta.hp - hurtbox.damage
+            if hurtbox.type == "poly" then
+                if ShapeUtils.circleInPolygon(
+                        npc.meta.pos.x, npc.meta.pos.y, npc.meta.size, hurtbox.poly) then
+                    npc.meta.hp = npc.meta.hp - hurtbox.damage
+                end
+            elseif hurtbox.type == "circle" then
+                if ShapeUtils.circleInCircle(
+                        npc.meta.pos.x, npc.meta.pos.y, npc.meta.size, hurtbox.x, hurtbox.y, hurtbox.radius) then
+                    npc.meta.hp = npc.meta.hp - hurtbox.damage
+                end
             end
         end
     end

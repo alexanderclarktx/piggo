@@ -7,6 +7,12 @@ function ShapeUtils.pointInCircle(pointX, pointY, circleX, circleY, radius)
     return mlib.circle.checkPoint(pointX, pointY, circleX, circleY, radius)
 end
 
+-- c2 is the larger circle
+function ShapeUtils.circleInCircle(c1X, c1Y, c1Radius, c2X, c2Y, c2Radius)
+    return mlib.circle.getCircleIntersection(c1X, c1Y, c1Radius, c2X, c2Y, c2Radius) or
+        mlib.circle.checkPoint(c1X, c1Y, c2X, c2Y, c2Radius)
+end
+
 -- circle intersects or is within polygon
 function ShapeUtils.circleInPolygon(circleX, circleY, radius, vertices)
     return mlib.circle.isCircleInsidePolygon(circleX, circleY, radius, unpack(vertices)) or

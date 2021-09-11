@@ -74,7 +74,7 @@ function sionQ(self)
                     effect.hitboxStyle = "fill"
 
                     -- damage
-                    me:submitHurtbox("axe", 140, effect.hitboxPoints)
+                    me:submitHurtboxPoly("axe", 100, effect.hitboxPoints)
                 end
             }
         },
@@ -126,15 +126,19 @@ function sionW(me)
                 end
             },
             {
-                time = 2,
+                time = 2.95,
                 done = false,
                 run = function(self, me)
-                    -- TODO damage
+                    me:submitHurtboxCircle("Shield", 140, me.meta.pos.x, me.meta.pos.y, 50)
                 end
             }
         },
         draw = function(self, me)
-            love.graphics.setColor(self.shield.color.r, self.shield.color.g, self.shield.color.b)
+            love.graphics.setColor(
+                self.shield.color.r,
+                self.shield.color.g - self.shield.color.g * self.dt / self.duration,
+                self.shield.color.b - self.shield.color.g * self.dt / self.duration
+            )
             love.graphics.setLineWidth(self.shield.width)
             love.graphics.circle("line", me.meta.pos.x, me.meta.pos.y, me.meta.size + self.shield.radius)
             love.graphics.setLineWidth(1)

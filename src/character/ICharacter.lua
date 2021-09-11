@@ -1,6 +1,6 @@
 local ICharacter = {}
 
-local update, draw, submitHurtbox
+local update, draw, submitHurtboxPoly, submitHurtboxCircle
 
 function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abilities)
     assert(
@@ -19,7 +19,7 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
-        submitHurtbox = submitHurtbox,
+        submitHurtboxPoly = submitHurtboxPoly, submitHurtboxCircle = submitHurtboxCircle,
         abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1
     }
 end
@@ -112,9 +112,15 @@ function draw(self)
     self.charDraw(self)
 end
 
-function submitHurtbox(self, name, damage, poly)
+function submitHurtboxPoly(self, name, damage, poly)
     table.insert(self.hurtboxes,
-        {name = name, damage = damage, poly = poly}
+        {type = "poly", name = name, damage = damage, poly = poly}
+    )
+end
+
+function submitHurtboxCircle(self, name, damage, x, y, radius)
+    table.insert(self.hurtboxes,
+        {type = "circle", name = name, damage = damage, x = x, y = y, radius = radius}
     )
 end
 
