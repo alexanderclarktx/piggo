@@ -31,7 +31,7 @@ function update(self, dt)
     end
 
     -- player movement
-    if love.mouse.isDown(2) then
+    if love.mouse.isDown(2) or love.mouse.isDown(1) then
         self.state.players[1].character.meta.marker = {x = mouseX, y = mouseY}
     end
 end

@@ -49,6 +49,9 @@ function update(self, dt)
 end
 
 function draw(self)
+    -- draw all terrain
+    for _, terrain in pairs(self.state.terrains) do terrain:draw() end
+
     -- draw all players
     for _, player in pairs(self.state.players) do player:draw() end
 

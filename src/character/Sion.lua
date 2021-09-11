@@ -5,6 +5,13 @@ local Sion = {}
 
 local update, draw, sionQ, sionW, sionE, sionR
 
+local qColors = {
+    {1, 0, 0, 0.6},
+    {1, 1, 0, 0.6},
+    {0, 1, 0, 0.6},
+    {0, 1, 1, 0.6},
+}
+
 function Sion.new(pos, hp)
     assert(pos, hp)
 
@@ -26,7 +33,7 @@ function update(self, dt) end
 
 function draw(self)
     -- draw sion
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(0.5, 0.8, 1)
     love.graphics.draw(
         love.graphics.newImage("res/skelly.png", {linear = true}),
         self.meta.pos.x, self.meta.pos.y,
@@ -49,6 +56,7 @@ function sionQ(self)
     table.insert(self.effects, {
         name = "Axe",
         drawable = true,
+        color = qColors[math.random(#qColors)],
         duration = 0.5,
         dt = 0,
         hitboxDistance = 200,
@@ -87,7 +95,7 @@ function sionQ(self)
             local p3 = ShapeUtils.rotate({self.xRatio, self.yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
             -- draw axe triangle
-            love.graphics.setColor(0.4, 0.8, 0.2, 0.5)
+            love.graphics.setColor(unpack(self.color))
             love.graphics.polygon(self.hitboxStyle, {
                 p1[1], p1[2],
                 p2[1], p2[2],

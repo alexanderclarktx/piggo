@@ -24,7 +24,7 @@ function update(self, dt, index)
 end
 
 function draw(self)
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(1, 0.7, 0)
     love.graphics.draw(
         love.graphics.newImage("res/piggo.png", {linear = true}),
         self.meta.pos.x, self.meta.pos.y,
