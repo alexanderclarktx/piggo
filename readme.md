@@ -1,5 +1,7 @@
 # moba-project
 
+A 2D multiplayer online battle arena
+
 ![](./screenshots/2.png)
 
 ## building
@@ -13,9 +15,9 @@
   love .
   ```
 
-# TODOs
+## TODOs
 
-## Mechanics
+#### Mechanics
 
 * auto attacks
 
@@ -35,7 +37,7 @@
 
 * ~~minion death~~
 
-## UI
+#### UI
 
 * minimap
 
@@ -51,8 +53,14 @@
 
 * ~~ability cooldown indicators~~
 
-# refactors
+## refactors
 
 * client/server
 
 * viewport/camera
+
+## Bugs
+
+* movement and ability targeting is not honoring pythagoras
+  * characters move faster in cardinal directions than diagonally
+  * abilities are longer when facing cardinal directions

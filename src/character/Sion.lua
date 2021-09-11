@@ -29,6 +29,7 @@ function draw(self)
 end
 
 function sionQ(me)
+    -- if me.abilities.q.dt < me.abilities.q.cd then return end
     me.abilities.q.dt = 0
 
     -- calculate axe orientation
@@ -91,6 +92,8 @@ function sionQ(me)
 end
 
 function sionW(me)
+    if me.abilities.w.dt < me.abilities.w.cd then return end
+
     me.abilities.w.dt = 0
     table.insert(me.effects, {
         name = "Shield",
