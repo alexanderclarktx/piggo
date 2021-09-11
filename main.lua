@@ -1,4 +1,4 @@
-local Aram = require 'src.Aram'
+local Aram = require 'src.game.Aram'
 
 local game = Aram.new()
 local printDebug

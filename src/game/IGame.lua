@@ -1,6 +1,6 @@
-local Gui = require 'src.Gui'
-local PlayerController = require 'src.PlayerController'
-local DamageController = require 'src.DamageController'
+local Gui = require 'src.ui.Gui'
+local PlayerController = require 'src.player.PlayerController'
+local DamageController = require 'src.game.DamageController'
 
 local iGame = {}
 

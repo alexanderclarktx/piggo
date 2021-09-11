@@ -9,8 +9,4 @@ function GameState.new()
     }
 end
 
--- delete characters here?
--- function update(self)
--- end
-
 return GameState

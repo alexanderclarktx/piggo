@@ -1,4 +1,4 @@
-local drawutils = require 'src.util.drawutils'
+local DrawUtils = require 'src.util.DrawUtils'
 
 local Player = {}
 
@@ -19,7 +19,7 @@ function update(self, dt)
 end
 
 function draw(self)
-    drawutils.drawHealthbar(self.character.meta.pos, self.character.meta.size, self.character.meta.hp, self.character.meta.maxhp)
+    DrawUtils.drawHealthbar(self.character.meta.pos, self.character.meta.size, self.character.meta.hp, self.character.meta.maxhp)
 
     -- draw character
     self.character:draw()

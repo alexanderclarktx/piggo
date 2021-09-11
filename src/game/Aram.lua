@@ -1,8 +1,8 @@
 local Minion = require 'src.character.Minion'
 local Sion = require 'src.character.Sion'
-local Player = require 'src.Player'
-local GameState = require 'src.GameState'
-local IGame = require 'src.IGame'
+local Player = require 'src.player.Player'
+local GameState = require 'src.game.GameState'
+local IGame = require 'src.game.IGame'
 
 local Aram = {}
 
@@ -45,8 +45,6 @@ function update(self, dt)
     end
 end
 
-function draw(self)
-    --
-end
+function draw(self) end
 
 return Aram
