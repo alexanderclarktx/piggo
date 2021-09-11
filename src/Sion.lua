@@ -1,103 +1,34 @@
-local Character = require 'src.Character'
+local ICharacter = require 'src.ICharacter'
 local ShapeUtils = require 'src.ShapeUtils'
 
 local Sion = {}
 
 local update, draw, sionQ, sionW, sionE, sionR
 
-function Sion.new(pos, hp, damageController)
-    assert(pos)
-    assert(hp)
-    assert(damageController)
-    -- local sion = Character.new({
+function Sion.new(pos, hp)
+    assert(pos, hp)
 
-    -- }, pos, hp, 1000, 340, 20)
-    return {
-        cmeta = Character.new(pos, hp, 1000, 340, 20),
-        damageController = damageController,
-        effects = {},
-        abilities = {
-            q = {cd = 2, dt = 2}, w = {cd = 4, dt = 4}, e = { cd = 3, dt = 3}, r = {cd = 5, dt = 5}
-        },
-        q = function(self, mousePos)
-            if self.abilities.q.dt > self.abilities.q.cd then sionQ(self, mousePos) end
-        end,
-        w = function(self)
-            if self.abilities.w.dt > self.abilities.w.cd then sionW(self) end
-        end,
-        e = function(self)
-            if self.abilities.e.dt > self.abilities.e.cd then sionE(self) end
-        end,
-        r = function(self)
-            if self.abilities.r.dt > self.abilities.r.cd then sionR(self) end
-        end,
-        update = update,
-        draw = draw,
-    }
+    return ICharacter.new(
+        update, draw,
+        pos, hp, 1000, 340, 20, 
+        {
+            q = {run = sionQ, cd = 2, dt = 2},
+            w = {run = sionW, cd = 4, dt = 4},
+            e = {run = sionE, cd = 3, dt = 3},
+            r = {run = sionR, cd = 5, dt = 5}
+        }
+    )
 end
 
 function update(self, dt)
-    -- update position
-    if self.cmeta.marker and self.cmeta.canMove then
-        local xdiff = self.cmeta.marker.x - self.cmeta.pos.x
-        local ydiff = self.cmeta.marker.y - self.cmeta.pos.y
-
-        if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
-            self.cmeta.marker = nil
-        end
-
-        local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-        local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
-
-        local xComponent = dt * self.cmeta.speed * xRatio
-        local yComponent = dt * self.cmeta.speed * yRatio
-
-        self.cmeta.pos.x = self.cmeta.pos.x + xComponent
-        self.cmeta.pos.y = self.cmeta.pos.y + yComponent
-    end
-
-    -- increment ability dt
-    for i, ability in pairs(self.abilities) do
-        ability.dt = ability.dt + dt
-    end
-
-    -- update each effect
-    for i, effect in pairs(self.effects) do
-        effect.dt = effect.dt + dt
-        
-        for _, segment in pairs(effect.segments) do
-            if not segment.done and segment.time <= effect.dt then
-                segment:run(self, effect)
-                segment.done = true
-            end
-        end
-
-        if effect.dt > effect.duration then
-            table.remove(self.effects, i)
-        end
-    end
+    --
 end
 
 function draw(self)
     -- draw my character
     love.graphics.setColor(0, 1, 0.4)
-    love.graphics.circle("fill", self.cmeta.pos.x, self.cmeta.pos.y, self.cmeta.size)
+    love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
 
-    -- draw line from me to marker
-    love.graphics.setColor(0.6, 0.6, 0.6)
-    if self.cmeta.marker then
-        love.graphics.line(
-            self.cmeta.pos.x, self.cmeta.pos.y,
-            self.cmeta.marker.x, self.cmeta.marker.y
-        )
-    end
-
-    -- draw each effect
-    for _, effect in pairs(self.effects) do
-        if effect.drawable then
-            effect:draw(self)
-        end
-    end
 end
 
 function sionQ(me, mousePos)
@@ -110,13 +41,14 @@ function sionQ(me, mousePos)
         hitboxDistance = 200,
         hitboxAngle = math.pi/8,
         hitboxStyle = "line",
+        mousePos = {x = love.mouse.getX(), y = love.mouse.getY()},
         segments = {
             {
                 time = 0,
                 done = false,
                 run = function(self, me)
-                    me.cmeta.canMove = false
-                    me.cmeta.marker = nil
+                    me.meta.canMove = false
+                    me.meta.marker = nil
                 end
             },
             {
@@ -124,22 +56,22 @@ function sionQ(me, mousePos)
                 done = false,
                 run = function(self, me, effect)
                     -- TODO contention here (CC from other effects)
-                    me.cmeta.canMove = true
+                    me.meta.canMove = true
                     effect.hitboxStyle = "fill"
 
                     -- damage
-                    me.damageController:submitHurtbox("axe", 140, effect.hitboxPoints)
+                    me:submitHurtbox("axe", 140, effect.hitboxPoints)
                 end
             }
         },
         draw = function(self, me)
-            local xdiff = mousePos.x - me.cmeta.pos.x
-            local ydiff = mousePos.y - me.cmeta.pos.y
+            local xdiff = self.mousePos.x - me.meta.pos.x
+            local ydiff = self.mousePos.y - me.meta.pos.y
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
             -- first point is on edge of character
-            local p1 = {me.cmeta.pos.x + me.cmeta.size * xRatio, me.cmeta.pos.y + me.cmeta.size * yRatio}
+            local p1 = {me.meta.pos.x + me.meta.size * xRatio, me.meta.pos.y + me.meta.size * yRatio}
 
             -- outer points of triangle
             local p2 = ShapeUtils.rotate({xRatio, yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
@@ -193,7 +125,7 @@ function sionW(me)
         draw = function(self, me)
             love.graphics.setColor(self.shield.color.r, self.shield.color.g, self.shield.color.b)
             love.graphics.setLineWidth(self.shield.width)
-            love.graphics.circle("line", me.cmeta.pos.x, me.cmeta.pos.y, me.cmeta.size + self.shield.radius)
+            love.graphics.circle("line", me.meta.pos.x, me.meta.pos.y, me.meta.size + self.shield.radius)
             love.graphics.setLineWidth(1)
         end
     })

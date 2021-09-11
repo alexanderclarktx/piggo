@@ -22,7 +22,9 @@ function update(self, dt)
     for _, npc in pairs(self.state.npcs) do
         -- TODO not just NPCs
         -- todo logic for targeting CLOSEST (shift+click)
-        if ShapeUtils.pointInCircle(mouseX, mouseY, npc.pos.x, npc.pos.y, npc.size + 16) then
+        if ShapeUtils.pointInCircle(
+                mouseX, mouseY,
+                npc.meta.pos.x, npc.meta.pos.y, npc.meta.size + 16) then
             self.hovering = npc
             break
         end
@@ -30,7 +32,7 @@ function update(self, dt)
 
     -- player movement
     if love.mouse.isDown(2) then
-        self.state.players[1].character.cmeta.marker = {x = mouseX, y = mouseY}
+        self.state.players[1].character.meta.marker = {x = mouseX, y = mouseY}
     end
 end
 
@@ -39,7 +41,7 @@ function draw(self)
     if self.hovering then
         love.graphics.setColor(0.7, 0.2, 0.2)
         love.graphics.setLineWidth(4)
-        love.graphics.circle("line", self.hovering.pos.x, self.hovering.pos.y, self.hovering.size + 2)
+        love.graphics.circle("line", self.hovering.meta.pos.x, self.hovering.meta.pos.y, self.hovering.meta.size + 2)
         love.graphics.setLineWidth(1)
     end
 
@@ -55,19 +57,24 @@ function handleKeyPressed(self, key, scancode, isrepeat)
     end
 
     if key == "q" then
-        self.state.players[1].character:q({
-            x = love.mouse.getX(),
-            y = love.mouse.getY()
-        })
+        self.state.players[1].character.abilities.q.run(
+            self.state.players[1].character
+        )
     end
     if key == "w" then
-        self.state.players[1].character:w()
+        self.state.players[1].character.abilities.w.run(
+            self.state.players[1].character
+        )
     end
     if key == "e" then
-        self.state.players[1].character:e()
+        self.state.players[1].character.abilities.e:run(
+            self.state.players[1].character
+        )
     end
     if key == "r" then
-        self.state.players[1].character:r()
+        self.state.players[1].character.abilities.r:run(
+            self.state.players[1].character
+        )
     end
 end
 

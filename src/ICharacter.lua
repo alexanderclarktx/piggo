@@ -1,9 +1,9 @@
-local Character = {}
+local ICharacter = {}
 -- character metadata and validation
 
-local posvalidate
+local update, draw, submitHurtbox
 
-function Character.new(pos, hp, maxhp, speed, size)
+function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abilities)
     assert(
         pos.x ~= nil and pos.x > 0,
         pos.y ~= nil and pos.y > 0,
@@ -12,21 +12,89 @@ function Character.new(pos, hp, maxhp, speed, size)
         speed ~= nil and speed > 0,
         size ~= nil and size > 0
     )
+
     return {
-        pos = pos, hp = hp, maxhp = maxhp, speed = speed, size = size,
-        canMove = true,
+        meta = {
+            pos = pos, hp = hp, maxhp = maxhp, speed = speed, size = size,
+            canMove = true, marker = nil
+        },
+        charUpdate = charUpdate, charDraw = charDraw,
+        draw = draw, update = update,
+        submitHurtbox = submitHurtbox,
+        abilities = abilities, effects = {}, hurtboxes = {}
     }
 end
 
-local function testCharacterNew()
-    assert(Character.new(
-        {x = 15, y = 15},
-        15,
-        20,
-        300,
-        20
-    ))
-end
-testCharacterNew()
+function update(self, dt)
+    -- update position
+    if self.meta.marker and self.meta.canMove then
+        local xdiff = self.meta.marker.x - self.meta.pos.x
+        local ydiff = self.meta.marker.y - self.meta.pos.y
 
-return Character
+        if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
+            self.meta.marker = nil
+        end
+
+        local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
+        local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+
+        local xComponent = dt * self.meta.speed * xRatio
+        local yComponent = dt * self.meta.speed * yRatio
+
+        self.meta.pos.x = self.meta.pos.x + xComponent
+        self.meta.pos.y = self.meta.pos.y + yComponent
+    end
+
+    -- increment ability dt
+    for i, ability in pairs(self.abilities) do
+        ability.dt = ability.dt + dt
+    end
+
+    -- update each effect
+    for i, effect in pairs(self.effects) do
+        effect.dt = effect.dt + dt
+
+        for _, segment in pairs(effect.segments) do
+            if not segment.done and segment.time <= effect.dt then
+                segment:run(self, effect)
+                segment.done = true
+            end
+        end
+
+        if effect.dt > effect.duration then
+            table.remove(self.effects, i)
+        end
+    end
+
+    self.charUpdate(self)
+end
+
+function draw(self)
+    -- draw line from me to marker
+    if debug then
+        love.graphics.setColor(0.6, 0.6, 0.6)
+        if self.meta.marker then
+            love.graphics.line(
+                self.meta.pos.x, self.meta.pos.y,
+                self.meta.marker.x, self.meta.marker.y
+            )
+        end
+    end
+
+    -- draw each effect
+    for _, effect in pairs(self.effects) do
+        if effect.drawable then
+            effect:draw(self)
+        end
+    end
+
+    self.charDraw(self)
+end
+
+function submitHurtbox(self, name, damage, poly)
+    table.insert(self.hurtboxes,
+        {name = name, damage = damage, poly = poly}
+    )
+end
+
+return ICharacter

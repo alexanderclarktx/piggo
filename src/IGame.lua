@@ -2,37 +2,31 @@ local Gui = require 'src.Gui'
 local PlayerController = require 'src.PlayerController'
 local DamageController = require 'src.DamageController'
 
-local GameController = {}
+local iGame = {}
 
 local load, update, draw, keypressed
 
-function IGameController.new(game, state)
-    assert (game, state, state.players[1])
+-- iGame is a baseclass for all games, controlling game logic, gui, player interfaces
+-- state: initial state
+-- gameLoad: load function of game logic
+-- gameUpdate: update function of game logic
+function iGame.new(gameLoad, gameUpdate, gameDraw, state)
+    assert(gameLoad, gameUpdate, gameDraw, state, state.players[1])
 
-    -- local state = GameState.new(new Player())
-    local gui = Gui.new(self.state.players[1], self.state)
+    local gui = Gui.new(state.players[1], state)
     local playerController = PlayerController.new(state)
-    local damageController = DamageController.new(selfstate)
+    local damageController = DamageController.new(state)
 
     return {
-        game = game, state = state,
+        state = state, gameLoad = gameLoad, gameUpdate = gameUpdate,
         load = load, update = update, draw = draw, keypressed = keypressed,
-        damageController = ,
-        playerController = PlayerController.new(self.state.players[1], self.state)
-        gui, playerController, damageController = nil
+        gui = gui, playerController = playerController, damageController = damageController
     }
 end
 
 function load(self)
-    -- initialize DamageController
-    
-
     -- initialize game loop
-    self.game:load(self.state, self.damageController)
-
-    -- initialize GUI, PlayerController, and DamageController
-    -- self.gui = 
-    -- self.playerController = 
+    self.gameLoad(self)
 end
 
 function update(self, dt)
@@ -52,7 +46,7 @@ function update(self, dt)
     for _, object in pairs(self.state.objects) do object:update(dt) end
 
     -- update game loop
-    self.game:update(dt)
+    self.gameUpdate(self)
 end
 
 function draw(self)
@@ -65,8 +59,10 @@ function draw(self)
     -- draw all non-npc objects
     for _, object in pairs(self.state.objects) do object:draw() end
 
-    -- draw the GUI and PlayerController indicators
+    -- draw the GUI
     self.gui:draw()
+
+    -- draw player indicators
     self.playerController:draw()
 end
 
@@ -74,4 +70,4 @@ function keypressed(self, key, scancode, isrepeat)
     self.playerController:handleKeyPressed(key, scancode, isrepeat)
 end
 
-return GameController
+return iGame

@@ -29,9 +29,9 @@ function drawDebug(player)
     love.graphics.setColor(1, 1, 0, 0.7)
     love.graphics.print(debug:format(
         love.timer.getFPS(),
-        player.character.cmeta.hp,
-        player.character.cmeta.pos.x,
-        player.character.cmeta.pos.y,
+        player.character.meta.hp,
+        player.character.meta.pos.x,
+        player.character.meta.pos.y,
         #player.character.effects
     ), 10, 10)
 end

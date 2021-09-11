@@ -1,8 +1,13 @@
 local Aram = require 'src.Aram'
 
 local game = Aram.new()
+local printDebug
+debug = function() end
 
-function love.load()
+function love.load(arg)
+    if arg[1] and arg[1] == "--debug" then
+        debug = printDebug
+    end
     game:load()
 end
 
@@ -16,4 +21,9 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
     game:keypressed(key, scancode, isrepeat)
+end
+
+function printDebug(...)
+    io.write("[debug] ")
+    print(...)
 end
