@@ -4,6 +4,7 @@ local game = Aram.new()
 local printDebug
 
 function love.load(arg)
+    love.graphics.setDefaultFilter("nearest", "nearest")
     if arg[1] and arg[1] == "--debug" then
         debug = printDebug
     else

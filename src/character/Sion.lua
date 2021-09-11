@@ -13,7 +13,7 @@ function Sion.new(pos, hp)
         pos, hp, 1000, 360, 20,
         {
             q = {run = sionQ, cd = 0, dt = 1,
-                charges = 4, maxCharges = 4, chargeCd = 1.5, chargeDt = 0
+                charges = 4, maxCharges = 4, chargeCd = 1, chargeDt = 0
             },
             w = {run = sionW, cd = 4, dt = 4},
             e = {run = sionE, cd = 3, dt = 3},
@@ -26,8 +26,12 @@ function update(self, dt) end
 
 function draw(self)
     -- draw sion
-    love.graphics.setColor(0, 1, 0.4)
-    love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(
+        love.graphics.newImage("res/skelly.png", {linear = true}),
+        self.meta.pos.x, self.meta.pos.y,
+        0, 4 * self.facingRight, 4, 6, 6
+    )
 end
 
 function sionQ(self)
@@ -62,7 +66,7 @@ function sionQ(self)
                 end
             },
             {
-                time = 0.47,
+                time = 0.3,
                 done = false,
                 run = function(self, me, effect)
                     -- TODO contention here (CC from other effects)
@@ -83,7 +87,7 @@ function sionQ(self)
             local p3 = ShapeUtils.rotate({self.xRatio, self.yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
             -- draw axe triangle
-            love.graphics.setColor(1, 0, 1)
+            love.graphics.setColor(0.4, 0.8, 0.2, 0.5)
             love.graphics.polygon(self.hitboxStyle, {
                 p1[1], p1[2],
                 p2[1], p2[2],

@@ -5,8 +5,6 @@ local Minion = {}
 
 local update, draw
 
-local color = {r = 1, g = 1, b = 0}
-
 function Minion.new(hp, pos)
     assert(hp, hp > 0, pos, pos.x, pos.y)
     return ICharacter.new(
@@ -26,8 +24,13 @@ function update(self, dt, index)
 end
 
 function draw(self)
-    love.graphics.setColor(color.r, color.g, color.b)
-    love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(
+        love.graphics.newImage("res/piggo.png", {linear = true}),
+        self.meta.pos.x, self.meta.pos.y,
+        0, 3 * self.facingRight, 3, 7, 7
+    )
+    -- love.graphics.circle("fill", self.meta.pos.x, self.meta.pos.y, self.meta.size)
     drawutils.drawHealthbar(self.meta.pos, self.meta.size, self.meta.hp, self.meta.maxhp)
 end
 

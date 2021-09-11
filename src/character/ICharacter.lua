@@ -20,7 +20,7 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         submitHurtbox = submitHurtbox,
-        abilities = abilities, effects = {}, hurtboxes = {}
+        abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1
     }
 end
 
@@ -42,6 +42,13 @@ function update(self, dt)
 
         self.meta.pos.x = self.meta.pos.x + xComponent
         self.meta.pos.y = self.meta.pos.y + yComponent
+    end
+
+    -- update where character is facing
+    if self.meta.marker and self.meta.marker.x < self.meta.pos.x then
+        self.facingRight = -1
+    elseif self.meta.marker and self.meta.marker.x > self.meta.pos.x then
+        self.facingRight = 1
     end
 
     -- increment ability dt
