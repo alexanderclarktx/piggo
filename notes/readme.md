@@ -1,3 +1,5 @@
+general notes
+
 # design
 
 # useful libraries/repos

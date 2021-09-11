@@ -1,4 +1,4 @@
-local drawutils = require 'src.drawutils'
+local drawutils = require 'src.util.drawutils'
 
 local Player = {}
 

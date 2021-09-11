@@ -1,5 +1,5 @@
-local ICharacter = require 'src.ICharacter'
-local ShapeUtils = require 'src.ShapeUtils'
+local ICharacter = require 'src.character.ICharacter'
+local ShapeUtils = require 'src.util.ShapeUtils'
 
 local Sion = {}
 

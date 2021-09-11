@@ -1,4 +1,4 @@
-local ShapeUtils = require 'src.ShapeUtils'
+local ShapeUtils = require 'src.util.ShapeUtils'
 
 local PlayerController = {}
 

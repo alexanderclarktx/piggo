@@ -1,6 +1,6 @@
-local Minion = require 'src.Minion'
+local Minion = require 'src.character.Minion'
+local Sion = require 'src.character.Sion'
 local Player = require 'src.Player'
-local Sion = require 'src.Sion'
 local GameState = require 'src.GameState'
 local IGame = require 'src.IGame'
 

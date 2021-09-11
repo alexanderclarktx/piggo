@@ -1,5 +1,5 @@
-local drawutils = require 'src.drawutils'
-local ICharacter = require 'src.ICharacter'
+local drawutils = require 'src.util.drawutils'
+local ICharacter = require 'src.character.ICharacter'
 
 local Minion = {}
 

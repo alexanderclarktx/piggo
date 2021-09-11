@@ -1,4 +1,4 @@
-local DrawUtils = require 'src.DrawUtils'
+local DrawUtils = require 'src.util.DrawUtils'
 
 local Gui = {}
 
