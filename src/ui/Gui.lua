@@ -2,7 +2,7 @@ local DrawUtils = require 'src.util.DrawUtils'
 
 local Gui = {}
 
-local draw, drawDebug, drawAbilityOutline, drawCooldownIndicator, drawConsole
+local draw, drawDebug, drawAbilityBackground, drawAbilityOutline, drawCooldownIndicator, drawConsole, drawCharges
 
 local boxWidth, boxHeight, consoleHeight = 50, 50, 0.95
 
@@ -39,10 +39,16 @@ function drawDebug(player)
 end
 
 function drawConsole(player)
-    local q = {x = love.graphics.getWidth() / 2 - 100, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local w = {x = love.graphics.getWidth() / 2 - 45, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local e = {x = love.graphics.getWidth() / 2 + 10, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local r = {x = love.graphics.getWidth() / 2 + 65, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local q = {x = love.graphics.getWidth() / 2 - 120, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local w = {x = love.graphics.getWidth() / 2 - 60, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local e = {x = love.graphics.getWidth() / 2, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local r = {x = love.graphics.getWidth() / 2 + 60, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+
+    -- ability background
+    drawAbilityBackground(q.x, q.y)
+    drawAbilityBackground(w.x, w.y)
+    drawAbilityBackground(e.x, e.y)
+    drawAbilityBackground(r.x, r.y)
 
     -- ability outlines
     drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
@@ -57,18 +63,18 @@ function drawConsole(player)
     drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- keybinds
-    love.graphics.setColor(.7, .7, .2)
+    love.graphics.setColor(.9, .9, .2)
     love.graphics.print("q", q.x + 5, q.y + 30)
     love.graphics.print("w", w.x + 5, w.y + 30)
     love.graphics.print("e", e.x + 5, e.y + 30)
     love.graphics.print("r", r.x + 5, r.y + 30)
 
     -- charge abilities
-    love.graphics.setColor(.2, .7, .7)
-    drawCharges(player.character.abilities.q, q.x + 20, q.y + 30)
-    drawCharges(player.character.abilities.w, w.x + 35, w.y + 30)
-    drawCharges(player.character.abilities.e, e.x + 35, e.y + 30)
-    drawCharges(player.character.abilities.r, r.x + 35, r.y + 30)
+    love.graphics.setColor(.2, .9, .9)
+    drawCharges(player.character.abilities.q, q.x + 18, q.y + 30)
+    drawCharges(player.character.abilities.w, w.x + 18, w.y + 30)
+    drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
+    drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
 end
 
 function drawCharges(ability, x, y)
@@ -78,6 +84,11 @@ function drawCharges(ability, x, y)
             x, y
         )
     end
+end
+
+function drawAbilityBackground(x, y)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.rectangle("fill", x, y, boxWidth, boxHeight)
 end
 
 function drawAbilityOutline(x, y, dt, cd)

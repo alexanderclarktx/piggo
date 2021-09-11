@@ -13,7 +13,7 @@ function Sion.new(pos, hp)
         pos, hp, 1000, 360, 20,
         {
             q = {run = sionQ, cd = 0, dt = 1,
-                charges = 3, maxCharges = 3, chargeCd = 2.5, chargeDt = 0
+                charges = 4, maxCharges = 4, chargeCd = 1.5, chargeDt = 0
             },
             w = {run = sionW, cd = 4, dt = 4},
             e = {run = sionE, cd = 3, dt = 3},

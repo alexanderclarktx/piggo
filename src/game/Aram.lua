@@ -24,7 +24,7 @@ function Aram.new()
 end
 
 function load(self)
-    love.graphics.setBackgroundColor(0.1,0.1,0.1)
+    love.graphics.setBackgroundColor(0.1,0.1,0.2)
 end
 
 function update(self, dt)
