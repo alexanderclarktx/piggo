@@ -57,7 +57,7 @@ A 2D multiplayer online battle arena
 
 * client/server
 
-* viewport/camera
+* ~~viewport/camera~~
 
 ## Bugs
 

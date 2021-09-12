@@ -30,6 +30,10 @@ function load(self)
 
     -- create the terrain
     spawnTerrain(self)
+
+    -- fade in the camera
+    state.camera.fade_color = {0, 0, 0, 0.6}
+    state.camera:fade(1.5, {0, 0, 0, 0})
 end
 
 function update(self, dt)

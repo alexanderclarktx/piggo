@@ -19,10 +19,6 @@ function iGame.new(gameLoad, gameUpdate, gameDraw, initialState)
     local playerController = PlayerController.new()
     local damageController = DamageController.new()
 
-    state.camera:setFollowLerp(0.2)
-    state.camera:setFollowLead(10)
-    -- camera:setFollowStyle('LOCKON')
-
     return {
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw, keypressed = keypressed,
@@ -84,8 +80,9 @@ function draw(self)
     -- draw player indicators
     self.playerController:draw()
 
-    -- detach camera
+    -- draw and detach camera
     state.camera:detach()
+    state.camera:draw()
 
     -- draw the GUI
     self.gui:draw()
