@@ -4,9 +4,8 @@ local DamageController = {}
 
 local update, draw
 
-function DamageController.new(state)
+function DamageController.new()
     return {
-        state = state,
         hurtboxes = {},
         update = update, draw = draw
     }
@@ -14,7 +13,7 @@ end
 
 function update(self, dt)
     -- add all submitted hurtboxes
-    for _, player in pairs(self.state.players) do
+    for _, player in pairs(state.players) do
         for i, hurtbox in ipairs(player.character.hurtboxes) do
             assert(hurtbox.name, hurtbox.damage, hurtbox.poly)
             table.insert(self.hurtboxes, hurtbox)
@@ -25,7 +24,7 @@ function update(self, dt)
     -- TODO non-damage effects (hurtbox:hit(npc))
     -- apply all damage from hurtboxes
     for i, hurtbox in ipairs(self.hurtboxes) do
-        for _, npc in pairs(self.state.npcs) do
+        for _, npc in pairs(state.npcs) do
             if hurtbox.type == "poly" then
                 if ShapeUtils.circleInPolygon(
                         npc.meta.pos.x, npc.meta.pos.y, npc.meta.size, hurtbox.poly) then

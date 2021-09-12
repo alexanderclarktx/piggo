@@ -25,8 +25,8 @@ function Aram.new()
 end
 
 function load(self)
-    love.graphics.setBackgroundColor(0.1,0.1,0.2)
-    love.graphics.setBackgroundColor(0.9, 0.8,0.7, 0.2)
+    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
+    love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
 
     -- create the terrain
     spawnTerrain(self)
@@ -34,15 +34,15 @@ end
 
 function update(self, dt)
     -- kill all npcs that are dead :)
-    for i, npc in ipairs(self.state.npcs) do
+    for i, npc in ipairs(state.npcs) do
         if npc.meta.hp <= 0 then
-            table.remove(self.state.npcs, i)
+            table.remove(state.npcs, i)
         end
     end
 
     -- if there are no npcs, spawn one
-    if #self.state.npcs == 0 then
-        table.insert(self.state.npcs, Minion.new(math.ceil(math.random() * 300), {
+    if #state.npcs == 0 then
+        table.insert(state.npcs, Minion.new(math.ceil(math.random() * 300), {
             x = math.ceil(math.random() * love.graphics.getWidth()),
             y = math.ceil(math.random() * love.graphics.getHeight()),
         }))
@@ -52,7 +52,7 @@ end
 function draw(self) end
 
 function spawnTerrain(self)
-    self.state.terrains = {
+    state.terrains = {
         Terrain.new({
             300, 150,
             500, 150,

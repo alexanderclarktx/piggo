@@ -48,8 +48,8 @@ function sionQ(self)
     self.abilities.q.charges = self.abilities.q.charges - 1
 
     -- calculate axe orientation
-    local xdiff = love.mouse.getX() - self.meta.pos.x
-    local ydiff = love.mouse.getY() - self.meta.pos.y
+    local xdiff = state.camera.mx - self.meta.pos.x
+    local ydiff = state.camera.my - self.meta.pos.y
     local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
     local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
@@ -66,19 +66,9 @@ function sionQ(self)
         yRatio = yRatio,
         segments = {
             {
-                time = 0,
-                done = false,
-                run = function(self, me)
-                    -- me.meta.canMove = false
-                    -- me.meta.marker = nil
-                end
-            },
-            {
-                time = 0.3,
+                time = 0.45,
                 done = false,
                 run = function(self, me, effect)
-                    -- TODO contention here (CC from other effects)
-                    -- me.meta.canMove = true
                     effect.hitboxStyle = "fill"
 
                     -- damage
@@ -127,7 +117,7 @@ function sionW(me)
                 done = false,
                 run = function(self, me, effect)
                     effect.shield = {
-                        color = {r = 1, g = 0, b = 0, alpha = 0.2},
+                        color = {r = 0.2, g = 0.2, b = 1, alpha = 0.2},
                         radius = 25,
                         width = 50
                     }
@@ -143,9 +133,9 @@ function sionW(me)
         },
         draw = function(self, me)
             love.graphics.setColor(
-                self.shield.color.r,
+                self.shield.color.r - self.shield.color.r * self.dt / self.duration,
                 self.shield.color.g - self.shield.color.g * self.dt / self.duration,
-                self.shield.color.b - self.shield.color.g * self.dt / self.duration
+                self.shield.color.b
             )
             love.graphics.setLineWidth(self.shield.width)
             love.graphics.circle("line", me.meta.pos.x, me.meta.pos.y, me.meta.size + self.shield.radius)
