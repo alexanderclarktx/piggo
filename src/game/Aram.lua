@@ -14,7 +14,7 @@ local load, update, draw, spawnTerrain
 --   * no recalling
 --   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
-    local state = GameState.new()
+    GameState.load()
 
     -- spawn the main player
     table.insert(state.players,

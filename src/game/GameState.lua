@@ -2,10 +2,13 @@ local Camera = require 'lib.Camera'
 
 local GameState = {}
 
-function GameState.new()
-    return {
+state = nil
+
+-- places instance of GameState into global scope
+function GameState.load()
+    state = {
         players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
-        camera = Camera()
+        camera = Camera(), world = love.physics.newWorld()
     }
 end
 

@@ -4,16 +4,12 @@ local DamageController = require 'src.game.DamageController'
 
 local iGame = {}
 
-state = nil
-
 local load, update, draw, keypressed
 
 -- iGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
-function iGame.new(gameLoad, gameUpdate, gameDraw, initialState)
-    assert(gameLoad, gameUpdate, gameDraw, initialState, initialState.players[1])
-
-    state = initialState
+function iGame.new(gameLoad, gameUpdate, gameDraw)
+    assert(gameLoad, gameUpdate, gameDraw, state, state.players[1])
 
     local gui = Gui.new(state.players[1])
     local playerController = PlayerController.new()
@@ -51,6 +47,9 @@ function update(self, dt)
     -- update game loop
     self.gameUpdate(self)
 
+    -- collisions
+    state.world:update(dt)
+
     state.camera:update(dt)
     state.camera:follow(
         state.players[1].character.meta.pos.x,
@@ -79,6 +78,16 @@ function draw(self)
 
     -- draw player indicators
     self.playerController:draw()
+
+    -- print all collisions
+    if debug() then
+        love.graphics.setColor(1, 1, 1)
+        for _, contact in pairs(state.world:getContactList()) do
+            x1, y1, x2, y2 = contact:getPositions()
+            local z = "%d,%d | %d, %d"
+            love.graphics.print(z:format(x1 or 0, y1 or 0, x2 or 0, y2 or 0), x1, y1)
+        end
+    end
 
     -- draw and detach camera
     state.camera:detach()

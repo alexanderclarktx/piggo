@@ -21,8 +21,6 @@ A 2D multiplayer online battle arena
 
 * auto attacks
 
-* terrain
-
 * gold/resources
 
 * player death
@@ -30,6 +28,8 @@ A 2D multiplayer online battle arena
 * collision
 
 * ability targeting
+
+* ~~terrain~~
 
 * ~~damage~~
 

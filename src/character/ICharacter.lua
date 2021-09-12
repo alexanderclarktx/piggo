@@ -12,6 +12,9 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
         size ~= nil and size > 0
     )
 
+    local body = love.physics.newBody(state.world, pos.x, pos.y, "dynamic")
+    local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))
+
     return {
         meta = {
             pos = pos, hp = hp, maxhp = maxhp, speed = speed, size = size,
@@ -20,7 +23,8 @@ function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abili
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         submitHurtboxPoly = submitHurtboxPoly, submitHurtboxCircle = submitHurtboxCircle,
-        abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1
+        abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1,
+        body = body, fixture = fixture
     }
 end
 
@@ -42,6 +46,9 @@ function update(self, dt)
 
         self.meta.pos.x = self.meta.pos.x + xComponent
         self.meta.pos.y = self.meta.pos.y + yComponent
+
+        self.body:setX(self.meta.pos.x)
+        self.body:setY(self.meta.pos.y)
     end
 
     -- update where character is facing

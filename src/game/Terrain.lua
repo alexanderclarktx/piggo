@@ -4,9 +4,14 @@ local update, draw
 
 function Terrain.new(poly)
     assert(#poly % 2 == 0)
+
+    local body = love.physics.newBody(state.world, poly[1], poly[2], "static")
+    local fixture = love.physics.newFixture(body, love.physics.newPolygonShape(poly))
+
     return {
         poly = poly,
-        update = update, draw = draw
+        update = update, draw = draw,
+        body = body, fixture = fixture
     }
 end
 
