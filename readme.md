@@ -1,4 +1,4 @@
-# moba-project
+# Piggo ARAM
 
 A 2D multiplayer online battle arena
 
