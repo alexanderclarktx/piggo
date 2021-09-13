@@ -50,14 +50,15 @@ function update(self, dt)
 end
 
 function draw(self)
-    -- draw sion
-    love.graphics.setColor(0.5, 0.8, 1)
+    -- pick animation frame
     local frameToDraw = self.frame
     local velocity = {self.body:getLinearVelocity()}
     if 0 == velocity[1] and 0 == velocity[2] then
         frameToDraw = 1
     end
 
+    -- draw sion
+    love.graphics.setColor(0.5, 0.7, 1)
     love.graphics.drawLayer(
         image, frameToDraw,
         self.body:getX(), self.body:getY(),
@@ -141,7 +142,7 @@ function sionW(me)
                 done = false,
                 run = function(self, me, effect)
                     effect.shield = {
-                        color = {r = 0.2, g = 0.2, b = 1, alpha = 0.2},
+                        color = {r = 1, g = 0.2, b = 0.2, alpha = 0.2},
                         radius = 25,
                         width = 50
                     }
@@ -157,9 +158,9 @@ function sionW(me)
         },
         draw = function(self, me)
             love.graphics.setColor(
-                self.shield.color.r - self.shield.color.r * self.dt / self.duration,
+                self.shield.color.r,
                 self.shield.color.g - self.shield.color.g * self.dt / self.duration,
-                self.shield.color.b
+                self.shield.color.b - self.shield.color.b * self.dt / self.duration
             )
             love.graphics.setLineWidth(self.shield.width)
             love.graphics.circle("line", me.body:getX(), me.body:getY(), me.meta.size + self.shield.radius)

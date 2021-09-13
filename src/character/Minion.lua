@@ -48,7 +48,7 @@ function draw(self)
     love.graphics.drawLayer(
         image, self.frame,
         self.body:getX(), self.body:getY(),
-        0, 3 * self.facingRight, 3, 7, 7
+        0, 3 * self.facingRight, 3, 8, 7
     )
 end
 
