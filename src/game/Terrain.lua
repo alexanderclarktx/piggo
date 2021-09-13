@@ -32,7 +32,7 @@ function draw(self)
         for i=1, #self.poly, 2 do
             local debugVertices = "%d,%d"
 
-            love.graphics.setColor(1, 1, 1)
+            love.graphics.setColor(1, 1, 1, 0.3)
             love.graphics.print(
                 debugVertices:format(self.body:getWorldPoints(self.poly[i], self.poly[i+1])),
                 self.body:getWorldPoints(self.poly[i], self.poly[i+1] - 5)

@@ -79,16 +79,6 @@ function draw(self)
     -- draw player indicators
     self.playerController:draw()
 
-    -- print all collisions
-    if debug() then
-        love.graphics.setColor(1, 1, 1)
-        for _, contact in pairs(state.world:getContacts()) do
-            x1, y1, x2, y2 = contact:getPositions()
-            local z = "%d,%d | %d, %d"
-            love.graphics.print(z:format(x1 or 0, y1 or 0, x2 or 0, y2 or 0), x1, y1)
-        end
-    end
-
     -- draw and detach camera
     state.camera:detach()
     state.camera:draw()
