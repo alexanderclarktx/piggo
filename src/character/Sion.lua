@@ -12,10 +12,16 @@ local qColors = {
     {0, 1, 1, 0.6},
 }
 
+local image = love.graphics.newArrayImage({
+    "res/skelly/skelly1.png",
+    "res/skelly/skelly2.png",
+    "res/skelly/skelly3.png",
+})
+
 function Sion.new(x, y, hp)
     assert(hp > 0, x >= 0, y >= 0)
 
-    return ICharacter.new(
+    local sion = ICharacter.new(
         update, draw,
         x, y, hp, 1000, 360, 20,
         {
@@ -27,15 +33,33 @@ function Sion.new(x, y, hp)
             r = {run = sionR, cd = 5, dt = 5}
         }
     )
+    sion.frame = 1
+    sion.frameLast = 0
+    sion.framecd = 0.13
+    image:setFilter("nearest", "nearest")
+
+    return sion
 end
 
-function update(self, dt) end
+function update(self, dt)
+    -- update animation frame
+    if self.dt - self.frameLast > self.framecd then
+        self.frameLast = self.dt
+        self.frame = (self.frame + 1) % 3 + 1
+    end
+end
 
 function draw(self)
     -- draw sion
     love.graphics.setColor(0.5, 0.8, 1)
-    love.graphics.draw(
-        love.graphics.newImage("res/skelly.png", {linear = true}),
+    local frameToDraw = self.frame
+    local velocity = {self.body:getLinearVelocity()}
+    if 0 == velocity[1] and 0 == velocity[2] then
+        frameToDraw = 1
+    end
+
+    love.graphics.drawLayer(
+        image, frameToDraw,
         self.body:getX(), self.body:getY(),
         0, 4 * self.facingRight, 4, 6, 6
     )

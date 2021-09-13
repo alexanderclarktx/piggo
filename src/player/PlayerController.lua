@@ -80,6 +80,7 @@ function handleKeyPressed(self, key, scancode, isrepeat)
     end
     if key == "s" then
         state.players[1].character.meta.marker = nil
+        state.players[1].character.body:setLinearVelocity(0, 0)
     end
 end
 

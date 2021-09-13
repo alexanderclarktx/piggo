@@ -50,11 +50,11 @@ function update(self, dt)
     -- collisions
     state.world:update(dt)
 
-    state.camera:update(dt)
     state.camera:follow(
         state.players[1].character.body:getX(),
         state.players[1].character.body:getY()
     )
+    state.camera:update(dt)
 end
 
 function draw(self)

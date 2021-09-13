@@ -11,7 +11,8 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         hp ~= nil and hp > 0,
         maxhp ~= nil and maxhp > 0,
         speed ~= nil and speed > 0,
-        size ~= nil and size > 0
+        size ~= nil and size > 0,
+        abilities ~= nil
     )
 
     local body = love.physics.newBody(state.world, x, y, "dynamic")
@@ -25,12 +26,15 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         submitHurtboxPoly = submitHurtboxPoly, submitHurtboxCircle = submitHurtboxCircle,
-        abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1,
+        abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1, dt = 0,
         body = body, fixture = fixture
     }
 end
 
 function update(self, dt)
+    -- accumulate total dt
+    self.dt = self.dt + dt
+
     -- move toward marker
     if self.meta.marker and self.meta.canMove then
         local xdiff = self.meta.marker.x - self.body:getX()
@@ -38,9 +42,7 @@ function update(self, dt)
 
         if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
             self.meta.marker = nil
-            debug(self.body:getLinearVelocity())
             self.body:setLinearVelocity(0, 0)
-            debug(self.body:getLinearVelocity())
         else
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
@@ -124,6 +126,11 @@ function draw(self)
     )
 
     self.charDraw(self)
+
+    if debug() then
+        love.graphics.setColor(0, 0, 1, 0.6)
+        love.graphics.circle("line", self.body:getX(), self.body:getY(), self.meta.size)
+    end
 end
 
 function submitHurtboxPoly(self, name, damage, poly)
