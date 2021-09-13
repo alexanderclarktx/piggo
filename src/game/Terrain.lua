@@ -21,11 +21,15 @@ function update(self, dt)
 end
 
 function draw(self)
+    -- draw terrain
     love.graphics.setColor(0.4, 0.2, 0.15)
     love.graphics.polygon("fill", self.body:getWorldPoints(unpack(self.poly)))
 
-    love.graphics.setColor(0, 0, 0, 0.7)
-    love.graphics.polygon("line", self.body:getWorldPoints(unpack(self.poly)))
+    -- draw terrain outlines
+    if debug() then
+        love.graphics.setColor(0, 0, 0, 0.7)
+        love.graphics.polygon("line", self.body:getWorldPoints(unpack(self.poly)))
+    end
 
     -- print the corner coordinates
     if debug() then

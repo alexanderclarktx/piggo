@@ -1,6 +1,4 @@
-local Aram = require 'src.game.Aram'
-
-local game = Aram.new()
+local game
 local printDebug
 
 function love.load(arg)
@@ -10,6 +8,10 @@ function love.load(arg)
     else
         debug = function() return false end
     end
+
+    local Aram = require 'src.game.Aram'
+    game = Aram.new()
+
     game:load()
 end
 

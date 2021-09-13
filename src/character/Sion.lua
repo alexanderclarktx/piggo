@@ -6,10 +6,10 @@ local Sion = {}
 local update, draw, sionQ, sionW, sionE, sionR
 
 local qColors = {
-    {1, 0, 0, 0.6},
-    {1, 1, 0, 0.6},
-    {0, 1, 0, 0.6},
-    {0, 1, 1, 0.6},
+    {1, 0, 0, debug() and 0.3 or 0.6},
+    {1, 1, 0, debug() and 0.3 or 0.6},
+    {0, 1, 0, debug() and 0.3 or 0.6},
+    {0, 1, 1, debug() and 0.3 or 0.6},
 }
 
 local image = love.graphics.newArrayImage({
@@ -23,7 +23,7 @@ function Sion.new(x, y, hp)
 
     local sion = ICharacter.new(
         update, draw,
-        x, y, hp, 1000, 360, 20,
+        x, y, hp, 1000, 400, 20,
         {
             q = {run = sionQ, cd = 0, dt = 1,
                 charges = 4, maxCharges = 4, chargeCd = 1, chargeDt = 0

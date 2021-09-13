@@ -25,8 +25,8 @@ function Aram.new()
 end
 
 function load(self)
-    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
-    love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
+    love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
+    -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
 
     -- create the terrain
     spawnTerrain()
@@ -58,29 +58,63 @@ function draw(self) end
 
 function spawnTerrain()
     state.terrains = {
-        Terrain.new(300, 150, {
+        -- Terrain.new(300, 150, {
+        --     0, 0,
+        --     300, 0,
+        --     300, 500,
+        --     100, 500,
+        -- }),
+        Terrain.new(-400, -600, { -- top wall
+            0, 0,
+            0, 500,
+            3400, 500,
+            3400, 0,
+        }),
+
+        -- top alcove
+        Terrain.new(650, -100, {
+            -50, 0,
+            350, 0,
+            300, 50,
+            000, 50,
+        }),
+        -- bottom alcove
+        Terrain.new(650, 450, {
             0, 0,
             300, 0,
             300, 50,
-            100, 50,
+            000, 50,
         }),
-        Terrain.new(750, 150, {
+        -- bottom
+        Terrain.new(-400, 500, { -- left
             0, 0,
-            300, 0,
-            300, 50,
-            100, 50,
+            0, 500,
+            700, 500,
+            700, 0,
         }),
-        Terrain.new(0, -50, { -- top wall
+        Terrain.new(300, 500, { -- left curve
             0, 0,
-            0, 50,
-            1400, 50,
-            1400, 0,
+            0, 500,
+            400, 500,
+            400, 200,
         }),
-        Terrain.new(0, 600, { -- bottom wall
+        Terrain.new(700, 700, { -- bottom bottom
             0, 0,
-            0, 50,
-            1400, 50,
-            1400, 0,
+            0, 300,
+            200, 300,
+            200, 0,
+        }),
+        Terrain.new(900, 500, { -- right curve
+            0, 200,
+            0, 500,
+            400, 500,
+            400, 0,
+        }),
+        Terrain.new(1300, 500, { -- right
+            0, 0,
+            0, 500,
+            700, 500,
+            700, 0,
         })
     }
 end
