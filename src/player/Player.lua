@@ -19,8 +19,6 @@ function update(self, dt)
 end
 
 function draw(self)
-    DrawUtils.drawHealthbar(self.character.meta.pos, self.character.meta.size, self.character.meta.hp, self.character.meta.maxhp)
-
     -- draw character
     self.character:draw()
 end

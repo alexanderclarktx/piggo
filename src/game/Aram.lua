@@ -18,7 +18,7 @@ function Aram.new()
 
     -- spawn the main player
     table.insert(state.players,
-        Player.new("player1", Sion.new({x = 600, y = 300}, 500))
+        Player.new("player1", Sion.new(500, 250, 500))
     )
 
     return IGame.new(load, update, draw, state)
@@ -29,7 +29,7 @@ function load(self)
     love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
 
     -- create the terrain
-    spawnTerrain(self)
+    spawnTerrain()
 
     -- fade in the camera
     state.camera.fade_color = {0, 0, 0, 0.6}
@@ -46,40 +46,41 @@ function update(self, dt)
 
     -- if there are no npcs, spawn one
     if #state.npcs == 0 then
-        table.insert(state.npcs, Minion.new(math.ceil(math.random() * 300), {
-            x = math.ceil(math.random() * love.graphics.getWidth()),
-            y = math.ceil(math.random() * love.graphics.getHeight()),
-        }))
+        table.insert(state.npcs, Minion.new(
+            math.random(love.graphics.getWidth()),
+            math.random(love.graphics.getHeight()),
+            math.random(300)
+        ))
     end
 end
 
 function draw(self) end
 
-function spawnTerrain(self)
+function spawnTerrain()
     state.terrains = {
-        Terrain.new({
-            300, 150,
-            500, 150,
-            500, 200,
-            200, 200,
+        Terrain.new(300, 150, {
+            0, 0,
+            300, 0,
+            300, 50,
+            100, 50,
         }),
-        Terrain.new({
-            750, 150,
-            900, 150,
-            1000, 200,
-            750, 200,
+        Terrain.new(750, 150, {
+            0, 0,
+            300, 0,
+            300, 50,
+            100, 50,
         }),
-        Terrain.new({ -- top wall
+        Terrain.new(0, -50, { -- top wall
             0, 0,
             0, 50,
             1400, 50,
             1400, 0,
         }),
-        Terrain.new({ -- bottom wall
-            0, 700,
-            0, 750,
-            1400, 750,
-            1400, 700,
+        Terrain.new(0, 600, { -- bottom wall
+            0, 0,
+            0, 50,
+            1400, 50,
+            1400, 0,
         })
     }
 end

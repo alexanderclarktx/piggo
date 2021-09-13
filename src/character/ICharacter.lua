@@ -1,23 +1,25 @@
+local DrawUtils = require 'src.util.DrawUtils'
+
 local ICharacter = {}
 
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
 
-function ICharacter.new(charUpdate, charDraw, pos, hp, maxhp, speed, size, abilities)
+function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
     assert(
-        pos.x ~= nil and pos.x > 0,
-        pos.y ~= nil and pos.y > 0,
+        x ~= nil and x > 0,
+        y ~= nil and y > 0,
         hp ~= nil and hp > 0,
         maxhp ~= nil and maxhp > 0,
         speed ~= nil and speed > 0,
         size ~= nil and size > 0
     )
 
-    local body = love.physics.newBody(state.world, pos.x, pos.y, "dynamic")
+    local body = love.physics.newBody(state.world, x, y, "dynamic")
     local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))
 
     return {
         meta = {
-            pos = pos, hp = hp, maxhp = maxhp, speed = speed, size = size,
+            hp = hp, maxhp = maxhp, speed = speed, size = size,
             canMove = true, marker = nil
         },
         charUpdate = charUpdate, charDraw = charDraw,
@@ -31,30 +33,29 @@ end
 function update(self, dt)
     -- move toward marker
     if self.meta.marker and self.meta.canMove then
-        local xdiff = self.meta.marker.x - self.meta.pos.x
-        local ydiff = self.meta.marker.y - self.meta.pos.y
+        local xdiff = self.meta.marker.x - self.body:getX()
+        local ydiff = self.meta.marker.y - self.body:getY()
 
         if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
             self.meta.marker = nil
+            debug(self.body:getLinearVelocity())
+            self.body:setLinearVelocity(0, 0)
+            debug(self.body:getLinearVelocity())
+        else
+            local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
+            local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+
+            local xComponent = self.meta.speed * xRatio
+            local yComponent = self.meta.speed * yRatio
+
+            self.body:setLinearVelocity(xComponent, yComponent)
         end
-
-        local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-        local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
-
-        local xComponent = dt * self.meta.speed * xRatio
-        local yComponent = dt * self.meta.speed * yRatio
-
-        self.meta.pos.x = self.meta.pos.x + xComponent
-        self.meta.pos.y = self.meta.pos.y + yComponent
-
-        self.body:setX(self.meta.pos.x)
-        self.body:setY(self.meta.pos.y)
     end
 
     -- update where character is facing
-    if self.meta.marker and self.meta.marker.x < self.meta.pos.x then
+    if self.meta.marker and self.meta.marker.x < self.body:getX() then
         self.facingRight = -1
-    elseif self.meta.marker and self.meta.marker.x > self.meta.pos.x then
+    elseif self.meta.marker and self.meta.marker.x > self.body:getX() then
         self.facingRight = 1
     end
 
@@ -103,7 +104,7 @@ function draw(self)
         love.graphics.setColor(0.6, 0.6, 0.6)
         if self.meta.marker then
             love.graphics.line(
-                self.meta.pos.x, self.meta.pos.y,
+                self.body:getX(), self.body:getY(),
                 self.meta.marker.x, self.meta.marker.y
             )
         end
@@ -115,6 +116,12 @@ function draw(self)
             effect:draw(self)
         end
     end
+
+    -- draw healthbar
+    DrawUtils.drawHealthbar(
+        self.body:getX(), self.body:getY(),
+        self.meta.size, self.meta.hp, self.meta.maxhp
+    )
 
     self.charDraw(self)
 end

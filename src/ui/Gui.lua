@@ -32,8 +32,8 @@ function drawDebug(player)
     love.graphics.print(debug:format(
         love.timer.getFPS(),
         player.character.meta.hp,
-        player.character.meta.pos.x,
-        player.character.meta.pos.y,
+        player.character.body:getX(),
+        player.character.body:getY(),
         #player.character.effects
     ), 10, 10)
 end

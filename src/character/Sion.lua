@@ -12,12 +12,12 @@ local qColors = {
     {0, 1, 1, 0.6},
 }
 
-function Sion.new(pos, hp)
-    assert(pos, hp)
+function Sion.new(x, y, hp)
+    assert(hp > 0, x >= 0, y >= 0)
 
     return ICharacter.new(
         update, draw,
-        pos, hp, 1000, 360, 20,
+        x, y, hp, 1000, 360, 20,
         {
             q = {run = sionQ, cd = 0, dt = 1,
                 charges = 4, maxCharges = 4, chargeCd = 1, chargeDt = 0
@@ -36,7 +36,7 @@ function draw(self)
     love.graphics.setColor(0.5, 0.8, 1)
     love.graphics.draw(
         love.graphics.newImage("res/skelly.png", {linear = true}),
-        self.meta.pos.x, self.meta.pos.y,
+        self.body:getX(), self.body:getY(),
         0, 4 * self.facingRight, 4, 6, 6
     )
 end
@@ -48,8 +48,8 @@ function sionQ(self)
     self.abilities.q.charges = self.abilities.q.charges - 1
 
     -- calculate axe orientation
-    local xdiff = state.camera.mx - self.meta.pos.x
-    local ydiff = state.camera.my - self.meta.pos.y
+    local xdiff = state.camera.mx - self.body:getX()
+    local ydiff = state.camera.my - self.body:getY()
     local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
     local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
@@ -78,7 +78,7 @@ function sionQ(self)
         },
         draw = function(self, me)
             -- first point is on edge of character
-            local p1 = {me.meta.pos.x + me.meta.size * self.xRatio, me.meta.pos.y + me.meta.size * self.yRatio}
+            local p1 = {me.body:getX() + me.meta.size * self.xRatio, me.body:getY() + me.meta.size * self.yRatio}
 
             -- outer points of triangle
             local p2 = ShapeUtils.rotate({self.xRatio, self.yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
@@ -127,7 +127,7 @@ function sionW(me)
                 time = 2.95,
                 done = false,
                 run = function(self, me)
-                    me:submitHurtboxCircle("Shield", 140, me.meta.pos.x, me.meta.pos.y, 50)
+                    me:submitHurtboxCircle("Shield", 140, me.body:getX(), me.body:getY(), 50)
                 end
             }
         },
@@ -138,7 +138,7 @@ function sionW(me)
                 self.shield.color.b
             )
             love.graphics.setLineWidth(self.shield.width)
-            love.graphics.circle("line", me.meta.pos.x, me.meta.pos.y, me.meta.size + self.shield.radius)
+            love.graphics.circle("line", me.body:getX(), me.body:getY(), me.meta.size + self.shield.radius)
             love.graphics.setLineWidth(1)
         end
     })

@@ -52,8 +52,8 @@ function update(self, dt)
 
     state.camera:update(dt)
     state.camera:follow(
-        state.players[1].character.meta.pos.x,
-        state.players[1].character.meta.pos.y
+        state.players[1].character.body:getX(),
+        state.players[1].character.body:getY()
     )
 end
 
@@ -82,7 +82,7 @@ function draw(self)
     -- print all collisions
     if debug() then
         love.graphics.setColor(1, 1, 1)
-        for _, contact in pairs(state.world:getContactList()) do
+        for _, contact in pairs(state.world:getContacts()) do
             x1, y1, x2, y2 = contact:getPositions()
             local z = "%d,%d | %d, %d"
             love.graphics.print(z:format(x1 or 0, y1 or 0, x2 or 0, y2 or 0), x1, y1)

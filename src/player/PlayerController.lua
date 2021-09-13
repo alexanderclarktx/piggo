@@ -24,7 +24,7 @@ function update(self, dt)
         -- todo logic for targeting CLOSEST (shift+click)
         if ShapeUtils.pointInCircle(
                 mouseX, mouseY,
-                npc.meta.pos.x, npc.meta.pos.y, npc.meta.size + 16) then
+                npc.body:getX(), npc.body:getY(), npc.meta.size + 16) then
             self.hovering = npc
             break
         end
@@ -44,7 +44,7 @@ function draw(self)
     if self.hovering then
         love.graphics.setColor(0.7, 0.2, 0.2)
         love.graphics.setLineWidth(4)
-        love.graphics.circle("line", self.hovering.meta.pos.x, self.hovering.meta.pos.y, self.hovering.meta.size + 2)
+        love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
         love.graphics.setLineWidth(1)
     end
 
