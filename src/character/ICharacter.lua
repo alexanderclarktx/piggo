@@ -5,15 +5,13 @@ local ICharacter = {}
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
 
 function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
-    assert(
-        x ~= nil and x > 0,
-        y ~= nil and y > 0,
-        hp ~= nil and hp > 0,
-        maxhp ~= nil and maxhp > 0,
-        speed ~= nil and speed > 0,
-        size ~= nil and size > 0,
-        abilities ~= nil
-    )
+    assert(type(x) == "number")
+    assert(type(y) == "number")
+    assert(type(hp) == "number")
+    assert(maxhp ~= nil and maxhp > 0)
+    assert(speed ~= nil and speed > 0)
+    assert(size ~= nil and size > 0)
+    assert(abilities ~= nil)
 
     local body = love.physics.newBody(state.world, x, y, "dynamic")
     local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))

@@ -8,7 +8,8 @@ state = nil
 function GameState.load()
     state = {
         players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
-        camera = Camera(), world = love.physics.newWorld()
+        camera = Camera(), world = love.physics.newWorld(),
+        dt = 0
     }
 end
 

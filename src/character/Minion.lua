@@ -10,9 +10,13 @@ local image = love.graphics.newArrayImage({
     "res/piggo/piggo2.png",
     "res/piggo/piggo3.png",
 })
+image:setFilter("nearest", "nearest")
 
-function Minion.new(x, y, hp)
-    assert(hp > 0, x >= 0, y >= 0)
+function Minion.new(x, y, hp, marker)
+    assert(type(x) == "number")
+    assert(type(y) == "number")
+    assert(type(hp) == "number")
+    assert(marker.x and marker.y)
 
     local minion = ICharacter.new(
         update, draw,
@@ -22,18 +26,18 @@ function Minion.new(x, y, hp)
     minion.frame = 1
     minion.frameLast = 0
     minion.framecd = 0.13
-    image:setFilter("nearest", "nearest")
+    minion.defaultMarker = marker
+    minion.color = {r = math.random(), g = math.random(), b = math.random()}
 
     return minion
 end
 
 function update(self, dt, index)
-    -- pick random place to move to
+    -- check surroundings for things to attack (minions, champions, structures)
+
+    -- if nothing nearby, move on toward defaultMarker
     if self.meta.marker == nil then
-        self.meta.marker = {
-            x = math.random() * love.graphics.getWidth(),
-            y = math.random() * love.graphics.getHeight()
-        }
+        self.meta.marker = self.defaultMarker
     end
 
     -- update animation frame
@@ -44,7 +48,7 @@ function update(self, dt, index)
 end
 
 function draw(self)
-    love.graphics.setColor(1, 0.7, 0)
+    love.graphics.setColor(self.color.r, self.color.g, self.color.b)
     love.graphics.drawLayer(
         image, self.frame,
         self.body:getX(), self.body:getY(),

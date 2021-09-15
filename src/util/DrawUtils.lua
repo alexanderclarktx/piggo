@@ -14,16 +14,8 @@ local const = {
 }
 
 function DrawUtils.drawHealthbar(x, y, size, hp, maxhp)
-    love.graphics.setColor(1, 0 , 0)
-    -- outer healthbar
-    love.graphics.rectangle(
-        "line",
-        x + const.healthbar.xoff,
-        y + const.healthbar.yoff - size,
-        const.healthbar.width,
-        const.healthbar.height
-    )
     -- fill healthbar
+    love.graphics.setColor(0.7, 0, 0)
     love.graphics.rectangle(
         "fill",
         x + const.healthbar.xoff,
@@ -31,7 +23,21 @@ function DrawUtils.drawHealthbar(x, y, size, hp, maxhp)
         hp / maxhp * const.healthbar.width,
         const.healthbar.height
     )
-    love.graphics.print(hp, x + const.healthnumber.xoff, y + const.healthnumber.yoff - size)
+
+    -- print hp
+    if debug() then
+        love.graphics.print(hp, x + const.healthnumber.xoff, y + const.healthnumber.yoff - size)
+    end
+
+    -- healthbar outline
+    love.graphics.setColor(1, 0.3, 0.3)
+    love.graphics.rectangle(
+        "line",
+        x + const.healthbar.xoff,
+        y + const.healthbar.yoff - size,
+        const.healthbar.width,
+        const.healthbar.height
+    )
 end
 
 function DrawUtils.drawBox(x, y, width, height)

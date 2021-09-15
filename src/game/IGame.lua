@@ -29,6 +29,9 @@ function load(self)
 end
 
 function update(self, dt)
+    -- increment state time
+    state.dt = state.dt + dt
+
     -- update player controller
     self.playerController:update(dt)
 
@@ -50,6 +53,7 @@ function update(self, dt)
     -- collisions
     state.world:update(dt)
 
+    -- camera to player
     state.camera:follow(
         state.players[1].character.body:getX(),
         state.players[1].character.body:getY()

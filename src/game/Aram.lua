@@ -7,7 +7,7 @@ local Terrain = require 'src.game.Terrain'
 
 local Aram = {}
 
-local load, update, draw, spawnTerrain
+local load, update, draw, spawnMinions, spawnTerrain
 
 -- rules:
 --   * single lane
@@ -21,15 +21,29 @@ function Aram.new()
         Player.new("player1", Sion.new(500, 250, 500))
     )
 
-    return IGame.new(load, update, draw, state)
+    local aram = IGame.new(load, update, draw, state)
+
+    aram.timers = {
+        minionSpawn = {
+            cd = 5,
+            last = 0,
+            run = spawnMinions
+        },
+    }
+
+    return aram
 end
 
 function load(self)
-    love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
+    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
     -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
+    love.graphics.setBackgroundColor(0.2, 0.15, 0.3)
 
     -- create the terrain
     spawnTerrain()
+
+    -- spawn first minions
+    spawnMinions()
 
     -- fade in the camera
     state.camera.fade_color = {0, 0, 0, 0.6}
@@ -42,35 +56,45 @@ function update(self, dt)
         if npc.meta.hp <= 0 then
             table.remove(state.npcs, i)
         end
+        debug(#state.npcs)
     end
 
-    -- if there are no npcs, spawn one
-    if #state.npcs == 0 then
-        table.insert(state.npcs, Minion.new(
-            math.random(love.graphics.getWidth()),
-            math.random(love.graphics.getHeight()),
-            math.random(300)
-        ))
+    -- run timers
+    for _, timer in pairs(self.timers) do
+        assert(
+            timer.cd ~= nil, timer.cd > 0,
+            timer.last ~= nil, type(timer.last) == "number",
+            timer.run ~= nil, type(timer.run) == "function"
+        )
+        if state.dt - timer.last >= timer.cd then
+            -- run the callback
+            timer.run(self)
+
+            -- set last
+            timer.last = state.dt
+        end
     end
 end
 
 function draw(self) end
 
+function spawnMinions()
+    for i = 1, 5, 1 do
+        table.insert(state.npcs,
+            Minion.new(-10 * i, 100, math.random(300), {x = 1400, y = 100})
+        )
+    end
+end
+
 function spawnTerrain()
     state.terrains = {
-        -- Terrain.new(300, 150, {
-        --     0, 0,
-        --     300, 0,
-        --     300, 500,
-        --     100, 500,
-        -- }),
-        Terrain.new(-400, -600, { -- top wall
+        -- top wall
+        Terrain.new(-400, -600, {
             0, 0,
             0, 500,
             3400, 500,
             3400, 0,
         }),
-
         -- top alcove
         Terrain.new(650, -100, {
             -50, 0,
@@ -85,7 +109,7 @@ function spawnTerrain()
             300, 50,
             000, 50,
         }),
-        -- bottom
+        -- bottom walls
         Terrain.new(-400, 500, { -- left
             0, 0,
             0, 500,
