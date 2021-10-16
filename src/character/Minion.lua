@@ -1,4 +1,4 @@
-local drawutils = require 'src.util.drawutils'
+local ShapeUtils = require 'src.util.shapeutils'
 local ICharacter = require 'src.character.ICharacter'
 
 local Minion = {}
@@ -12,7 +12,7 @@ local image = love.graphics.newArrayImage({
 })
 image:setFilter("nearest", "nearest")
 
-function Minion.new(x, y, hp, marker)
+function Minion.new(x, y, hp, marker, team)
     assert(type(x) == "number")
     assert(type(y) == "number")
     assert(type(hp) == "number")
@@ -27,7 +27,10 @@ function Minion.new(x, y, hp, marker)
     minion.frameLast = 0
     minion.framecd = 0.13
     minion.defaultMarker = marker
-    minion.color = {r = math.random(), g = math.random(), b = math.random()}
+    minion.meta.marker = marker
+    minion.color = {r = team == 2 and 1 or 0, g = team == 1 and 1 or 0, b = 0}
+    minion.team = team
+    minion.fixture:setFriction(1)
 
     return minion
 end
@@ -35,9 +38,27 @@ end
 function update(self, dt, index)
     -- check surroundings for things to attack (minions, champions, structures)
 
+    local target = nil
+    for _, character in pairs(state.npcs) do
+        if character.team ~= self.team then
+            -- debug(string.format("me team %s checking team %s", self.team, character.team))
+            if ShapeUtils.pointInCircle(
+                character.body:getX(),
+                character.body:getY(),
+                self.body:getX(),
+                self.body:getY(),
+                200
+            ) then
+                target = character
+                break
+            end
+        end
+    end
+    self.target = target
+
     -- if nothing nearby, move on toward defaultMarker
     if self.meta.marker == nil then
-        self.meta.marker = self.defaultMarker
+        -- self.meta.marker = self.defaultMarker
     end
 
     -- update animation frame

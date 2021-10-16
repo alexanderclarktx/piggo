@@ -1,3 +1,4 @@
+local ShapeUtils = require 'src.util.shapeutils'
 local DrawUtils = require 'src.util.DrawUtils'
 
 local ICharacter = {}
@@ -25,13 +26,47 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         update = update, draw = draw,
         submitHurtboxPoly = submitHurtboxPoly, submitHurtboxCircle = submitHurtboxCircle,
         abilities = abilities, effects = {}, hurtboxes = {}, facingRight = 1, dt = 0,
-        body = body, fixture = fixture
+        body = body, fixture = fixture,
+        team = 2, -- TODO
+        target = nil,
+        range = 50, ranged = false
     }
 end
 
 function update(self, dt)
+    self.charUpdate(self)
+
+    if self.target ~= nil and self.target.body == nil then
+        self.target = nil
+    end
+
+    -- velocity to 0
+    self.body:setLinearVelocity(0, 0)
+
     -- accumulate total dt
     self.dt = self.dt + dt
+
+    -- if i'm targeting, check if i can auto attack them
+    if self.target ~= nil then
+        -- remove marker since we are in range
+        self.meta.marker = nil
+
+        if ShapeUtils.circleInCircle(
+            self.target.body:getX(), self.target.body:getY(), self.target.meta.size,
+            self.body:getX(), self.body:getY(), self.range
+        ) then
+            self.body:setLinearVelocity(0, 0)
+
+            if self.ranged then -- ranged auto attack
+                -- table.insert(state.objects, AutoAttack.new(self.range, 70))
+                debug("create ranged auto attack")
+            else -- melee auto attack
+                self.target.meta.hp = self.target.meta.hp - 1
+            end
+        else -- walk toward the target
+            self.meta.marker = {x = self.target.body:getX(), y = self.target.body:getY()}
+        end
+    end
 
     -- move toward marker
     if self.meta.marker and self.meta.canMove then
@@ -40,7 +75,7 @@ function update(self, dt)
 
         if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
             self.meta.marker = nil
-            self.body:setLinearVelocity(0, 0)
+            -- self.body:setLinearVelocity(0, 0)
         else
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
@@ -94,12 +129,10 @@ function update(self, dt)
             table.remove(self.effects, i)
         end
     end
-
-    self.charUpdate(self)
 end
 
 function draw(self)
-    -- draw line from me to marker
+    -- draw line to marker
     if debug() then
         love.graphics.setColor(0.6, 0.6, 0.6)
         if self.meta.marker then
@@ -109,6 +142,17 @@ function draw(self)
             )
         end
     end
+
+    -- draw line to targeted enemy
+    -- if debug() then
+    --     love.graphics.setColor(self.team == 1 and 1 or 0, self.team == 2 and 1 or 0, 0)
+    --     if self.target ~= nil and self.target.body ~= nil then
+    --         love.graphics.line(
+    --             self.body:getX(), self.body:getY(),
+    --             self.target.body:getX(), self.target.body:getY()
+    --         )
+    --     end
+    -- end
 
     -- draw each effect
     for _, effect in pairs(self.effects) do

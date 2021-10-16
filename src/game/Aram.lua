@@ -25,7 +25,7 @@ function Aram.new()
 
     aram.timers = {
         minionSpawn = {
-            cd = 5,
+            cd = 10,
             last = 0,
             run = spawnMinions
         },
@@ -55,8 +55,8 @@ function update(self, dt)
     for i, npc in ipairs(state.npcs) do
         if npc.meta.hp <= 0 then
             table.remove(state.npcs, i)
+            npc.body:release()
         end
-        debug(#state.npcs)
     end
 
     -- run timers
@@ -79,9 +79,17 @@ end
 function draw(self) end
 
 function spawnMinions()
+    -- spawn team 1 minions
     for i = 1, 5, 1 do
         table.insert(state.npcs,
-            Minion.new(-10 * i, 100, math.random(300), {x = 1400, y = 100})
+            Minion.new(2000 - 10 * i, 100, math.random(300), {x = 0, y = 100}, 1)
+        )
+    end
+
+    -- spawn team 2 minions
+    for i = 1, 5, 1 do
+        table.insert(state.npcs,
+            Minion.new(-400 - 10 * i, 100, math.random(300), {x = 1400, y = 100}, 2)
         )
     end
 end

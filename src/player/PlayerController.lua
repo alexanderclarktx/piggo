@@ -44,7 +44,7 @@ function draw(self)
     if self.hovering then
         love.graphics.setColor(0.7, 0.2, 0.2)
         love.graphics.setLineWidth(4)
-        love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
+        -- love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
         love.graphics.setLineWidth(1)
     end
 
