@@ -55,7 +55,7 @@ function update(self, dt)
     for i, npc in ipairs(state.npcs) do
         if npc.meta.hp <= 0 then
             table.remove(state.npcs, i)
-            npc.body:release()
+            npc.body:destroy()
         end
     end
 
