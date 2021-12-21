@@ -7,9 +7,9 @@ local cast, update, draw
 
 local rgb = {
     {1, 0, 0, debug() and 0.3 or 0.6},
-    {1, 1, 0, debug() and 0.3 or 0.6},
-    {0, 1, 0, debug() and 0.3 or 0.6},
-    {0, 1, 1, debug() and 0.3 or 0.6},
+    -- {1, 1, 0, debug() and 0.3 or 0.6},
+    -- {0, 1, 0, debug() and 0.3 or 0.6},
+    -- {0, 1, 1, debug() and 0.3 or 0.6},
 }
 
 function SionAxe.new()

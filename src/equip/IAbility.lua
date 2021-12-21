@@ -2,9 +2,11 @@ local IAbility = {}
 
 local update, draw
 
-function IAbility.new(abilityName) return IAbility.new(abilityName, cast, update, draw, 100) end
+-- function IAbility.new(abilityName) return IAbility.new(abilityName, cast, update, draw, 10) end
 
 function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abilityCd)
+    assert(abilityDraw)
+    assert(abilityCd)
     local iAbility = {
         cast = cast, update = update, draw = draw,
 
@@ -17,6 +19,7 @@ function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abil
     assert(iAbility.update)
     assert(iAbility.draw)
     assert(iAbility.cd)
+    assert(iAbility.dt)
 
     return iAbility
 end
@@ -26,12 +29,18 @@ function cast(self, character)
 
     -- cd check
     if self.dt >= self.cd then
-        debug("casting " .. self.name)
+        debug("CAST " .. self.name)
         self:abilityCast(character)
+    else
+        debug("CASTCD " .. self.name)
     end
+
+    -- reset time delta
+    self.dt = 0
 end
 
 function update(self, dt)
+    self.dt = self.dt + dt / 1000.0
     -- self.abilityUpdate(self)
 end
 
