@@ -1,16 +1,9 @@
 local ICharacter = require 'src.character.ICharacter'
-local ShapeUtils = require 'src.util.ShapeUtils'
+local SionAxe = require 'src.equip.SionAxe'
 
 local Sion = {}
 
-local update, draw, sionQ, sionW, sionE, sionR
-
-local qColors = {
-    {1, 0, 0, debug() and 0.3 or 0.6},
-    {1, 1, 0, debug() and 0.3 or 0.6},
-    {0, 1, 0, debug() and 0.3 or 0.6},
-    {0, 1, 1, debug() and 0.3 or 0.6},
-}
+local update, draw, sionW, sionE, sionR
 
 local image = love.graphics.newArrayImage({
     "res/skelly/skelly1.png",
@@ -21,18 +14,26 @@ local image = love.graphics.newArrayImage({
 function Sion.new(x, y, hp)
     assert(hp > 0, x >= 0, y >= 0)
 
+    local sionAxe = SionAxe.new()
+
     local sion = ICharacter.new(
         update, draw,
         x, y, hp, 1000, 400, 20,
         {
-            q = {run = sionQ, cd = 0, dt = 1,
-                charges = 4, maxCharges = 4, chargeCd = 1, chargeDt = 0
-            },
+            q = sionAxe,
+            -- {cd = 0, dt = 1,
+            -- -- q = {run = sionQ, cd = 0, dt = 1,
+            --     charges = 4, maxCharges = 4, chargeCd = 1, chargeDt = 0
+            -- },
             w = {run = sionW, cd = 4, dt = 4},
             e = {run = sionE, cd = 3, dt = 3},
             r = {run = sionR, cd = 5, dt = 5}
         }
     )
+
+    sion.qItem = SionAxe.new()
+    -- sion.abilities.q.run = sion.qItemrun
+
     sion.frame = 1
     sion.frameLast = 0
     sion.framecd = 0.13
@@ -66,61 +67,9 @@ function draw(self)
     )
 end
 
-function sionQ(self)
-    if self.abilities.q.dt <= self.abilities.q.cd then return end
-    if self.abilities.q.charges <= 0 then return end
-    self.abilities.q.dt = 0
-    self.abilities.q.charges = self.abilities.q.charges - 1
-
-    -- calculate axe orientation
-    local xdiff = state.camera.mx - self.body:getX()
-    local ydiff = state.camera.my - self.body:getY()
-    local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-    local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
-
-    table.insert(self.effects, {
-        name = "Axe",
-        drawable = true,
-        color = qColors[math.random(#qColors)],
-        duration = 0.5,
-        dt = 0,
-        hitboxDistance = 200,
-        hitboxAngle = math.pi/8,
-        hitboxStyle = "line",
-        xRatio = xRatio,
-        yRatio = yRatio,
-        segments = {
-            {
-                time = 0.45,
-                done = false,
-                run = function(self, me, effect)
-                    effect.hitboxStyle = "fill"
-
-                    -- damage
-                    me:submitHurtboxPoly("axe", 100, effect.hitboxPoints)
-                end
-            }
-        },
-        draw = function(self, me)
-            -- first point is on edge of character
-            local p1 = {me.body:getX() + me.meta.size * self.xRatio, me.body:getY() + me.meta.size * self.yRatio}
-
-            -- outer points of triangle
-            local p2 = ShapeUtils.rotate({self.xRatio, self.yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
-            local p3 = ShapeUtils.rotate({self.xRatio, self.yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
-
-            -- draw axe triangle
-            love.graphics.setColor(unpack(self.color))
-            love.graphics.polygon(self.hitboxStyle, {
-                p1[1], p1[2],
-                p2[1], p2[2],
-                p3[1], p3[2]
-            })
-
-            self.hitboxPoints = {p1[1], p1[2], p2[1], p2[2], p3[1], p3[2]}
-        end
-    })
-end
+-- function sionQ(self)
+    
+-- end
 
 function sionW(me)
     if me.abilities.w.dt < me.abilities.w.cd then return end

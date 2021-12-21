@@ -96,7 +96,7 @@ function update(self, dt)
 
     -- increment ability dt
     for i, ability in pairs(self.abilities) do
-        ability.dt = ability.dt + dt
+        ability.dt = ability.dt + self.dt
 
         -- handle abilities with charges
         if ability.charges and ability.maxCharges then
@@ -120,7 +120,7 @@ function update(self, dt)
 
         for _, segment in pairs(effect.segments) do
             if not segment.done and segment.time <= effect.dt then
-                segment:run(self, effect)
+                segment:cast(self, effect)
                 segment.done = true
             end
         end

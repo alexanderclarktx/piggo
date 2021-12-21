@@ -2,13 +2,13 @@ local Gui = require 'src.ui.Gui'
 local PlayerController = require 'src.player.PlayerController'
 local DamageController = require 'src.game.DamageController'
 
-local iGame = {}
+local IGame = {}
 
 local load, update, draw, keypressed
 
--- iGame is a baseclass for all games, controlling game logic, gui, player interfaces
+-- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
-function iGame.new(gameLoad, gameUpdate, gameDraw)
+function IGame.new(gameLoad, gameUpdate, gameDraw)
     assert(gameLoad, gameUpdate, gameDraw, state, state.players[1])
 
     local gui = Gui.new(state.players[1])
@@ -95,4 +95,4 @@ function keypressed(self, key, scancode, isrepeat)
     self.playerController:handleKeyPressed(key, scancode, isrepeat)
 end
 
-return iGame
+return IGame

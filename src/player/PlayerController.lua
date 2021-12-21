@@ -61,25 +61,25 @@ function handleKeyPressed(self, key, scancode, isrepeat)
         love.event.quit()
     end
     if key == "q" then
-        state.players[1].character.abilities.q.run(
+        state.players[1].character.abilities.q:cast(
             state.players[1].character
         )
     end
-    if key == "w" then
-        state.players[1].character.abilities.w.run(
-            state.players[1].character
-        )
-    end
-    if key == "e" then
-        state.players[1].character.abilities.e:run(
-            state.players[1].character
-        )
-    end
-    if key == "r" then
-        state.players[1].character.abilities.r:run(
-            state.players[1].character
-        )
-    end
+    -- if key == "w" then
+    --     state.players[1].character.abilities.w:cast(
+    --         state.players[1].character
+    --     )
+    -- end
+    -- if key == "e" then
+    --     state.players[1].character.abilities.e:cast(
+    --         state.players[1].character
+    --     )
+    -- end
+    -- if key == "r" then
+    --     state.players[1].character.abilities.r:cast(
+    --         state.players[1].character
+    --     )
+    -- end
     if key == "s" then
         state.players[1].character.meta.marker = nil
         state.players[1].character.body:setLinearVelocity(0, 0)
