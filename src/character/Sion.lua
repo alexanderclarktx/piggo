@@ -17,6 +17,8 @@ local image = love.graphics.newArrayImage({
 function Sion.new(x, y, hp)
     assert(hp > 0, x >= 0, y >= 0)
 
+    local sionAxe = SionAxe.new()
+
     local sion = ICharacter.new(
         update, draw,
         x, y, hp, 1000, 400, 20,

@@ -52,15 +52,15 @@ function drawConsole(player)
 
     -- ability outlines
     drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    -- drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    -- drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    -- drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- cooldown indicators
     drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    -- drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    -- drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    -- drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.9, .9, .2)
