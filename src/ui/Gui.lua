@@ -52,15 +52,15 @@ function drawConsole(player)
 
     -- ability outlines
     drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    -- drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    -- drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    -- drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- cooldown indicators
     drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    -- drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    -- drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    -- drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
+    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
+    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.9, .9, .2)
@@ -73,8 +73,8 @@ function drawConsole(player)
     love.graphics.setColor(.2, .9, .9)
     drawCharges(player.character.abilities.q, q.x + 18, q.y + 30)
     drawCharges(player.character.abilities.w, w.x + 18, w.y + 30)
-    drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
-    drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
+    -- drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
+    -- drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
 end
 
 function drawCharges(ability, x, y)
@@ -87,7 +87,7 @@ function drawCharges(ability, x, y)
 end
 
 function drawAbilityBackground(x, y)
-    love.graphics.setColor(0, 0, 0)
+    love.graphics.setColor(1, 1, 1, 0.5)
     love.graphics.rectangle("fill", x, y, boxWidth, boxHeight)
 end
 
@@ -101,6 +101,7 @@ function drawAbilityOutline(x, y, dt, cd)
 end
 
 function drawCooldownIndicator(x, y, width, height, dt, cd)
+    local dt = dt / 1000.0
     if dt < cd then
         love.graphics.setColor(.3, .3, .3)
         love.graphics.stencil(function() DrawUtils.drawBox(x, y, width, height) end)

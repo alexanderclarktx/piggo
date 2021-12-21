@@ -37,7 +37,7 @@ end
 function load(self)
     -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
     -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
-    love.graphics.setBackgroundColor(0.2, 0.15, 0.3)
+    love.graphics.setBackgroundColor(0.05, 0.05, 0.15)
 
     -- create the terrain
     spawnTerrain()

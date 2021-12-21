@@ -22,7 +22,7 @@ end
 
 function draw(self)
     -- draw terrain
-    love.graphics.setColor(0.4, 0.2, 0.15)
+    love.graphics.setColor(0.85, 0.65, 0.4, 0.3)
     love.graphics.polygon("fill", self.body:getWorldPoints(unpack(self.poly)))
 
     -- draw terrain outlines

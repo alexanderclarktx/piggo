@@ -29,6 +29,8 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         body = body, fixture = fixture,
         team = 2, -- TODO
         target = nil,
+        color = {0.7, 0.5, 0},
+        defaultColor = {0.7, 0.5, 0},
         range = 50, ranged = false
     }
 end
