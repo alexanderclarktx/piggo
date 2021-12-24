@@ -20,7 +20,8 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
     return {
         meta = {
             hp = hp, maxhp = maxhp, speed = speed, size = size,
-            canMove = true, marker = nil
+            canMove = true, marker = nil,
+            speedfactor = 1,
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
@@ -82,8 +83,8 @@ function update(self, dt)
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-            local xComponent = self.meta.speed * xRatio
-            local yComponent = self.meta.speed * yRatio
+            local xComponent = self.meta.speed * self.meta.speedfactor * xRatio
+            local yComponent = self.meta.speed * self.meta.speedfactor * yRatio
 
             self.body:setLinearVelocity(xComponent, yComponent)
         end

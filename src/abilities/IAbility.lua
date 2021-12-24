@@ -5,8 +5,6 @@ local update, draw
 -- function IAbility.new(abilityName) return IAbility.new(abilityName, cast, update, draw, 10) end
 
 function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abilityCd)
-    assert(abilityDraw)
-    assert(abilityCd)
     local iAbility = {
         cast = cast, update = update, draw = draw,
 

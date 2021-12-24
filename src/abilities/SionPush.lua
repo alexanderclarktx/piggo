@@ -44,16 +44,7 @@ function cast(self, character)
                 end
             }
         },
-        draw = function(self, me)
-            love.graphics.setColor(
-                self.push.color.r,
-                self.push.color.g - self.push.color.g * self.dt / self.duration,
-                self.push.color.b - self.push.color.b * self.dt / self.duration
-            )
-            love.graphics.setLineWidth(self.push.width)
-            love.graphics.circle("line", character.body:getX(), character.body:getY(), character.meta.size + self.push.radius)
-            love.graphics.setLineWidth(1)
-        end
+        draw = function(self, me) end
     })
 end
 

@@ -22,14 +22,20 @@ function cast(self, character)
         dt = 0,
         segments = {
             {
-                time = 2,
+                time = 0,
+                done = false,
+                cast = function(self, me)
+                    character.meta.speedfactor = 4
+                end
+            },
+            {
+                time = 1.8,
                 done = false,
                 cast = function(self, me)
                     me:submitHurtboxCircle("Ulti", 9999999, character.body:getX(), character.body:getY(), 500)
-                    debug("ulti ended")
                     character.meta.hp = character.meta.hp + 150
                     character.color = character.defaultColor
-                    
+                    character.meta.speedfactor = 1
                 end
             }
         },
@@ -52,7 +58,9 @@ function cast(self, character)
 end
 
 function update(self, dt)
-
+    if collision then
+        
+    end
 end
 
 function draw()
