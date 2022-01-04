@@ -101,7 +101,6 @@ function drawAbilityOutline(x, y, dt, cd)
 end
 
 function drawCooldownIndicator(x, y, width, height, dt, cd)
-    local dt = dt / 1000.0
     if dt < cd then
         love.graphics.setColor(.3, .3, .3)
         love.graphics.stencil(function() DrawUtils.drawBox(x, y, width, height) end)
