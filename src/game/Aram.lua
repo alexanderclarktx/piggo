@@ -4,6 +4,7 @@ local Player = require 'src.player.Player'
 local GameState = require 'src.game.GameState'
 local IGame = require 'src.game.IGame'
 local Terrain = require 'src.game.Terrain'
+local AramMenu = require 'src.ui.AramMenu'
 
 local Aram = {}
 
@@ -35,9 +36,15 @@ function Aram.new()
 end
 
 function load(self)
+
+    -- if state.scene = "GAME" then
+        -- load the menu
+    --     state.menu = AramMenu.new()
+    -- else
+
     -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
     -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
-    love.graphics.setBackgroundColor(0.2, 0.15, 0.3)
+    love.graphics.setBackgroundColor(0.05, 0.05, 0.15)
 
     -- create the terrain
     spawnTerrain()
@@ -55,7 +62,7 @@ function update(self, dt)
     for i, npc in ipairs(state.npcs) do
         if npc.meta.hp <= 0 then
             table.remove(state.npcs, i)
-            npc.body:release()
+            npc.body:destroy()
         end
     end
 

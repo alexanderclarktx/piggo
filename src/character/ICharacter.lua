@@ -13,14 +13,16 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
     assert(speed ~= nil and speed > 0)
     assert(size ~= nil and size > 0)
     assert(abilities ~= nil)
+    -- TODO if #abilities then assert(abilities.q)
 
     local body = love.physics.newBody(state.world, x, y, "dynamic")
     local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))
 
-    return {
+    local character = {
         meta = {
             hp = hp, maxhp = maxhp, speed = speed, size = size,
-            canMove = true, marker = nil
+            canMove = true, marker = nil,
+            speedfactor = 1,
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
@@ -29,8 +31,14 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         body = body, fixture = fixture,
         team = 2, -- TODO
         target = nil,
+        color = {0.7, 0.5, 0},
+        defaultColor = {0.7, 0.5, 0},
         range = 50, ranged = false
     }
+
+    if #abilities then assert(character.abilities) end
+
+    return character
 end
 
 function update(self, dt)
@@ -80,8 +88,8 @@ function update(self, dt)
             local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
             local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 
-            local xComponent = self.meta.speed * xRatio
-            local yComponent = self.meta.speed * yRatio
+            local xComponent = self.meta.speed * self.meta.speedfactor * xRatio
+            local yComponent = self.meta.speed * self.meta.speedfactor * yRatio
 
             self.body:setLinearVelocity(xComponent, yComponent)
         end
@@ -94,24 +102,9 @@ function update(self, dt)
         self.facingRight = 1
     end
 
-    -- increment ability dt
+    -- update each ability
     for i, ability in pairs(self.abilities) do
-        ability.dt = ability.dt + dt
-
-        -- handle abilities with charges
-        if ability.charges and ability.maxCharges then
-
-            -- recharge
-            if ability.chargeDt >= ability.chargeCd then
-                ability.charges = ability.charges + 1
-                ability.chargeDt = 0
-            end
-
-            -- increment chargeDt if not at max
-            if ability.charges < ability.maxCharges then
-                ability.chargeDt = ability.chargeDt + dt
-            end
-        end
+        ability:update(dt)
     end
 
     -- update each effect
@@ -120,7 +113,7 @@ function update(self, dt)
 
         for _, segment in pairs(effect.segments) do
             if not segment.done and segment.time <= effect.dt then
-                segment:run(self, effect)
+                segment:cast(self, effect)
                 segment.done = true
             end
         end

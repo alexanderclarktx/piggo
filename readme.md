@@ -64,3 +64,4 @@ A 2D multiplayer online battle arena
 * movement and ability targeting is not honoring pythagoras
   * characters move faster in cardinal directions than diagonally
   * abilities are longer when facing cardinal directions
+* camera position not handling window resize

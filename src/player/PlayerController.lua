@@ -44,7 +44,9 @@ function draw(self)
     if self.hovering then
         love.graphics.setColor(0.7, 0.2, 0.2)
         love.graphics.setLineWidth(4)
-        -- love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
+        if not self.hovering.body:isDestroyed() then
+            love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
+        end
         love.graphics.setLineWidth(1)
     end
 
@@ -59,22 +61,22 @@ function handleKeyPressed(self, key, scancode, isrepeat)
         love.event.quit()
     end
     if key == "q" then
-        state.players[1].character.abilities.q.run(
+        state.players[1].character.abilities.q:cast(
             state.players[1].character
         )
     end
     if key == "w" then
-        state.players[1].character.abilities.w.run(
+        state.players[1].character.abilities.w:cast(
             state.players[1].character
         )
     end
     if key == "e" then
-        state.players[1].character.abilities.e:run(
+        state.players[1].character.abilities.e:cast(
             state.players[1].character
         )
     end
     if key == "r" then
-        state.players[1].character.abilities.r:run(
+        state.players[1].character.abilities.r:cast(
             state.players[1].character
         )
     end
