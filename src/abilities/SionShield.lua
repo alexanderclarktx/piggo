@@ -1,4 +1,4 @@
-local IAbility = require 'src.equip.IAbility'
+local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
 local SionShield = {}

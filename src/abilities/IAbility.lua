@@ -29,21 +29,36 @@ function cast(self, character)
     if self.dt >= self.cd then
         debug("CAST " .. self.name)
         self:abilityCast(character)
+
+        -- reset time delta
+        self.dt = 0
     else
         debug("CASTCD " .. self.name)
     end
-
-    -- reset time delta
-    self.dt = 0
 end
 
 function update(self, dt)
-    self.dt = self.dt + dt / 1000.0
-    -- self.abilityUpdate(self)
+    self.dt = self.dt + dt
+    self.abilityUpdate(self)
+
+    -- handle abilities with charges
+    if self.charges and self.maxCharges then
+
+        -- recharge
+        if self.chargeDt >= self.chargeCd then
+            self.charges = self.charges + 1
+            self.chargeDt = 0
+        end
+
+        -- increment chargeDt if not at max
+        if self.charges < self.maxCharges then
+            self.chargeDt = self.chargeDt + dt
+        end
+    end
 end
 
 function draw(self)
-    -- self.abilityDraw(self)
+    self.abilityDraw(self)
 end
 
 return IAbility

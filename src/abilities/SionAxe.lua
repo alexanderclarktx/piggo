@@ -1,4 +1,4 @@
-local IAbility = require 'src.equip.IAbility'
+local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
 local SionAxe = {}
@@ -12,6 +12,7 @@ local rgb = {
     -- {0, 1, 1, debug() and 0.3 or 0.6},
 }
 
+-- hold down to charge; release for AoE stun and damage
 function SionAxe.new()
     local sionAxe = IAbility.new("Sion Axe", cast, update, draw, 2)
 
@@ -29,7 +30,7 @@ function cast(self, character)
 
     if self.dt <= self.cd then return end
     if self.charges <= 0 then return end
-    self.dt = 0
+    -- self.dt = 0
     self.charges = self.charges - 1
 
     -- calculate axe orientation

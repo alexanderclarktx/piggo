@@ -1,8 +1,8 @@
 local ICharacter = require 'src.character.ICharacter'
-local SionAxe = require 'src.equip.SionAxe'
-local SionShield = require 'src.equip.SionShield'
-local SionPush = require 'src.equip.SionPush'
-local SionUlti = require 'src.equip.SionUlti'
+local SionAxe = require 'src.abilities.SionAxe'
+local SionShield = require 'src.abilities.SionShield'
+local SionPush = require 'src.abilities.SionPush'
+local SionUlti = require 'src.abilities.SionUlti'
 
 local Sion = {}
 
@@ -16,8 +16,6 @@ local image = love.graphics.newArrayImage({
 
 function Sion.new(x, y, hp)
     assert(hp > 0, x >= 0, y >= 0)
-
-    local sionAxe = SionAxe.new()
 
     local sion = ICharacter.new(
         update, draw,

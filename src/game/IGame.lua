@@ -25,7 +25,12 @@ end
 
 function load(self)
     -- initialize game loop
-    self.gameLoad(self)
+    self:gameLoad()
+
+    assert(#state.players >= 1)
+    -- assert(state.menu)
+    assert(state.camera)
+    assert(state.world)
 end
 
 function update(self, dt)
@@ -59,6 +64,10 @@ function update(self, dt)
         state.players[1].character.body:getY()
     )
     state.camera:update(dt)
+
+    -- update the menu if we're in one
+    -- TODO need a single state controller
+    -- state.menu:update(dt)
 end
 
 function draw(self)
@@ -89,6 +98,10 @@ function draw(self)
 
     -- draw the GUI
     self.gui:draw()
+
+    -- draw the menu if we're in one
+    -- TODO above
+    -- state.menu:draw()
 end
 
 function keypressed(self, key, scancode, isrepeat)

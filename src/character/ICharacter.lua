@@ -13,11 +13,12 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
     assert(speed ~= nil and speed > 0)
     assert(size ~= nil and size > 0)
     assert(abilities ~= nil)
+    -- TODO if #abilities then assert(abilities.q)
 
     local body = love.physics.newBody(state.world, x, y, "dynamic")
     local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))
 
-    return {
+    local character = {
         meta = {
             hp = hp, maxhp = maxhp, speed = speed, size = size,
             canMove = true, marker = nil,
@@ -34,6 +35,10 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
         defaultColor = {0.7, 0.5, 0},
         range = 50, ranged = false
     }
+
+    if #abilities then assert(character.abilities) end
+
+    return character
 end
 
 function update(self, dt)
@@ -97,24 +102,9 @@ function update(self, dt)
         self.facingRight = 1
     end
 
-    -- increment ability dt
+    -- update each ability
     for i, ability in pairs(self.abilities) do
-        ability.dt = ability.dt + self.dt
-
-        -- handle abilities with charges
-        if ability.charges and ability.maxCharges then
-
-            -- recharge
-            if ability.chargeDt >= ability.chargeCd then
-                ability.charges = ability.charges + 1
-                ability.chargeDt = 0
-            end
-
-            -- increment chargeDt if not at max
-            if ability.charges < ability.maxCharges then
-                ability.chargeDt = ability.chargeDt + dt
-            end
-        end
+        ability:update(dt)
     end
 
     -- update each effect
