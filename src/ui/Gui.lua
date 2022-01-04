@@ -73,8 +73,8 @@ function drawConsole(player)
     love.graphics.setColor(.2, .9, .9)
     drawCharges(player.character.abilities.q, q.x + 18, q.y + 30)
     drawCharges(player.character.abilities.w, w.x + 18, w.y + 30)
-    -- drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
-    -- drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
+    drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
+    drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
 end
 
 function drawCharges(ability, x, y)
