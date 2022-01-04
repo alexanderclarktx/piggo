@@ -63,8 +63,6 @@ function update(self, dt)
     end
 end
 
-function draw()
-
-end
+function draw(self) end
 
 return SionUlti

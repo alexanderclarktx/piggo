@@ -60,12 +60,8 @@ function cast(self, character)
     })
 end
 
-function update(self, dt)
+function update(self, dt) end
 
-end
-
-function draw()
-
-end
+function draw(self) end
 
 return SionShield

@@ -5,13 +5,6 @@ local SionAxe = {}
 
 local cast, update, draw
 
-local rgb = {
-    {1, 0, 0, debug() and 0.3 or 0.6},
-    -- {1, 1, 0, debug() and 0.3 or 0.6},
-    -- {0, 1, 0, debug() and 0.3 or 0.6},
-    -- {0, 1, 1, debug() and 0.3 or 0.6},
-}
-
 -- hold down to charge; release for AoE stun and damage
 function SionAxe.new()
     local sionAxe = IAbility.new("Sion Axe", cast, update, draw, 2)
@@ -42,7 +35,7 @@ function cast(self, character)
     table.insert(character.effects, {
         name = "Axe",
         drawable = true,
-        color = rgb[math.random(#rgb)],
+        color = {1, 0, 0, debug() and 0.3 or 0.6},
         duration = 0.5,
         dt = 0,
         hitboxDistance = 200,
@@ -83,14 +76,8 @@ function cast(self, character)
     })
 end
 
-function update(self, dt)
+function update(self, dt) end
 
-end
+function draw(self) end
 
-function draw(self)
-
-end
-
--- character q --> myItems[q].cast()
--- character w --> myItems[w].cast()
 return SionAxe
