@@ -1,5 +1,5 @@
 local Minion = require 'src.character.Minion'
-local Sion = require 'src.character.Sion'
+local Skelly = require 'src.character.Skelly'
 local Player = require 'src.player.Player'
 local GameState = require 'src.game.GameState'
 local IGame = require 'src.game.IGame'
@@ -19,7 +19,7 @@ function Aram.new()
 
     -- spawn the main player
     table.insert(state.players,
-        Player.new("player1", Sion.new(500, 250, 500))
+        Player.new("player1", Skelly.new(500, 250, 500))
     )
 
     local aram = IGame.new(load, update, draw, state)
