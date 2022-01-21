@@ -1,10 +1,10 @@
 local ICharacter = require 'src.character.ICharacter'
-local SionAxe = require 'src.abilities.SionAxe'
-local SionShield = require 'src.abilities.SionShield'
-local SionPush = require 'src.abilities.SionPush'
-local SionUlti = require 'src.abilities.SionUlti'
+local SkellyAxe = require 'src.abilities.SkellyAxe'
+local SkellyShield = require 'src.abilities.SkellyShield'
+local SkellyPush = require 'src.abilities.SkellyPush'
+local SkellyUlti = require 'src.abilities.SkellyUlti'
 
-local Sion = {}
+local Skelly = {}
 
 local update, draw
 
@@ -14,26 +14,26 @@ local image = love.graphics.newArrayImage({
     "res/skelly/skelly3.png",
 })
 
-function Sion.new(x, y, hp)
+function Skelly.new(x, y, hp)
     assert(hp > 0, x >= 0, y >= 0)
 
-    local sion = ICharacter.new(
+    local skelly = ICharacter.new(
         update, draw,
         x, y, hp, 1000, 400, 20,
         {
-            q = SionAxe.new(),
-            w = SionShield.new(),
-            e = SionPush.new(),
-            r = SionUlti.new(),
+            q = SkellyAxe.new(),
+            w = SkellyShield.new(),
+            e = SkellyPush.new(),
+            r = SkellyUlti.new(),
         }
     )
 
-    sion.frame = 1
-    sion.frameLast = 0
-    sion.framecd = 0.13
+    skelly.frame = 1
+    skelly.frameLast = 0
+    skelly.framecd = 0.13
     image:setFilter("nearest", "nearest")
 
-    return sion
+    return skelly
 end
 
 function update(self, dt)
@@ -52,7 +52,7 @@ function draw(self)
         frameToDraw = 1
     end
 
-    -- draw sion
+    -- draw skelly
     assert(self.color)
     love.graphics.setColor(self.color[1], self.color[2], self.color[3])
     love.graphics.drawLayer(
@@ -62,4 +62,4 @@ function draw(self)
     )
 end
 
-return Sion
+return Skelly

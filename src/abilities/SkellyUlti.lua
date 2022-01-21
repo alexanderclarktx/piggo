@@ -1,16 +1,16 @@
 local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local SionUlti = {}
+local SkellyUlti = {}
 
 local cast, update, draw
 
 local rgb = {1, 0, 0, debug() and 0.3 or 0.6}
 
-function SionUlti.new()
-    local sionUlti = IAbility.new("Sion Ulti", cast, update, draw, 10)
+function SkellyUlti.new()
+    local skellyUlti = IAbility.new("Skelly Ulti", cast, update, draw, 10)
 
-    return sionUlti
+    return skellyUlti
 end
 
 function cast(self, character)
@@ -58,11 +58,11 @@ function cast(self, character)
 end
 
 function update(self, dt)
-    if collision then
+    if colliskelly then
         
     end
 end
 
 function draw(self) end
 
-return SionUlti
+return SkellyUlti

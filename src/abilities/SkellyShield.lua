@@ -1,16 +1,16 @@
 local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local SionShield = {}
+local SkellyShield = {}
 
 local cast, update, draw
 
 local rgb = {1, 0, 0, debug() and 0.3 or 0.6}
 
-function SionShield.new()
-    local sionShield = IAbility.new("Sion Shield", cast, update, draw, 2)
+function SkellyShield.new()
+    local skellyShield = IAbility.new("Skelly Shield", cast, update, draw, 2)
 
-    return sionShield
+    return skellyShield
 end
 
 function cast(self, character)
@@ -64,4 +64,4 @@ function update(self, dt) end
 
 function draw(self) end
 
-return SionShield
+return SkellyShield
