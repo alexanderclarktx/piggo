@@ -8,7 +8,7 @@ local defaultPort = 12345
 -- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
 function Server.new(port)
     local udp = socket.udp()
-    udp:settimeout(0) -- don't block
+    udp:settimeout(0)
     udp:setsockname("*", port or defaultPort)
 
     local server = {
@@ -26,6 +26,5 @@ function update(self, dt)
         debug(data, msgOrIp, portOrNil)
     end
 end
--- ApplicationController
 
 return Server
