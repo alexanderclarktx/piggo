@@ -1,20 +1,20 @@
 local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local SionAxe = {}
+local SkellyAxe = {}
 
 local cast, update, draw
 
 -- hold down to charge; release for AoE stun and damage
-function SionAxe.new()
-    local sionAxe = IAbility.new("Sion Axe", cast, update, draw, 2)
+function SkellyAxe.new()
+    local skellyAxe = IAbility.new("Skelly Axe", cast, update, draw, 2)
 
-    sionAxe.charges = 4
-    sionAxe.maxCharges = 4
-    sionAxe.chargeCd = 1
-    sionAxe.chargeDt = 0
+    skellyAxe.charges = 4
+    skellyAxe.maxCharges = 4
+    skellyAxe.chargeCd = 1
+    skellyAxe.chargeDt = 0
 
-    return sionAxe
+    return skellyAxe
 end
 
 function cast(self, character)
@@ -80,4 +80,4 @@ function update(self, dt) end
 
 function draw(self) end
 
-return SionAxe
+return SkellyAxe

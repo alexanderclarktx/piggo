@@ -1,16 +1,16 @@
 local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local SionPush = {}
+local SkellyPush = {}
 
 local cast, update, draw
 
 local rgb = {1, 0, 0, debug() and 0.3 or 0.6}
 
-function SionPush.new()
-    local sionPush = IAbility.new("Sion Push", cast, update, draw, 2)
+function SkellyPush.new()
+    local skellyPush = IAbility.new("Skelly Push", cast, update, draw, 2)
 
-    return sionPush
+    return skellyPush
 end
 
 function cast(self, character)
@@ -52,4 +52,4 @@ function update(self, dt) end
 
 function draw(self) end
 
-return SionPush
+return SkellyPush
