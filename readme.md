@@ -1,4 +1,4 @@
-# Piggo ARAM
+# Piggo
 
 A 2D multiplayer online battle arena
 
