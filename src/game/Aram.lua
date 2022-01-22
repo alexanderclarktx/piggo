@@ -6,6 +6,7 @@ local GameState = require 'src.game.GameState'
 local IGame = require 'src.game.IGame'
 local Terrain = require 'src.game.Terrain'
 
+
 local load, update, draw, spawnMinions, spawnTerrain
 
 -- rules:
@@ -20,7 +21,7 @@ function Aram.new()
         Player.new("player1", Skelly.new(500, 250, 500))
     )
 
-    local aram = IGame.new(update, draw, state)
+    local aram = IGame.new(load, update, draw, state)
 
     aram.timers = {
         minionSpawn = {
@@ -29,10 +30,6 @@ function Aram.new()
             run = spawnMinions
         },
     }
-
-    aram.load = load
-
-    aram:load()
 
     return aram
 end
@@ -49,8 +46,8 @@ function load(self)
     spawnMinions()
 
     -- fade in the camera
-    state.camera.fade_color = {0, 0, 0, 0.6}
-    state.camera:fade(1.5, {0, 0, 0, 0})
+    state.camera.fade_color = {0, 0, 0, 1}
+    state.camera:fade(3, {0, 0, 0, 0})
 end
 
 function update(self, dt)

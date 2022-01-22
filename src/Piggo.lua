@@ -20,7 +20,9 @@ function Piggo.new()
     return piggo
 end
 
-function load(self) end
+function load(self)
+    self.state.scenes[self.state.currentScene]:load()
+end
 
 function update(self, dt)
     self.state.scenes[self.state.currentScene]:update(dt)
@@ -35,9 +37,10 @@ function handleKeyPressed(self, key, scancode, isrepeat)
 end
 
 function setScene(self, scene)
-    assert(scene and scene <= #self.state.scenes)
+    assert(scene and scene <= #self.state.scenes and scene ~= self.state.currentScene)
 
     love.graphics.setNewFont(12)
+    self.state.scenes[scene]:load()
     self.state.currentScene = scene
 end
 

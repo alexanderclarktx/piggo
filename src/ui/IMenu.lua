@@ -1,35 +1,21 @@
 local IMenu = {}
 local ShapeUtils = require "src.util.ShapeUtils"
 
-local update, draw, handleKeyPressed
-local addText
+local load, update, draw, handleKeyPressed
+local addText, addTexture, addButton
 
 function IMenu.new(fonts)
     assert(fonts)
 
     -- attach methods for generic buttons/text/inputs
     local menu = {
-        update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        load = load, update = update, draw = draw, handleKeyPressed = handleKeyPressed,
         addText = addText, addTexture = addTexture, addButton = addButton,
         texts = {}, textures = {}, buttons = {},
         fonts = fonts
     }
 
     return menu
-end
-
-function addTexture()
-
-end
-
-function addButton(self, body, x, y, width, height, font, callback)
-    assert(body and x and y and width and height and font and callback)
-
-    table.insert(self.buttons, {
-        body = body, font = font,
-        x = x, y = y, width = width, height = height,
-        callback = callback
-    })
 end
 
 -- adds text to be drawn in the menu
@@ -42,6 +28,20 @@ function addText(self, body, x, y, limit, font)
         font = font
     })
 end
+
+function addTexture() end
+
+function addButton(self, body, x, y, width, height, font, callback)
+    assert(body and x and y and width and height and font and callback)
+
+    table.insert(self.buttons, {
+        body = body, font = font,
+        x = x, y = y, width = width, height = height,
+        callback = callback
+    })
+end
+
+function load(self) end
 
 function update(self, dt)
     -- check if a button was pressed
@@ -70,8 +70,8 @@ function draw(self)
     local mouseX, mouseY = love.mouse.getPosition()
 
     -- draw all textures
-    for _, each in ipairs(self.textures) do
-        -- debug(each)
+    for _, texture in ipairs(self.textures) do
+        -- debug(texture)
 
         -- love.graphics.drawLayer(
         --     image, frameToDraw,

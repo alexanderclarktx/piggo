@@ -7,15 +7,15 @@ local load, update, draw, handleKeyPressed
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
-function IGame.new(gameUpdate, gameDraw)
-    assert(gameUpdate and gameDraw and state and state.players[1])
+function IGame.new(gameLoad, gameUpdate, gameDraw)
+    assert(gameLoad and gameUpdate and gameDraw and state and state.players[1])
 
     local gui = Gui.new(state.players[1])
     local playerController = PlayerController.new()
     local damageController = DamageController.new()
 
     return {
-        gameUpdate = gameUpdate, gameDraw = gameDraw,
+        gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw,
         playerController = playerController, damageController = damageController,
         gui = gui,
@@ -23,11 +23,21 @@ function IGame.new(gameUpdate, gameDraw)
     }
 end
 
-function update(self, dt)
+function load(self)
+    self:gameLoad()
     assert(#state.players >= 1 and state.camera and state.world)
+end
 
+function update(self, dt)
     -- increment state time
     state.dt = state.dt + dt
+
+    -- camera to player
+    state.camera:follow(
+        state.players[1].character.body:getX(),
+        state.players[1].character.body:getY()
+    )
+    state.camera:update(dt)
 
     -- update player controller
     self.playerController:update(dt)
@@ -49,13 +59,6 @@ function update(self, dt)
 
     -- collisions
     state.world:update(dt)
-
-    -- camera to player
-    state.camera:follow(
-        state.players[1].character.body:getX(),
-        state.players[1].character.body:getY()
-    )
-    state.camera:update(dt)
 end
 
 function draw(self)
