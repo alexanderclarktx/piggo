@@ -1,7 +1,6 @@
+local ICharacter = {}
 local ShapeUtils = require 'src.util.shapeutils'
 local DrawUtils = require 'src.util.DrawUtils'
-
-local ICharacter = {}
 
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
 

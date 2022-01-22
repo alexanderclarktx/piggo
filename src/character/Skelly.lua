@@ -1,10 +1,9 @@
+local Skelly = {}
 local ICharacter = require 'src.character.ICharacter'
 local SkellyAxe = require 'src.abilities.SkellyAxe'
 local SkellyShield = require 'src.abilities.SkellyShield'
 local SkellyPush = require 'src.abilities.SkellyPush'
 local SkellyUlti = require 'src.abilities.SkellyUlti'
-
-local Skelly = {}
 
 local update, draw
 

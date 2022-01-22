@@ -1,12 +1,10 @@
+local Aram = {}
 local Minion = require 'src.character.Minion'
 local Skelly = require 'src.character.Skelly'
 local Player = require 'src.player.Player'
 local GameState = require 'src.game.GameState'
 local IGame = require 'src.game.IGame'
 local Terrain = require 'src.game.Terrain'
-local AramMenu = require 'src.ui.AramMenu'
-
-local Aram = {}
 
 local load, update, draw, spawnMinions, spawnTerrain
 
@@ -22,7 +20,7 @@ function Aram.new()
         Player.new("player1", Skelly.new(500, 250, 500))
     )
 
-    local aram = IGame.new(load, update, draw, state)
+    local aram = IGame.new(update, draw, state)
 
     aram.timers = {
         minionSpawn = {
@@ -32,16 +30,14 @@ function Aram.new()
         },
     }
 
+    aram.load = load
+
+    aram:load()
+
     return aram
 end
 
 function load(self)
-
-    -- if state.scene = "GAME" then
-        -- load the menu
-    --     state.menu = AramMenu.new()
-    -- else
-
     -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
     -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
     love.graphics.setBackgroundColor(0.05, 0.05, 0.15)
@@ -69,8 +65,8 @@ function update(self, dt)
     -- run timers
     for _, timer in pairs(self.timers) do
         assert(
-            timer.cd ~= nil, timer.cd > 0,
-            timer.last ~= nil, type(timer.last) == "number",
+            timer.cd ~= nil, timer.cd > 0 and
+            timer.last ~= nil, type(timer.last) == "number" and
             timer.run ~= nil, type(timer.run) == "function"
         )
         if state.dt - timer.last >= timer.cd then

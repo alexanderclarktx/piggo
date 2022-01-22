@@ -1,8 +1,7 @@
+local PlayerController = {}
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local PlayerController = {}
-
-local update, draw, handleKeypressed
+local update, draw, handleKeyPressed
 
 function PlayerController.new()
     assert(state, state.players[1])

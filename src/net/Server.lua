@@ -1,6 +1,5 @@
-local socket = require "socket"
-
 local Server = {}
+local socket = require "socket"
 
 local update
 local defaultPort = 12345

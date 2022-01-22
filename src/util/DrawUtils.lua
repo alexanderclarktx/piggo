@@ -13,6 +13,12 @@ local const = {
     }
 }
 
+-- function DrawUtils.withColor(run, r, g, b, alpha)
+--     love.graphics.setColor(r, g, b, alpha)
+--     run()
+--     love.graphics.
+-- end
+
 function DrawUtils.drawHealthbar(x, y, size, hp, maxhp)
     -- fill healthbar
     love.graphics.setColor(0.7, 0, 0)
