@@ -2,14 +2,13 @@ local MainMenu = {}
 local IMenu = require 'src.ui.IMenu'
 
 function MainMenu.new()
-    -- font for title and  button text
     local menu = IMenu.new({
         love.graphics.newFont("res/fonts/Hussar.otf", 100),
         love.graphics.newFont(25)
     })
+    local windowWidth, _ = love.graphics.getDimensions()
 
     -- title
-    local windowWidth, _ = love.graphics.getDimensions()
     menu:addText("Piggo", 0, 100, windowWidth, 1)
 
     -- start button

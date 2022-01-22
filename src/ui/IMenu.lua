@@ -55,11 +55,8 @@ function update(self, dt)
                     button.x + button.width, button.y + button.height,
                     button.x + button.width, button.y
             )
-
             if mouseIsHoveringButton then
-                -- callback
                 button.callback()
-
                 break
             end
         end
@@ -82,7 +79,7 @@ function draw(self)
 
     -- draw all buttons
     for _, button in ipairs(self.buttons) do
-        -- hovered buttons should be yellow
+        -- hovered buttons are yellow
         local mouseIsHoveringButton = ShapeUtils.pointInPolygon(mouseX, mouseY,
                 button.x, button.y,
                 button.x, button.y + button.height,
