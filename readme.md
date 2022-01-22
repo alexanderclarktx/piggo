@@ -19,23 +19,13 @@ A 2D multiplayer online battle arena
 
 #### Mechanics
 
+* end-to-end ARAM game logic
+
 * auto attacks
 
 * gold/resources
 
-* player death
-
-* collision
-
-* ability targeting
-
-* ~~terrain~~
-
-* ~~damage~~
-
-* ~~movement~~
-
-* ~~minion death~~
+* player death and respawn
 
 #### UI
 
@@ -47,17 +37,11 @@ A 2D multiplayer online battle arena
 
 * player inventory
 
-* tooltips
-
-* ~~health indicators~~
-
-* ~~ability cooldown indicators~~
+* ability tooltips
 
 ## refactors
 
 * client/server
-
-* ~~viewport/camera~~
 
 ## Bugs
 
@@ -65,3 +49,4 @@ A 2D multiplayer online battle arena
   * characters move faster in cardinal directions than diagonally
   * abilities are longer when facing cardinal directions
 * camera position not handling window resize
+* menu items not handling window resize
