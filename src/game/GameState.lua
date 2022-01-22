@@ -1,6 +1,5 @@
-local Camera = require 'lib.Camera'
-
 local GameState = {}
+local Camera = require 'lib.Camera'
 
 state = nil
 

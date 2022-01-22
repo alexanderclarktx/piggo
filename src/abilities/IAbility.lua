@@ -12,12 +12,7 @@ function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abil
         abilityCast = abilityCast, abilityUpdate = abilityUpdate, abilityDraw = abilityDraw, ability
     }
 
-    assert(iAbility.name)
-    assert(iAbility.cast)
-    assert(iAbility.update)
-    assert(iAbility.draw)
-    assert(iAbility.cd)
-    assert(iAbility.dt)
+    assert(iAbility.name and iAbility.cast and iAbility.update and iAbility.draw and iAbility.cd and iAbility.dt)
 
     return iAbility
 end

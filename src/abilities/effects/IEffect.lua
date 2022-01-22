@@ -1,9 +1,8 @@
-
--- class for stateful effects on a character
 local IEffect = {}
 
 local update
 
+-- class for stateful effects on a character
 function IEffect.new(effectUpdate, effectDraw)
     local effect = {
         update = update, draw = effectDraw,

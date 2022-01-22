@@ -1,6 +1,10 @@
+local ShapeUtils = {}
 local mlib = require 'lib.mlib'
 
-local ShapeUtils = {}
+-- point is inside rectangle
+function ShapeUtils.pointInPolygon(pointX, pointY, ...)
+    return mlib.polygon.checkPoint(pointX, pointY, ...)
+end
 
 -- point is inside a circle
 function ShapeUtils.pointInCircle(pointX, pointY, circleX, circleY, radius)

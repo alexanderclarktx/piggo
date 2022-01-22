@@ -1,6 +1,5 @@
-local ShapeUtils = require 'src.util.ShapeUtils'
-
 local DamageController = {}
+local ShapeUtils = require 'src.util.ShapeUtils'
 
 local update, draw
 

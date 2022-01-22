@@ -1,15 +1,14 @@
+local IGame = {}
 local Gui = require 'src.ui.Gui'
 local PlayerController = require 'src.player.PlayerController'
 local DamageController = require 'src.game.DamageController'
 
-local IGame = {}
-
-local load, update, draw, keypressed
+local load, update, draw, handleKeyPressed
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
 function IGame.new(gameLoad, gameUpdate, gameDraw)
-    assert(gameLoad, gameUpdate, gameDraw, state, state.players[1])
+    assert(gameLoad and gameUpdate and gameDraw and state and state.players[1])
 
     local gui = Gui.new(state.players[1])
     local playerController = PlayerController.new()
@@ -17,25 +16,28 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
 
     return {
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
-        load = load, update = update, draw = draw, keypressed = keypressed,
+        load = load, update = update, draw = draw,
         playerController = playerController, damageController = damageController,
-        gui = gui
+        gui = gui,
+        handleKeyPressed = handleKeyPressed
     }
 end
 
 function load(self)
-    -- initialize game loop
     self:gameLoad()
-
-    assert(#state.players >= 1)
-    -- assert(state.menu)
-    assert(state.camera)
-    assert(state.world)
+    assert(#state.players >= 1 and state.camera and state.world)
 end
 
 function update(self, dt)
     -- increment state time
     state.dt = state.dt + dt
+
+    -- camera to player
+    state.camera:follow(
+        state.players[1].character.body:getX(),
+        state.players[1].character.body:getY()
+    )
+    state.camera:update(dt)
 
     -- update player controller
     self.playerController:update(dt)
@@ -57,17 +59,6 @@ function update(self, dt)
 
     -- collisions
     state.world:update(dt)
-
-    -- camera to player
-    state.camera:follow(
-        state.players[1].character.body:getX(),
-        state.players[1].character.body:getY()
-    )
-    state.camera:update(dt)
-
-    -- update the menu if we're in one
-    -- TODO need a single state controller
-    -- state.menu:update(dt)
 end
 
 function draw(self)
@@ -98,13 +89,9 @@ function draw(self)
 
     -- draw the GUI
     self.gui:draw()
-
-    -- draw the menu if we're in one
-    -- TODO above
-    -- state.menu:draw()
 end
 
-function keypressed(self, key, scancode, isrepeat)
+function handleKeyPressed(self, key, scancode, isrepeat)
     self.playerController:handleKeyPressed(key, scancode, isrepeat)
 end
 

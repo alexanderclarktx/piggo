@@ -1,6 +1,5 @@
-local DrawUtils = require 'src.util.DrawUtils'
-
 local Gui = {}
+local DrawUtils = require 'src.util.DrawUtils'
 
 local draw, drawDebug, drawAbilityBackground, drawAbilityOutline, drawCooldownIndicator, drawConsole, drawCharges
 

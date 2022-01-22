@@ -1,6 +1,5 @@
-local DrawUtils = require 'src.util.DrawUtils'
-
 local Player = {}
+local DrawUtils = require 'src.util.DrawUtils'
 
 local update, draw
 

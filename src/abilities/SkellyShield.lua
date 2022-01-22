@@ -1,11 +1,10 @@
+local SkellyShield = {}
 local IAbility = require 'src.abilities.IAbility'
 local ShapeUtils = require 'src.util.ShapeUtils'
 
-local SkellyShield = {}
-
 local cast, update, draw
 
-local rgb = {1, 0, 0, debug() and 0.3 or 0.6}
+local rgb = {1, 0, 0, 0.6}
 
 function SkellyShield.new()
     local skellyShield = IAbility.new("Skelly Shield", cast, update, draw, 2)

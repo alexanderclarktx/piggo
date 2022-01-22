@@ -1,7 +1,6 @@
+local Minion = {}
 local ShapeUtils = require 'src.util.shapeutils'
 local ICharacter = require 'src.character.ICharacter'
-
-local Minion = {}
 
 local update, draw
 
@@ -42,15 +41,10 @@ function update(self, dt, index)
     for _, character in pairs(state.npcs) do
         if character.team ~= self.team then
             -- debug(string.format("me team %s checking team %s", self.team, character.team))
-            if ShapeUtils.pointInCircle(
-                character.body:getX(),
-                character.body:getY(),
-                self.body:getX(),
-                self.body:getY(),
-                200
-            ) then
-                target = character
-                break
+            if ShapeUtils.pointInCircle(character.body:getX(), character.body:getY(),
+                self.body:getX(), self.body:getY(), 200) then
+                    target = character
+                    break
             end
         end
     end

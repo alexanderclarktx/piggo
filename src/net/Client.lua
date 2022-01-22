@@ -1,6 +1,5 @@
-local socket = require "socket"
-
 local Client = {}
+local socket = require "socket"
 
 local update
 local defaultHost = "localhost"
