@@ -43,7 +43,9 @@ end
 
 function load(self) end
 
-function update(self, dt)
+function update(self, dt, state)
+    assert(state)
+
     -- check if a button was pressed
     if love.mouse.isDown(1) then
         local mouseX, mouseY = love.mouse.getPosition()
@@ -56,7 +58,7 @@ function update(self, dt)
                     button.x + button.width, button.y
             )
             if mouseIsHoveringButton then
-                button.callback()
+                button.callback(state)
                 break
             end
         end

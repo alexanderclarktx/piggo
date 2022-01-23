@@ -12,22 +12,22 @@ function MainMenu.new()
     menu:addText("Piggo", 0, 100, windowWidth, 1)
 
     -- start button
-    menu:addButton("start", windowWidth/2 - 100, 300, 200, 50, 2, onStart)
+    menu:addButton("start", windowWidth/2 - 100, 300, 200, 50, 2, onclickStart)
 
     -- settings button
-    menu:addButton("settings", windowWidth/2 - 100, 375, 200, 50, 2, onSettings)
+    menu:addButton("settings", windowWidth/2 - 100, 375, 200, 50, 2, onclickSettings)
 
     return menu
 end
 
 -- start the game
-function onStart()
+function onclickStart(state)
     debug("start")
-    piggo:setScene(2)
+    state:setScene(2)
 end
 
 -- TODO open the settings overlay
-function onSettings()
+function onclickSettings(state)
     debug("settings")
 end
 
