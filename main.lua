@@ -6,6 +6,7 @@ function love.load(arg)
     -- handle debug flag
     love.graphics.setDefaultFilter("nearest", "nearest")
     if arg[1] and arg[1] == "--debug" then
+        debugog = debug
         debug = printDebug
     else
         debug = function() return false end
@@ -28,7 +29,11 @@ end
 
 function printDebug(...)
     if ... then
-        io.write("[debug] ")
+        io.write(
+            "\27[31m[" ..
+            debugog.getinfo(2).source:match("%a+.lua") ..
+            "]\27[00m "
+        )
         print(...)
     end
     return true

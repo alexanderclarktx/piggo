@@ -35,6 +35,9 @@ function load(self)
 end
 
 function update(self, dt)
+    if self.server then
+        self.server:update(dt, self.state)
+    end
     self.state.scenes[self.state.currentScene]:update(dt, self.state)
 end
 

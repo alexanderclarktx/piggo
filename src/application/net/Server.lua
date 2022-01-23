@@ -24,28 +24,44 @@ function Server.new(game, port)
 end
 
 function update(self, dt)
-    debug(dt)
     self.dt = self.dt + dt
+
+    local clientData, msgOrIp, portOrNil
 
     -- buffer all data received from the clients
     while true do
-        local clientData, msgOrIp, _ = self.udp:receivefrom()
+        clientData, msgOrIp, portOrNil = self.udp:receivefrom()
         if clientData == nil then break end
-        table.insert(self.tickClientDataBuffer, msgOrIp, clientData)
+
+        -- if this client has no record, make an empty table
+        if self.tickClientDataBuffer[string.format("%s;%s", tostring(msgOrIp), tostring(portOrNil))] == nil then
+            self.tickClientDataBuffer[string.format("%s;%s", tostring(msgOrIp), tostring(portOrNil))] = {}
+        end
+
+        table.insert(
+            self.tickClientDataBuffer[string.format("%s;%s", tostring(msgOrIp), tostring(portOrNil))],
+            clientData
+        )
     end
 
     -- server tick
     if self.lastTick == 0 or self.dt - self.lastTick <= 1.0/self.tickrate then
         -- self:gameTick(dt)
-        debug("tick")
+        for ipAndPort, _ in pairs(self.tickClientDataBuffer) do
+            local ip, port = ipAndPort:match("([%w:]+);(%w+)")
+            self.udp:sendto("hello mr client", ip, port)
+        end
     end
 end
 
 -- TODO maintain list of validated clients & their IPs
 function gameTick(self, dt)
-    self.game:update(dt, self.tickClientDataBuffer)
+    -- self.game:update(dt, self.tickClientDataBuffer)
+    self.game:update(dt)
     self.lastTick = self.lastTick + dt
     self.tickClientDataBuffer = {}
+
+    -- TODO remove all messages from buffer
 end
 
 return Server

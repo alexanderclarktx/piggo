@@ -1,5 +1,6 @@
 local Client = {}
 local socket = require "socket"
+local json = require "lib.json"
 local Camera = require "lib.Camera"
 local Player = require "src.game.Player"
 local Gui = require "src.application.ui.Gui"
@@ -54,9 +55,14 @@ function update(self, dt)
     -- update player controller
     self.playerController:update(dt, self.camera.mx, self.camera.my)
 
-    self.udp:send("hello world")
+    -- self.udp:send("hello world")
 
-    self.game:update(dt)
+    local data, msg = self.udp:receive()
+    if data then
+        debug(data)
+        -- json:decode(data)
+    end
+
 end
 
 function draw(self)
