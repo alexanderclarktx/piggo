@@ -1,16 +1,17 @@
 local Piggo = require "src.application.Piggo"
 
-function love.load(arg)
-    piggo = Piggo.new() -- piggo is in global scope
-    piggo:load()
+local piggo = Piggo.new()
 
-    -- debug flag
+function love.load(arg)
+    -- handle debug flag
     love.graphics.setDefaultFilter("nearest", "nearest")
     if arg[1] and arg[1] == "--debug" then
         debug = printDebug
     else
         debug = function() return false end
     end
+
+    piggo:load()
 end
 
 function love.update(dt)
