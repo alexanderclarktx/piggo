@@ -1,26 +1,24 @@
 local PlayerController = {}
-local ShapeUtils = require 'src.util.ShapeUtils'
+local ShapeUtils = require "src.util.ShapeUtils"
 
 local update, draw, handleKeyPressed
 
-function PlayerController.new()
-    assert(state, state.players[1])
+function PlayerController.new(game, player)
+    assert(game and player)
     return {
-        player = state.players[1],
+        game = game, player = player,
         update = update, draw = draw, handleKeyPressed = handleKeyPressed,
         hovering = nil,
     }
 end
 
-function update(self, dt)
-    local mouseX, mouseY = state.camera.mx, state.camera.my
-
-    -- targeting
+function update(self, dt, mouseX, mouseY)
+    assert(mouseX and mouseY)
     -- for each npc, is the player clicking on it
     self.hovering = nil
-    for _, npc in pairs(state.npcs) do
+    for _, npc in pairs(self.game.state.npcs) do
         -- TODO not just NPCs
-        -- todo logic for targeting CLOSEST (shift+click)
+        -- TODO logic for targeting CLOSEST (shift+click)
         if ShapeUtils.pointInCircle(
                 mouseX, mouseY,
                 npc.body:getX(), npc.body:getY(), npc.meta.size + 16) then
@@ -31,9 +29,9 @@ function update(self, dt)
 
     -- player movement
     if love.mouse.isDown(2) or love.mouse.isDown(1) then
-        state.players[1].character.meta.marker = {
-            x = state.camera.mx,
-            y = state.camera.my
+        self.player.character.meta.marker = {
+            x = mouseX,
+            y = mouseY
         }
     end
 end
@@ -55,33 +53,32 @@ function draw(self)
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat)
-    if key == "space" then
-        love.event.quit()
-    end
+function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
+    assert(mouseX, mouseY)
+
     if key == "q" then
-        state.players[1].character.abilities.q:cast(
-            state.players[1].character
+        self.player.character.abilities.q:cast(
+            self.player.character, mouseX, mouseY
         )
     end
     if key == "w" then
-        state.players[1].character.abilities.w:cast(
-            state.players[1].character
+        self.player.character.abilities.w:cast(
+            self.player.character, mouseX, mouseY
         )
     end
     if key == "e" then
-        state.players[1].character.abilities.e:cast(
-            state.players[1].character
+        self.player.character.abilities.e:cast(
+            self.player.character, mouseX, mouseY
         )
     end
     if key == "r" then
-        state.players[1].character.abilities.r:cast(
-            state.players[1].character
+        self.player.character.abilities.r:cast(
+            self.player.character, mouseX, mouseY
         )
     end
     if key == "s" then
-        state.players[1].character.meta.marker = nil
-        state.players[1].character.body:setLinearVelocity(0, 0)
+        self.player.character.meta.marker = nil
+        self.player.character.body:setLinearVelocity(0, 0)
     end
 end
 

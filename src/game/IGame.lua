@@ -1,98 +1,63 @@
 local IGame = {}
-local Gui = require 'src.ui.Gui'
-local PlayerController = require 'src.player.PlayerController'
-local DamageController = require 'src.game.DamageController'
+local DamageController = require "src.game.DamageController"
 
-local load, update, draw, handleKeyPressed
+local load, update, draw, addPlayer
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
 function IGame.new(gameLoad, gameUpdate, gameDraw)
-    assert(gameLoad and gameUpdate and gameDraw and state and state.players[1])
+    assert(gameLoad and gameUpdate and gameDraw)
 
-    local gui = Gui.new(state.players[1])
-    local playerController = PlayerController.new()
     local damageController = DamageController.new()
 
     return {
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw,
-        playerController = playerController, damageController = damageController,
-        gui = gui,
-        handleKeyPressed = handleKeyPressed
+        damageController = damageController,
+        addPlayer = addPlayer,
+        state = {
+            players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
+            world = love.physics.newWorld(),
+            dt = 0
+        }
     }
 end
 
 function load(self)
     self:gameLoad()
-    assert(#state.players >= 1 and state.camera and state.world)
+    -- assert(#self.state.players >= 1 and self.state.camera and self.state.world)
 end
 
 function update(self, dt)
     -- increment state time
-    state.dt = state.dt + dt
-
-    -- camera to player
-    state.camera:follow(
-        state.players[1].character.body:getX(),
-        state.players[1].character.body:getY()
-    )
-    state.camera:update(dt)
-
-    -- update player controller
-    self.playerController:update(dt)
+    self.state.dt = self.state.dt + dt
 
     -- update damage controller
-    self.damageController:update(dt)
+    self.damageController:update(dt, self.state)
 
     -- update all internal states
-    for _, player in pairs(state.players) do player:update(dt) end
+    for _, player in pairs(self.state.players) do player:update(dt, self.state) end
 
     -- update all npcs
-    for index, npc in pairs(state.npcs) do npc:update(dt, index) end
+    for index, npc in pairs(self.state.npcs) do npc:update(dt, self.state) end
 
     -- handle non-player non-npc objects
-    for _, object in pairs(state.objects) do object:update(dt) end
+    for _, object in pairs(self.state.objects) do object:update(dt) end
 
     -- update game loop
     self.gameUpdate(self)
 
     -- collisions
-    state.world:update(dt)
+    self.state.world:update(dt)
 end
 
 function draw(self)
-    -- attach camera
-    state.camera:attach()
-
-    -- draw all terrain
-    for _, terrain in pairs(state.terrains) do terrain:draw() end
-
-    -- draw all players
-    for _, player in pairs(state.players) do player:draw() end
-
-    -- draw all npcs
-    for _, npc in pairs(state.npcs) do npc:draw() end
-
-    -- draw all non-npc objects
-    for _, object in pairs(state.objects) do object:draw() end
-
-    -- draw game-specific things
-    self.gameDraw(self)
-
-    -- draw player indicators
-    self.playerController:draw()
-
-    -- draw and detach camera
-    state.camera:detach()
-    state.camera:draw()
-
-    -- draw the GUI
-    self.gui:draw()
+    self.gameDraw()
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat)
-    self.playerController:handleKeyPressed(key, scancode, isrepeat)
+function addPlayer(self, player)
+    assert(player)
+    table.insert(self.state.players, player)
 end
 
 return IGame

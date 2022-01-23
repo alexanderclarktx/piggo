@@ -1,6 +1,6 @@
 local Minion = {}
-local ShapeUtils = require 'src.util.shapeutils'
-local ICharacter = require 'src.character.ICharacter'
+local ShapeUtils = require "src.util.shapeutils"
+local ICharacter = require "src.game.characters.ICharacter"
 
 local update, draw
 
@@ -11,13 +11,14 @@ local image = love.graphics.newArrayImage({
 })
 image:setFilter("nearest", "nearest")
 
-function Minion.new(x, y, hp, marker, team)
+function Minion.new(world, x, y, hp, marker, team)
     assert(type(x) == "number")
     assert(type(y) == "number")
     assert(type(hp) == "number")
     assert(marker.x and marker.y)
 
     local minion = ICharacter.new(
+        world,
         update, draw,
         x, y, hp, 300, 300, 15,
         {}
@@ -34,7 +35,8 @@ function Minion.new(x, y, hp, marker, team)
     return minion
 end
 
-function update(self, dt, index)
+function update(self, dt, state)
+    assert(state)
     -- check surroundings for things to attack (minions, champions, structures)
 
     local target = nil

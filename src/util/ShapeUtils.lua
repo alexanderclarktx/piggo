@@ -1,5 +1,5 @@
 local ShapeUtils = {}
-local mlib = require 'lib.mlib'
+local mlib = require "lib.mlib"
 
 -- point is inside rectangle
 function ShapeUtils.pointInPolygon(pointX, pointY, ...)

@@ -1,6 +1,8 @@
 local Piggo = {}
-local MainMenu = require 'src.ui.MainMenu'
-local Aram = require 'src.game.Aram'
+local MainMenu = require "src.application.ui.MainMenu"
+local Server = require "src.application.net.Server"
+local Client = require "src.application.net.Client"
+local Aram = require "src.game.Aram"
 
 local load, update, draw, handleKeyPressed, printDebug, setScene
 
@@ -12,10 +14,11 @@ function Piggo.new()
         state = {
             scenes = {
                 MainMenu.new(),
-                Aram.new()
+                Client.new(Aram.new()),
             },
             currentScene = 1
         },
+        server = Server.new(Aram.new())
     }
     return piggo
 end
@@ -33,6 +36,10 @@ function draw(self)
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat)
+    if key == "space" then
+        love.event.quit()
+    end
+
     self.state.scenes[self.state.currentScene]:handleKeyPressed(key, scancode, isrepeat)
 end
 

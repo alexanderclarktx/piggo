@@ -1,6 +1,6 @@
 local SkellyUlti = {}
-local IAbility = require 'src.abilities.IAbility'
-local ShapeUtils = require 'src.util.ShapeUtils'
+local IAbility = require "src.game.abilities.IAbility"
+local ShapeUtils = require "src.util.ShapeUtils"
 
 local cast, update, draw
 
@@ -56,11 +56,7 @@ function cast(self, character)
     })
 end
 
-function update(self, dt)
-    if colliskelly then
-        
-    end
-end
+function update(self, dt) end
 
 function draw(self) end
 

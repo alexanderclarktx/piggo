@@ -4,6 +4,6 @@ function love.conf(t)
     t.window.usedpiscaling = false
     t.window.vsync = 0
     t.window.msaa = 4
-    t.window.title = "Piggo ARAM"
-    t.window.resizable = true
+    t.window.title = "Piggo"
+    t.window.resizable = false
 end

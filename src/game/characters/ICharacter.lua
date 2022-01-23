@@ -1,10 +1,11 @@
 local ICharacter = {}
-local ShapeUtils = require 'src.util.shapeutils'
-local DrawUtils = require 'src.util.DrawUtils'
+local ShapeUtils = require "src.util.shapeutils"
+local DrawUtils = require "src.util.DrawUtils"
 
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
 
-function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
+function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
+    assert(world)
     assert(type(x) == "number")
     assert(type(y) == "number")
     assert(type(hp) == "number")
@@ -14,7 +15,7 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
     assert(abilities ~= nil)
     -- TODO if #abilities then assert(abilities.q)
 
-    local body = love.physics.newBody(state.world, x, y, "dynamic")
+    local body = love.physics.newBody(world, x, y, "dynamic")
     local fixture = love.physics.newFixture(body, love.physics.newCircleShape(size))
 
     local character = {
@@ -40,8 +41,9 @@ function ICharacter.new(charUpdate, charDraw, x, y, hp, maxhp, speed, size, abil
     return character
 end
 
-function update(self, dt)
-    self.charUpdate(self)
+function update(self, dt, state)
+    assert(state)
+    self.charUpdate(self, dt, state)
 
     if self.target ~= nil and self.target.body == nil then
         self.target = nil

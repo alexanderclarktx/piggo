@@ -2,10 +2,10 @@ local Terrain = {}
 
 local update, draw
 
-function Terrain.new(x, y, poly)
+function Terrain.new(world, x, y, poly)
     assert(#poly % 2 == 0)
 
-    local body = love.physics.newBody(state.world, x, y, "static")
+    local body = love.physics.newBody(world, x, y, "static")
     local fixture = love.physics.newFixture(body, love.physics.newPolygonShape(poly))
 
     return {
@@ -15,10 +15,8 @@ function Terrain.new(x, y, poly)
     }
 end
 
--- maybe some terrain destruction
-function update(self, dt)
-    --
-end
+-- TODO maybe some terrain destruction?
+function update(self, dt) end
 
 function draw(self)
     -- draw terrain

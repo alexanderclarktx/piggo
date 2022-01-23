@@ -1,5 +1,5 @@
 local DamageController = {}
-local ShapeUtils = require 'src.util.ShapeUtils'
+local ShapeUtils = require "src.util.ShapeUtils"
 
 local update, draw
 
@@ -10,11 +10,12 @@ function DamageController.new()
     }
 end
 
-function update(self, dt)
+function update(self, dt, state)
+    assert(state)
     -- add all submitted hurtboxes
     for _, player in pairs(state.players) do
         for i, hurtbox in ipairs(player.character.hurtboxes) do
-            assert(hurtbox.name, hurtbox.damage, hurtbox.poly)
+            assert(hurtbox.name and hurtbox.damage and (hurtbox.type == "poly" or hurtbox.type == "circle"))
             table.insert(self.hurtboxes, hurtbox)
         end
         player.character.hurtboxes = {}

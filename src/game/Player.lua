@@ -1,9 +1,9 @@
 local Player = {}
-local DrawUtils = require 'src.util.DrawUtils'
 
 local update, draw
 
 function Player.new(name, character)
+    assert(name and character)
     return {
         name = name,
         character = character,
@@ -12,13 +12,12 @@ function Player.new(name, character)
     }
 end
 
-function update(self, dt)
-    -- update character
-    self.character:update(dt)
+function update(self, dt, state)
+    assert(state)
+    self.character:update(dt, state)
 end
 
 function draw(self)
-    -- draw character
     self.character:draw()
 end
 

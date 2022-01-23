@@ -1,5 +1,5 @@
 local Gui = {}
-local DrawUtils = require 'src.util.DrawUtils'
+local DrawUtils = require "src.util.DrawUtils"
 
 local draw, drawDebug, drawAbilityBackground, drawAbilityOutline, drawCooldownIndicator, drawConsole, drawCharges
 
@@ -9,6 +9,7 @@ local chargeCounter = "%d / %d"
 
 function Gui.new(player)
     return {
+        -- game = game,
         player = player,
         draw = draw
     }

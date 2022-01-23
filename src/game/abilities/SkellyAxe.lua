@@ -1,6 +1,6 @@
 local SkellyAxe = {}
-local IAbility = require 'src.abilities.IAbility'
-local ShapeUtils = require 'src.util.ShapeUtils'
+local IAbility = require "src.game.abilities.IAbility"
+local ShapeUtils = require "src.util.ShapeUtils"
 
 local cast, update, draw
 
@@ -16,9 +16,8 @@ function SkellyAxe.new()
     return skellyAxe
 end
 
-function cast(self, character)
-    assert(character)
-    assert(character.body)
+function cast(self, character, mouseX, mouseY)
+    assert(character and character.body and mouseX and mouseY)
 
     if self.dt <= self.cd then return end
     if self.charges <= 0 then return end
@@ -26,8 +25,8 @@ function cast(self, character)
     self.charges = self.charges - 1
 
     -- calculate axe orientation
-    local xdiff = state.camera.mx - character.body:getX()
-    local ydiff = state.camera.my - character.body:getY()
+    local xdiff = mouseX - character.body:getX()
+    local ydiff = mouseY - character.body:getY()
     local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
     local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
 

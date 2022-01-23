@@ -1,9 +1,9 @@
 local Skelly = {}
-local ICharacter = require 'src.character.ICharacter'
-local SkellyAxe = require 'src.abilities.SkellyAxe'
-local SkellyShield = require 'src.abilities.SkellyShield'
-local SkellyPush = require 'src.abilities.SkellyPush'
-local SkellyUlti = require 'src.abilities.SkellyUlti'
+local ICharacter = require "src.game.characters.ICharacter"
+local SkellyAxe = require "src.game.abilities.SkellyAxe"
+local SkellyShield = require "src.game.abilities.SkellyShield"
+local SkellyPush = require "src.game.abilities.SkellyPush"
+local SkellyUlti = require "src.game.abilities.SkellyUlti"
 
 local update, draw
 
@@ -13,10 +13,11 @@ local image = love.graphics.newArrayImage({
     "res/skelly/skelly3.png",
 })
 
-function Skelly.new(x, y, hp)
-    assert(hp > 0, x >= 0, y >= 0)
+function Skelly.new(world, x, y, hp)
+    assert(hp > 0 and x >= 0 and y >= 0)
 
     local skelly = ICharacter.new(
+        world,
         update, draw,
         x, y, hp, 1000, 400, 20,
         {

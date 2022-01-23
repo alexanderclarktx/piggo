@@ -1,4 +1,4 @@
-local Piggo = require 'src.Piggo'
+local Piggo = require "src.application.Piggo"
 
 function love.load(arg)
     piggo = Piggo.new() -- piggo is in global scope

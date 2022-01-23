@@ -17,13 +17,13 @@ function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abil
     return iAbility
 end
 
-function cast(self, character)
-    assert(character)
+function cast(self, character, mouseX, mouseY)
+    assert(character and mouseX and mouseY)
 
     -- cd check
     if self.dt >= self.cd then
         debug("CAST " .. self.name)
-        self:abilityCast(character)
+        self:abilityCast(character, mouseX, mouseY)
 
         -- reset time delta
         self.dt = 0

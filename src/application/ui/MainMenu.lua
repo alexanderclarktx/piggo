@@ -1,5 +1,5 @@
 local MainMenu = {}
-local IMenu = require 'src.ui.IMenu'
+local IMenu = require "src.application.ui.IMenu"
 
 function MainMenu.new()
     local menu = IMenu.new({
