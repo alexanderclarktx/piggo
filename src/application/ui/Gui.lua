@@ -8,6 +8,7 @@ local boxWidth, boxHeight, consoleHeight = 50, 50, 0.95
 local chargeCounter = "%d / %d"
 
 function Gui.new(player)
+    assert(player)
     return {
         -- game = game,
         player = player,

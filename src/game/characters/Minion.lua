@@ -4,13 +4,6 @@ local ICharacter = require "src.game.characters.ICharacter"
 
 local update, draw
 
-local image = love.graphics.newArrayImage({
-    "res/piggo/piggo1.png",
-    "res/piggo/piggo2.png",
-    "res/piggo/piggo3.png",
-})
-image:setFilter("nearest", "nearest")
-
 function Minion.new(world, x, y, hp, marker, team)
     assert(type(x) == "number")
     assert(type(y) == "number")
@@ -23,6 +16,7 @@ function Minion.new(world, x, y, hp, marker, team)
         x, y, hp, 300, 300, 15,
         {}
     )
+
     minion.frame = 1
     minion.frameLast = 0
     minion.framecd = 0.13
@@ -65,9 +59,18 @@ function update(self, dt, state)
 end
 
 function draw(self)
+    if self.image == nil then
+        self.image = love.graphics.newArrayImage({
+            "res/piggo/piggo1.png",
+            "res/piggo/piggo2.png",
+            "res/piggo/piggo3.png",
+        })
+        self.image:setFilter("nearest", "nearest")
+    end
+
     love.graphics.setColor(self.color.r, self.color.g, self.color.b)
     love.graphics.drawLayer(
-        image, self.frame,
+        self.image, self.frame,
         self.body:getX(), self.body:getY(),
         0, 3 * self.facingRight, 3, 8, 7
     )

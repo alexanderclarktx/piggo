@@ -2,6 +2,7 @@ local Client = {}
 local socket = require "socket"
 local json = require "lib.json"
 local Camera = require "lib.Camera"
+local hero = require "lib.hero"
 local Player = require "src.game.Player"
 local Gui = require "src.application.ui.Gui"
 local Skelly = require "src.game.characters.Skelly"
@@ -20,14 +21,32 @@ function Client.new(game, host, port)
     udp:settimeout(0)
     udp:setpeername(host or defaultHost, port or defaultPort)
 
-    local player = Player.new("player1", Skelly.new(game.state.world, 500, 250, 500))
+
+    -- print(udp:send("hello world"))
+    -- -- connect (blocking)
+    -- local data, msg = udp:receive()
+    -- if data then
+    --     -- debug(data)
+    --     local state = json:decode(data)
+    --     state.world = hero.load(state.world)
+    --     self.game.state = state
+
+    --     player = state.players[1]
+    -- else print(msg) end
+    -- print(player)
+
+    -- -- don't block once we've connected
+    -- udp:settimeout(0)
+    -- -- debug(player)
+
+    local player = Player.new("p1", Skelly.new(game.state.world, 500, 250, 500))
     game:addPlayer(player)
 
     local client = {
         load = load, update = update, draw = draw, handleKeyPressed = handleKeyPressed,
         host = host or defaultHost, port = port or defaultPort,
         udp = udp, game = game, player = player,
-        gui = Gui.new(player), playerController = PlayerController.new(game, player),
+        gui = Gui.new(player), playerController = PlayerController.new(player),
         camera = Camera()
     }
 
@@ -41,7 +60,7 @@ function load(self)
 
     -- camera fade in
     self.camera.fade_color = {0, 0, 0, 1}
-    self.camera:fade(3, {0, 0, 0, 0})
+    self.camera:fade(2, {0, 0, 0, 0})
 end
 
 function update(self, dt)
@@ -53,16 +72,23 @@ function update(self, dt)
     self.camera:update(dt)
 
     -- update player controller
-    self.playerController:update(dt, self.camera.mx, self.camera.my)
+    self.playerController:update(dt, self.camera.mx, self.camera.my, self.game.state)
 
-    -- self.udp:send("hello world")
+    self.udp:send("hello world")
 
     local data, msg = self.udp:receive()
     if data then
-        debug(data)
-        -- json:decode(data)
+        print("uhh")
+        local state = json:decode(data)
+        state.world = hero.load(state.world)
+        self.game.state = state
+    else
+        -- print("gg")
+        -- debug("got nothing from server")
+        -- print(msg)
     end
 
+    -- self.game:update(dt)
 end
 
 function draw(self)

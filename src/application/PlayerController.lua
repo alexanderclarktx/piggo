@@ -3,8 +3,8 @@ local ShapeUtils = require "src.util.ShapeUtils"
 
 local update, draw, handleKeyPressed
 
-function PlayerController.new(game, player)
-    assert(game and player)
+function PlayerController.new(player)
+    assert(player)
     return {
         game = game, player = player,
         update = update, draw = draw, handleKeyPressed = handleKeyPressed,
@@ -12,11 +12,11 @@ function PlayerController.new(game, player)
     }
 end
 
-function update(self, dt, mouseX, mouseY)
-    assert(mouseX and mouseY)
+function update(self, dt, mouseX, mouseY, state)
+    assert(mouseX and mouseY and state)
     -- for each npc, is the player clicking on it
     self.hovering = nil
-    for _, npc in pairs(self.game.state.npcs) do
+    for _, npc in pairs(state.npcs) do
         -- TODO not just NPCs
         -- TODO logic for targeting CLOSEST (shift+click)
         if ShapeUtils.pointInCircle(

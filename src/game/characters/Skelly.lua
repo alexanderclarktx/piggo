@@ -7,12 +7,6 @@ local SkellyUlti = require "src.game.abilities.SkellyUlti"
 
 local update, draw
 
-local image = love.graphics.newArrayImage({
-    "res/skelly/skelly1.png",
-    "res/skelly/skelly2.png",
-    "res/skelly/skelly3.png",
-})
-
 function Skelly.new(world, x, y, hp)
     assert(hp > 0 and x >= 0 and y >= 0)
 
@@ -31,7 +25,6 @@ function Skelly.new(world, x, y, hp)
     skelly.frame = 1
     skelly.frameLast = 0
     skelly.framecd = 0.13
-    image:setFilter("nearest", "nearest")
 
     return skelly
 end
@@ -45,6 +38,15 @@ function update(self, dt)
 end
 
 function draw(self)
+    if self.image == nil then
+        self.image = love.graphics.newArrayImage({
+            "res/skelly/skelly1.png",
+            "res/skelly/skelly2.png",
+            "res/skelly/skelly3.png",
+        })
+        self.image:setFilter("nearest", "nearest")
+    end
+
     -- pick animation frame
     local frameToDraw = self.frame
     local velocity = {self.body:getLinearVelocity()}
@@ -56,7 +58,7 @@ function draw(self)
     assert(self.color)
     love.graphics.setColor(self.color[1], self.color[2], self.color[3])
     love.graphics.drawLayer(
-        image, frameToDraw,
+        self.image, frameToDraw,
         self.body:getX(), self.body:getY(),
         0, 4 * self.facingRight, 4, 6, 6
     )

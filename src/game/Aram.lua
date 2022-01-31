@@ -2,7 +2,6 @@ local Aram = {}
 local Minion = require "src.game.characters.Minion"
 local IGame = require "src.game.IGame"
 local Terrain = require "src.game.Terrain"
-
 local load, update, draw, spawnMinions, spawnTerrain
 
 local backgroundColor = {0.05, 0.05, 0.15}
@@ -13,7 +12,6 @@ local backgroundColor = {0.05, 0.05, 0.15}
 --   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
     local aram = IGame.new(load, update, draw)
-
     aram.timers = {
         minionSpawn = {
             cd = 10,
@@ -28,10 +26,6 @@ function Aram.new()
 end
 
 function load(self)
-    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
-    -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
-    love.graphics.setBackgroundColor(backgroundColor)
-
     -- create the terrain
     self:spawnTerrain()
 
@@ -62,7 +56,11 @@ function update(self, dt)
     end
 end
 
-function draw(self) end
+function draw(self)
+    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
+    -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
+    love.graphics.setBackgroundColor(backgroundColor)
+end
 
 function spawnMinions(self)
     -- spawn team 1 minions
@@ -138,5 +136,4 @@ function spawnTerrain(self)
         })
     }
 end
-
 return Aram

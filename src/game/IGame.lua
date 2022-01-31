@@ -1,5 +1,6 @@
 local IGame = {}
 local DamageController = require "src.game.DamageController"
+local p = require 'love.physics'
 
 local load, update, draw, addPlayer
 
@@ -10,17 +11,19 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
 
     local damageController = DamageController.new()
 
-    return {
+    local iGame = {
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw,
         damageController = damageController,
         addPlayer = addPlayer,
         state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
-            world = love.physics.newWorld(),
+            world = p.newWorld(),
             dt = 0
         }
     }
+
+    return iGame
 end
 
 function load(self)
