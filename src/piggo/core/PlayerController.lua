@@ -1,39 +1,41 @@
 local PlayerController = {}
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
-local update, draw, handleKeyPressed
+local update, draw, handleKeyPressed, bufferCommand
 
 function PlayerController.new(player)
     assert(player)
     return {
-        game = game, player = player,
         update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        bufferCommand = bufferCommand,
+        player = player,
         hovering = nil,
+        bufferedCommands = {}
     }
 end
 
 function update(self, dt, mouseX, mouseY, state)
-    assert(mouseX and mouseY and state)
-    -- for each npc, is the player clicking on it
-    self.hovering = nil
-    for _, npc in pairs(state.npcs) do
-        -- TODO not just NPCs
-        -- TODO logic for targeting CLOSEST (shift+click)
-        if ShapeUtils.pointInCircle(
-                mouseX, mouseY,
-                npc.body:getX(), npc.body:getY(), npc.meta.size + 16) then
-            self.hovering = npc
-            break
-        end
-    end
+    -- assert(mouseX and mouseY and state)
+    -- -- for each npc, is the player clicking on it
+    -- self.hovering = nil
+    -- for _, npc in pairs(state.npcs) do
+    --     -- TODO not just NPCs
+    --     -- TODO logic for targeting CLOSEST (shift+click)
+    --     if ShapeUtils.pointInCircle(
+    --             mouseX, mouseY,
+    --             npc.body:getX(), npc.body:getY(), npc.meta.size + 16) then
+    --         self.hovering = npc
+    --         break
+    --     end
+    -- end
 
-    -- player movement
-    if love.mouse.isDown(2) or love.mouse.isDown(1) then
-        self.player.character.meta.marker = {
-            x = mouseX,
-            y = mouseY
-        }
-    end
+    -- -- player movement
+    -- if love.mouse.isDown(2) or love.mouse.isDown(1) then
+    --     self.player.character.meta.marker = {
+    --         x = mouseX,
+    --         y = mouseY
+    --     }
+    -- end
 end
 
 function draw(self)
@@ -51,6 +53,12 @@ function draw(self)
     if self.targeting then
         -- TODO
     end
+end
+
+function bufferCommand(self, command)
+    assert(command)
+    debug("buffering command: ", command.action)
+    table.insert(self.bufferedCommands, command)
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
@@ -76,9 +84,8 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
             self.player.character, mouseX, mouseY
         )
     end
-    if key == "s" then
-        self.player.character.meta.marker = nil
-        self.player.character.body:setLinearVelocity(0, 0)
+    if key == "s" then -- stop
+        self:bufferCommand({action = "stop"})
     end
 end
 

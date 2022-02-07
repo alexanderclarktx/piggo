@@ -13,6 +13,7 @@ local Skelly = require "src.contrib.aram.characters.Skelly"
 
 
 local load, update, draw, handleKeyPressed
+local sendCommandsToServer, processServerPacket, connectToServer
 local defaultHost = "localhost"
 local defaultPort = 12345
 
@@ -20,33 +21,17 @@ local defaultPort = 12345
 -- ref https://web.archive.org/web/20200415042448/http://w3.impa.br/~diego/software/luasocket/udp.html
 function Client.new(game, host, port)
     assert(game)
-    -- connect to server
-    local udp = socket.udp()
-    udp:settimeout(0)
-    udp:setpeername(host or defaultHost, port or defaultPort)
 
-    -- print(udp:send("hello world"))
-    -- -- connect (blocking)
-    -- local payload, msg = udp:receive()
-    -- if payload then
-    --     -- debug(payload)
-    --     local state = json:decode(payload)
-    --     state.world = hero.load(state.world)
-    --     self.game.state = state
+    -- connect to game server
+    local udp = connectToServer(host or defaultHost, port or defaultPort)
 
-    --     player = state.players[1]
-    -- else print(msg) end
-    -- print(player)
-
-    -- -- don't block once we've connected
-    -- udp:settimeout(0)
-    -- -- debug(player)
-
-    local player = Player.new("p1", Skelly.new(game.state.world, 500, 250, 500))
-    game:addPlayer(player)
+    local playerName = "KetoMojito" -- TODO
+    local player = Player.new(playerName, Skelly.new(game.state.world, 500, 250, 500))
+    game:addPlayer(playerName, player)
 
     local client = {
         load = load, update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        sendCommandsToServer = sendCommandsToServer, processServerPacket = processServerPacket,
         host = host or defaultHost, port = port or defaultPort,
         udp = udp, game = game, player = player,
         gui = Gui.new(player), playerController = PlayerController.new(player),
@@ -77,28 +62,14 @@ function update(self, dt)
     -- update player controller
     self.playerController:update(dt, self.camera.mx, self.camera.my, self.game.state)
 
-    -- send actions to server
-    self.udp:send("hello world")
-    self.udp:send(json:encode({
-        marker = {
-            x = 50,
-            y = 200
-        }
-    }))
+    -- send player's commands to server
+    self:sendCommandsToServer()
 
-    local payload, _ = self.udp:receive()
-    if payload then
-        debug("got something from server")
+    -- process server packet
+    self:processServerPacket()
 
-        local data = json:decode(payload)
-        self.game.state.players[1].character.body:setX(data.x)
-        self.game.state.players[1].character.body:setY(data.y)
-
-        -- state.world = hero.load(state.world)
-        -- self.game.state = state
-    end
-
-    -- self.game:update(dt)
+    -- update game state
+    self.game:update(dt)
 end
 
 function draw(self)
@@ -131,10 +102,44 @@ function draw(self)
     self.gui:draw()
 end
 
+function sendCommandsToServer(self)
+    local commandsToSend = self.playerController.bufferedCommands
+
+    if #commandsToSend > 0 then
+        debug("sending commands ", #commandsToSend, commandsToSend[1].action)
+        self.udp:send(json:encode(commandsToSend))
+        self.playerController.bufferedCommands = {}
+    else
+        self.udp:send("ping")
+    end
+end
+
+function processServerPacket(self)
+    local packet, _ = self.udp:receive()
+    if packet then
+        local payload = json:decode(packet)
+        assert(payload.gameTickPayload, payload.playerTickPayload)
+
+        -- update all player state
+        for playerName, player in pairs(payload.gameTickPayload.players) do
+            self.game.state.players[playerName]:setPosition(
+                player.x, player.y, player.velocity
+            )
+        end
+    end
+end
+
 function handleKeyPressed(self, key, scancode, isrepeat)
     self.playerController:handleKeyPressed(
         key, scancode, isrepeat, self.camera.mx, self.camera.my
     )
+end
+
+function connectToServer(host, port)
+    local udp = socket.udp()
+    udp:settimeout(0)
+    udp:setpeername(host, port)
+    return udp
 end
 
 return Client

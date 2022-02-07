@@ -7,118 +7,161 @@ local json = require "lib.json"
 local Player = require "src.piggo.core.Player"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
-local update, gameTick
+local update, gameTick, openSocket, createGameTickPayload, createPlayerTickPayload, connectPlayer
 local defaultPort = 12345
-local tickrate = 64
 
 -- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
 -- ref https://web.archive.org/web/20200415042448/http://w3.impa.br/~diego/software/luasocket/udp.html
 function Server.new(game, port)
     assert(game)
-    local udp = socket.udp()
-    udp:settimeout(0)
-    udp:setsockname("*", port or defaultPort)
+
+    -- open the server socket
+    local udp = openSocket(port or defaultPort)
 
     game:load()
 
     local server = {
         update = update, gameTick = gameTick,
-        port = port or defaultPort, udp = udp,
-        game = game, dt = 0,
-        lastTick = 0, tickrate = 64,
-        tickClientDataBuffer = {},
-        connectedClients = {}
+        createGameTickPayload = createGameTickPayload,
+        createPlayerTickPayload = createPlayerTickPayload,
+        connectPlayer = connectPlayer,
+        udp = udp, -- udp socket
+        game = game, -- game object
+        dt = 0, -- millis since server start
+        tick = 0, -- current tick
+        lastTick = 0,
+        tickrate = 64, -- server ticks per second
+        connectedPlayers = {}
     }
 
     return server
 end
 
-local function deepCopy(original)
-    local copy = {}
-    for k, v in pairs(original) do
-        if type(v) == "table" then
-            v = deepCopy(v)
-        end
-        copy[k] = v
-    end
-    return copy
-end
-
 function update(self, dt)
-    -- debug(#self.connectedClients)
+    -- debug("players connected: " .. tostring(#self.connectedPlayers))
     self.dt = self.dt + dt
 
-    local clientData, msgOrIp, portOrNil
+    local playerCommand, msgOrIp, portOrNil
 
-    -- buffer all data received from the clients
+    -- buffer all data received from the players
     while true do
-        clientData, msgOrIp, portOrNil = self.udp:receivefrom()
-        if clientData == nil then break end
+        -- check for data from players, breaking when nothing's left to receive
+        playerCommand, msgOrIp, portOrNil = self.udp:receivefrom()
+        if playerCommand == nil then break end
+        assert(msgOrIp and portOrNil)
 
-        -- get the client's name (ip;port)
-        local clientIpPort = string.format("%s;%s", tostring(msgOrIp), tostring(portOrNil))
-
-        -- if this client has no record, create their player/character and add them
-        if not self.connectedClients[clientIpPort] then
-            local newPlayer = Player.new(clientIpPort, Skelly.new(self.game.state.world, 500, 250, 500))
-            newPlayer.character.body:setLinearVelocity(50, 0)
-            self.game:addPlayer(newPlayer)
-
-            self.connectedClients[clientIpPort] = "a"
-            self.tickClientDataBuffer[clientIpPort] = {}
+        -- if this player has no record, create their player/character and add them
+        local playerName = "KetoMojito" -- TODO get from player's connect payload
+        if not self.connectedPlayers[playerName] then
+            self:connectPlayer(playerName, playerCommand, msgOrIp, portOrNil)
         end
 
-        -- buffer this input
-        table.insert(self.tickClientDataBuffer[clientIpPort], clientData)
+        -- add command to player's command buffer
+        if playerCommand.action then
+            if playerCommand.action == "stop" then
+                table.insert(self.connectedPlayers[playerName].commands, playerCommand)
+            end
+        end
     end
-    -- print(#self.connectedClients)
 
     -- server tick
     if self.lastTick == 0 or (self.dt - self.lastTick >= 1.0/self.tickrate) then
-        -- print("gametick")
+        -- game tick
         self:gameTick(dt)
-        -- TODO always send to existing clients, not just those who have sent a message this tick
-        for ipAndPort, _ in pairs(self.tickClientDataBuffer) do
-            -- print("server send")
-            local ip, port = ipAndPort:match("([%w:]+);(%w+)")
 
-            -- local worldState = hero.save(self.game.state.world)
+        -- create game tick payload
+        local gameTickPayload = self:createGameTickPayload()
 
-            -- this worked:
-            -- self.udp:sendto("hello", ip, port)
-            -- self.udp:sendto(json:encode({message = "hello"}), ip, port)
+        -- send everyone the game and player states
+        for _, player in pairs(self.connectedPlayers) do
+            -- create player tick payload
+            local playerTickPayload = self:createPlayerTickPayload(player)
 
-            debug(self.game.state.players[1].character.body:getLinearVelocity())
+            -- send the tick payloads
             self.udp:sendto(json:encode({
-                x = self.game.state.players[1].character.body:getX(),
-                y = self.game.state.players[1].character.body:getY(),
-                velocity = self.game.state.players[1].character.body:getLinearVelocity()
-            }), ip, port)
-
-
-
-
-            -- self.game.state.world = hero.load(self.game.state.world)
-                -- {
-                -- players = deepCopy(self.game.state.players),
-                -- npcs = self.game.state.npcs,
-                -- hurtboxes = self.game.state.hurtboxes,
-                -- objects = self.game.state.objects,
-                -- terrains = deepCopy(self.game.state.terrains),
-                -- dt = self.game.state.dt,
-                -- world = hero.save(self.game.state.world)
-            -- }), ip, port)
-            -- self.udp:sendto("hello mr client", ip, port)
+                gameTickPayload = gameTickPayload,
+                playerTickPayload = playerTickPayload
+            }), player.ip, player.port)
         end
-        -- self.tickClientDataBuffer = {}
     end
 end
 
--- TODO maintain list of validated clients & their IPs
+-- connect a new player
+function connectPlayer(self, playerName, playerCommand, msgOrIp, portOrNil)
+    -- add the player to the game
+    local player = Player.new(playerName, Skelly.new(self.game.state.world, 500, 250, 500))
+    self.game:addPlayer(playerName, player)
+    player.character.body:setLinearVelocity(200, 0)
+
+    -- add player to connectedPlayers
+    self.connectedPlayers[playerName] = {
+        player = player,
+        ip = msgOrIp,
+        port = portOrNil,
+        commands = {}
+    }
+end
+
+-- prepare data for all players
+function createGameTickPayload(self)
+    local gameTickPayload = {
+        players = {},
+        abilities = {},
+        attacks = {},
+        effects = {},
+        damage = {}
+    }
+
+    for playerName, player in pairs(self.connectedPlayers) do
+        local velocityX, velocityY = player.player.character.body:getLinearVelocity()
+
+        gameTickPayload.players[playerName] = {
+            x = player.player.character.body:getX(),
+            y = player.player.character.body:getY(),
+            velocity = {
+                x = velocityX,
+                y = velocityY
+            }
+        }
+    end
+
+    return gameTickPayload
+end
+
+-- prepare data for the individual player
+function createPlayerTickPayload(self, player)
+    local playerTickPayload = {
+        -- cds = player.cooldowns
+    }
+    return playerTickPayload
+end
+
+-- run the game tick
 function gameTick(self, dt)
-    -- self.game:update(dt, self.tickClientDataBuffer)
+    -- increment tick number
+    self.tick = self.tick + 1
+
+    -- handle all the buffered player commands
+    self.game:handlePlayerCommands(self.connectedPlayers)
+
+    -- update the game
     self.game:update(dt)
+
+    -- reset tick state
+    for _, player in pairs(self.connectedPlayers) do
+        player.commands = {}
+    end
+
+    -- record the last tick time
     self.lastTick = self.dt
+end
+
+-- open server socket
+function openSocket(port)
+    local udp = socket.udp()
+    udp:settimeout(0)
+    udp:setsockname("*", port)
+    return udp
 end
 
 return Server

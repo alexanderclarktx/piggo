@@ -4,7 +4,8 @@ local Terrain = require "src.piggo.core.Terrain"
 local Minion = require "src.contrib.aram.characters.Minion"
 local load, update, draw, spawnMinions, spawnTerrain
 
-local backgroundColor = {0.05, 0.05, 0.15}
+-- local backgroundColor = {0.05, 0.05, 0.15}
+local backgroundColor = {0.1, 0, 0.2}
 
 -- rules:
 --   * single lane
@@ -25,25 +26,6 @@ function Aram.new()
     return aram
 end
 
-function Aram.startServer()
-    local threadCode = [[
-        local t = require "love.timer"
-        local Aram = require "src.contrib.aram.Aram"
-        local Server = require "src.piggo.net.Server"
-        debug = print
-
-        local server = Server.new(Aram.new())
-        while true do
-            server:update(.05)
-            -- print("wagmi")
-            t.sleep(0.05)
-        end
-    ]]
-    local thread = love.thread.newThread(threadCode)
-    thread:start()
-    return thread
-end
-
 function load(self)
     -- create the terrain
     self:spawnTerrain()
@@ -52,7 +34,7 @@ function load(self)
     self:spawnMinions()
 end
 
-function update(self, dt)
+function update(self, dt, playerCommandsBuffer)
     -- kill all npcs that are dead :)
     for i, npc in ipairs(self.state.npcs) do
         if npc.meta.hp <= 0 then
@@ -77,8 +59,6 @@ function update(self, dt)
 end
 
 function draw(self)
-    -- love.graphics.setBackgroundColor(0.8, 0.7, 0.65)
-    -- love.graphics.setBackgroundColor(0.4, 0.35, 0.35)
     love.graphics.setBackgroundColor(backgroundColor)
 end
 
@@ -156,4 +136,5 @@ function spawnTerrain(self)
         })
     }
 end
+
 return Aram
