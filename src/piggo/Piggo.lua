@@ -1,15 +1,15 @@
 local Piggo = {}
-local MainMenu = require "src.application.ui.MainMenu"
--- local Server = require "src.application.net.Server"
-local Client = require "src.application.net.Client"
-local Aram = require "src.game.Aram"
+local MainMenu = require "src.piggo.ui.MainMenu"
+local Client = require "src.piggo.net.Client"
+local Server = require "src.piggo.net.Server"
+local Aram = require "src.contrib.aram.Aram"
 
 local load, update, draw, handleKeyPressed
 
 -- top level application controller
 function Piggo.new()
     local piggo = {
-        -- server = Server.new(Aram.new()),
+        serverThread = Aram.startServer(),
         load = load, update = update, draw = draw,
         handleKeyPressed = handleKeyPressed,
         state = {
@@ -28,26 +28,6 @@ function Piggo.new()
         }
     }
 
-
-    serverThread =
-[[
--- local love = require "love"
-local t = require "love.timer"
-local Aram = require "src.game.Aram"
-local Server = require "src.application.net.Server"
-
-local server = Server.new(Aram.new())
-while true do
-    server:update(.05)
-    -- print("wagmi")
-    t.sleep(0.05)
-end
-]]
-
-    love.thread.newThread(serverThread):start()
-    -- love.thread.newChannel()
-    -- thread:start()
-
     return piggo
 end
 
@@ -56,10 +36,8 @@ function load(self)
 end
 
 function update(self, dt)
-    -- if self.server then
-    --     self.server:update(dt, self.state)
-    -- end
     self.state.scenes[self.state.currentScene]:update(dt, self.state)
+    -- TODO server/client healthchecks?
 end
 
 function draw(self)

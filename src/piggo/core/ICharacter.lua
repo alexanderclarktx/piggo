@@ -1,6 +1,6 @@
 local ICharacter = {}
-local ShapeUtils = require "src.util.shapeutils"
-local DrawUtils = require "src.util.DrawUtils"
+local ShapeUtils = require "src.piggo.util.shapeutils"
+local DrawUtils = require "src.piggo.util.DrawUtils"
 
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
 
@@ -42,6 +42,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
 end
 
 function update(self, dt, state)
+    if self.body:isDestroyed() then return end
     assert(state)
     self.charUpdate(self, dt, state)
 
@@ -50,7 +51,7 @@ function update(self, dt, state)
     end
 
     -- velocity to 0
-    self.body:setLinearVelocity(0, 0)
+    -- self.body:setLinearVelocity(0, 0)
 
     -- accumulate total dt
     self.dt = self.dt + dt

@@ -1,12 +1,16 @@
 local Client = {}
 local socket = require "socket"
+
 local json = require "lib.json"
-local Camera = require "lib.Camera"
-local hero = require "lib.hero"
-local Player = require "src.game.Player"
-local Gui = require "src.application.ui.Gui"
-local Skelly = require "src.game.characters.Skelly"
-local PlayerController = require "src.application.PlayerController"
+local camera = require "lib.camera"
+-- local hero = require "lib.hero"
+
+local Gui = require "src.piggo.ui.Gui"
+local Player = require "src.piggo.core.Player"
+local PlayerController = require "src.piggo.core.PlayerController"
+
+local Skelly = require "src.contrib.aram.characters.Skelly"
+
 
 local load, update, draw, handleKeyPressed
 local defaultHost = "localhost"
@@ -21,13 +25,12 @@ function Client.new(game, host, port)
     udp:settimeout(0)
     udp:setpeername(host or defaultHost, port or defaultPort)
 
-
     -- print(udp:send("hello world"))
     -- -- connect (blocking)
-    -- local data, msg = udp:receive()
-    -- if data then
-    --     -- debug(data)
-    --     local state = json:decode(data)
+    -- local payload, msg = udp:receive()
+    -- if payload then
+    --     -- debug(payload)
+    --     local state = json:decode(payload)
     --     state.world = hero.load(state.world)
     --     self.game.state = state
 
@@ -47,7 +50,7 @@ function Client.new(game, host, port)
         host = host or defaultHost, port = port or defaultPort,
         udp = udp, game = game, player = player,
         gui = Gui.new(player), playerController = PlayerController.new(player),
-        camera = Camera()
+        camera = camera()
     }
 
     return client
@@ -74,18 +77,25 @@ function update(self, dt)
     -- update player controller
     self.playerController:update(dt, self.camera.mx, self.camera.my, self.game.state)
 
+    -- send actions to server
     self.udp:send("hello world")
+    self.udp:send(json:encode({
+        marker = {
+            x = 50,
+            y = 200
+        }
+    }))
 
-    local data, msg = self.udp:receive()
-    if data then
-        print("uhh")
-        local state = json:decode(data)
-        state.world = hero.load(state.world)
-        self.game.state = state
-    else
-        -- print("gg")
-        -- debug("got nothing from server")
-        -- print(msg)
+    local payload, _ = self.udp:receive()
+    if payload then
+        debug("got something from server")
+
+        local data = json:decode(payload)
+        self.game.state.players[1].character.body:setX(data.x)
+        self.game.state.players[1].character.body:setY(data.y)
+
+        -- state.world = hero.load(state.world)
+        -- self.game.state = state
     end
 
     -- self.game:update(dt)

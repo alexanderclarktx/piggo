@@ -1,5 +1,5 @@
 local PlayerController = {}
-local ShapeUtils = require "src.util.ShapeUtils"
+local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
 local update, draw, handleKeyPressed
 

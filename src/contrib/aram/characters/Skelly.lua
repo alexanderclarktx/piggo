@@ -1,9 +1,11 @@
 local Skelly = {}
-local ICharacter = require "src.game.characters.ICharacter"
-local SkellyAxe = require "src.game.abilities.SkellyAxe"
-local SkellyShield = require "src.game.abilities.SkellyShield"
-local SkellyPush = require "src.game.abilities.SkellyPush"
-local SkellyUlti = require "src.game.abilities.SkellyUlti"
+
+local ICharacter = require "src.piggo.core.ICharacter"
+
+local SkellyAxe = require "src.contrib.aram.abilities.SkellyAxe"
+local SkellyShield = require "src.contrib.aram.abilities.SkellyShield"
+local SkellyPush = require "src.contrib.aram.abilities.SkellyPush"
+local SkellyUlti = require "src.contrib.aram.abilities.SkellyUlti"
 
 local update, draw
 

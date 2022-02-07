@@ -1,7 +1,7 @@
 local Aram = {}
-local Minion = require "src.game.characters.Minion"
-local IGame = require "src.game.IGame"
-local Terrain = require "src.game.Terrain"
+local IGame = require "src.piggo.core.IGame"
+local Terrain = require "src.piggo.core.Terrain"
+local Minion = require "src.contrib.aram.characters.Minion"
 local load, update, draw, spawnMinions, spawnTerrain
 
 local backgroundColor = {0.05, 0.05, 0.15}
@@ -25,6 +25,25 @@ function Aram.new()
     return aram
 end
 
+function Aram.startServer()
+    local threadCode = [[
+        local t = require "love.timer"
+        local Aram = require "src.contrib.aram.Aram"
+        local Server = require "src.piggo.net.Server"
+        debug = print
+
+        local server = Server.new(Aram.new())
+        while true do
+            server:update(.05)
+            -- print("wagmi")
+            t.sleep(0.05)
+        end
+    ]]
+    local thread = love.thread.newThread(threadCode)
+    thread:start()
+    return thread
+end
+
 function load(self)
     -- create the terrain
     self:spawnTerrain()
@@ -38,6 +57,7 @@ function update(self, dt)
     for i, npc in ipairs(self.state.npcs) do
         if npc.meta.hp <= 0 then
             table.remove(self.state.npcs, i)
+            debug("destroying body")
             npc.body:destroy()
         end
     end

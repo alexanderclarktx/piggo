@@ -1,5 +1,5 @@
 local IGame = {}
-local DamageController = require "src.game.DamageController"
+local DamageController = require "src.piggo.core.DamageController"
 local p = require 'love.physics'
 
 local load, update, draw, addPlayer

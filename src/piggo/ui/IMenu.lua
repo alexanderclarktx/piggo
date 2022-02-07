@@ -1,5 +1,5 @@
 local IMenu = {}
-local ShapeUtils = require "src.util.ShapeUtils"
+local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
 local load, update, draw, handleKeyPressed
 local addText, addTexture, addButton

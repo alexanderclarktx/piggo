@@ -1,9 +1,11 @@
 local Server = {}
 local socket = require "socket"
+
 local json = require "lib.json"
-local hero = require "lib.hero"
-local Player = require "src.game.Player"
-local Skelly = require "src.game.characters.Skelly"
+-- local hero = require "lib.hero"
+
+local Player = require "src.piggo.core.Player"
+local Skelly = require "src.contrib.aram.characters.Skelly"
 
 local update, gameTick
 local defaultPort = 12345
@@ -58,7 +60,10 @@ function update(self, dt)
 
         -- if this client has no record, create their player/character and add them
         if not self.connectedClients[clientIpPort] then
-            self.game:addPlayer(Player.new(clientIpPort, Skelly.new(self.game.state.world, 500, 250, 500)))
+            local newPlayer = Player.new(clientIpPort, Skelly.new(self.game.state.world, 500, 250, 500))
+            newPlayer.character.body:setLinearVelocity(50, 0)
+            self.game:addPlayer(newPlayer)
+
             self.connectedClients[clientIpPort] = "a"
             self.tickClientDataBuffer[clientIpPort] = {}
         end
@@ -77,9 +82,23 @@ function update(self, dt)
             -- print("server send")
             local ip, port = ipAndPort:match("([%w:]+);(%w+)")
 
-            self.game.state.world = hero.save(self.game.state.world)
-            self.udp:sendto(json:encode(self.game.state.world), ip, port)
-            self.game.state.world = hero.load(self.game.state.world)
+            -- local worldState = hero.save(self.game.state.world)
+
+            -- this worked:
+            -- self.udp:sendto("hello", ip, port)
+            -- self.udp:sendto(json:encode({message = "hello"}), ip, port)
+
+            debug(self.game.state.players[1].character.body:getLinearVelocity())
+            self.udp:sendto(json:encode({
+                x = self.game.state.players[1].character.body:getX(),
+                y = self.game.state.players[1].character.body:getY(),
+                velocity = self.game.state.players[1].character.body:getLinearVelocity()
+            }), ip, port)
+
+
+
+
+            -- self.game.state.world = hero.load(self.game.state.world)
                 -- {
                 -- players = deepCopy(self.game.state.players),
                 -- npcs = self.game.state.npcs,

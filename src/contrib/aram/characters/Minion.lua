@@ -1,6 +1,6 @@
 local Minion = {}
-local ShapeUtils = require "src.util.shapeutils"
-local ICharacter = require "src.game.characters.ICharacter"
+local ShapeUtils = require "src.piggo.util.shapeutils"
+local ICharacter = require "src.piggo.core.ICharacter"
 
 local update, draw
 

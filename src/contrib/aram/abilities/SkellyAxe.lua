@@ -1,6 +1,6 @@
 local SkellyAxe = {}
-local IAbility = require "src.game.abilities.IAbility"
-local ShapeUtils = require "src.util.ShapeUtils"
+local IAbility = require "src.piggo.core.IAbility"
+local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
 local cast, update, draw
 

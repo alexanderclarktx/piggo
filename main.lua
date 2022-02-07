@@ -1,4 +1,4 @@
-local Piggo = require "src.application.Piggo"
+local Piggo = require "src.piggo.Piggo"
 
 local piggo = Piggo.new()
 
