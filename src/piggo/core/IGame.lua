@@ -62,13 +62,12 @@ end
 -- validate/process every player's commands
 function handlePlayerCommands(self, players)
     for playerName, player in pairs(players) do
-        debug("handling commands from ", playerName)
         for _, command in ipairs(player.commands) do
             debug("handling ", command.action, playerName)
             if command.action == "stop" then
-                player.character.meta.marker = nil
-                player.character.target = nil
-                player.character.body:setLinearVelocity(0, 0)
+                self.state.players[playerName].character.meta.marker = nil
+                self.state.players[playerName].character.target = nil
+                self.state.players[playerName].character.body:setLinearVelocity(0, 0)
             end
         end
     end

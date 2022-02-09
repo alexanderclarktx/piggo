@@ -4,8 +4,7 @@ local Terrain = require "src.piggo.core.Terrain"
 local Minion = require "src.contrib.aram.characters.Minion"
 local load, update, draw, spawnMinions, spawnTerrain
 
--- local backgroundColor = {0.05, 0.05, 0.15}
-local backgroundColor = {0.1, 0, 0.2}
+local backgroundColor = {0, 0.1, 0.3}
 
 -- rules:
 --   * single lane

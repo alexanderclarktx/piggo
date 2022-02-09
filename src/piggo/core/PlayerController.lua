@@ -15,7 +15,7 @@ function PlayerController.new(player)
 end
 
 function update(self, dt, mouseX, mouseY, state)
-    -- assert(mouseX and mouseY and state)
+    assert(mouseX and mouseY and state)
     -- -- for each npc, is the player clicking on it
     -- self.hovering = nil
     -- for _, npc in pairs(state.npcs) do
@@ -29,7 +29,7 @@ function update(self, dt, mouseX, mouseY, state)
     --     end
     -- end
 
-    -- -- player movement
+    -- player movement
     -- if love.mouse.isDown(2) or love.mouse.isDown(1) then
     --     self.player.character.meta.marker = {
     --         x = mouseX,

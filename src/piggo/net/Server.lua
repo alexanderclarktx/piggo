@@ -46,8 +46,8 @@ function update(self, dt)
     -- buffer all data received from the players
     while true do
         -- check for data from players, breaking when nothing's left to receive
-        playerCommand, msgOrIp, portOrNil = self.udp:receivefrom()
-        if playerCommand == nil then break end
+        playerCommandsJson, msgOrIp, portOrNil = self.udp:receivefrom()
+        if playerCommandsJson == nil then break end
         assert(msgOrIp and portOrNil)
 
         -- if this player has no record, create their player/character and add them
@@ -56,10 +56,15 @@ function update(self, dt)
             self:connectPlayer(playerName, playerCommand, msgOrIp, portOrNil)
         end
 
-        -- add command to player's command buffer
-        if playerCommand.action then
-            if playerCommand.action == "stop" then
-                table.insert(self.connectedPlayers[playerName].commands, playerCommand)
+        -- handle all player commands
+        local playerCommands = json:decode(playerCommandsJson)
+        for _, playerCommand in ipairs(playerCommands) do
+            -- add command to player's command buffer
+            if playerCommand.action ~= nil then
+                if playerCommand.action == "stop" then
+                    debug("adding stop command to player.commands")
+                    table.insert(self.connectedPlayers[playerName].commands, playerCommand)
+                end
             end
         end
     end
@@ -144,13 +149,13 @@ function gameTick(self, dt)
     -- handle all the buffered player commands
     self.game:handlePlayerCommands(self.connectedPlayers)
 
-    -- update the game
-    self.game:update(dt)
-
     -- reset tick state
     for _, player in pairs(self.connectedPlayers) do
         player.commands = {}
     end
+
+    -- update the game
+    self.game:update(dt)
 
     -- record the last tick time
     self.lastTick = self.dt

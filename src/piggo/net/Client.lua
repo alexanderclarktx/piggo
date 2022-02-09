@@ -110,7 +110,7 @@ function sendCommandsToServer(self)
         self.udp:send(json:encode(commandsToSend))
         self.playerController.bufferedCommands = {}
     else
-        self.udp:send("ping")
+        self.udp:send(json:encode({}))
     end
 end
 
