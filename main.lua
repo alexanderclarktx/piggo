@@ -1,16 +1,17 @@
-local Piggo = require 'src.Piggo'
+local Piggo = require "src.piggo.Piggo"
+
+local piggo = Piggo.new()
 
 function love.load(arg)
-    piggo = Piggo.new() -- piggo is in global scope
-    piggo:load()
-
-    -- debug flag
+    -- handle debug flag
     love.graphics.setDefaultFilter("nearest", "nearest")
     if arg[1] and arg[1] == "--debug" then
-        debug = printDebug
+        debug = require("src.piggo.util.debug")
     else
         debug = function() return false end
     end
+
+    piggo:load()
 end
 
 function love.update(dt)
@@ -25,10 +26,6 @@ function love.keypressed(key, scancode, isrepeat)
     piggo:handleKeyPressed(key, scancode, isrepeat)
 end
 
-function printDebug(...)
-    if ... then
-        io.write("[debug] ")
-        print(...)
-    end
-    return true
+function love.mousepressed(x, y, mouseButton)
+    piggo:handleMousePressed(x, y, mouseButton)
 end
