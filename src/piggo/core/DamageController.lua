@@ -27,13 +27,13 @@ function update(self, dt, state)
         for _, npc in pairs(state.npcs) do
             if hurtbox.type == "poly" then
                 if ShapeUtils.circleInPolygon(
-                        npc.body:getX(), npc.body:getY(), npc.meta.size, hurtbox.poly) then
-                    npc.meta.hp = npc.meta.hp - hurtbox.damage
+                        npc.body:getX(), npc.body:getY(), npc.state.size, hurtbox.poly) then
+                    npc.state.hp = npc.state.hp - hurtbox.damage
                 end
             elseif hurtbox.type == "circle" then
                 if ShapeUtils.circleInCircle(
-                        npc.body:getX(), npc.body:getY(), npc.meta.size, hurtbox.x, hurtbox.y, hurtbox.radius) then
-                    npc.meta.hp = npc.meta.hp - hurtbox.damage
+                        npc.body:getX(), npc.body:getY(), npc.state.size, hurtbox.x, hurtbox.y, hurtbox.radius) then
+                    npc.state.hp = npc.state.hp - hurtbox.damage
                 end
             end
         end

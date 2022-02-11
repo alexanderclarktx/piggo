@@ -12,7 +12,7 @@ local PlayerController = require "src.piggo.core.PlayerController"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
 
-local load, update, draw, handleKeyPressed
+local load, update, draw, handleKeyPressed, handleMousePressed
 local sendCommandsToServer, processServerPacket, connectToServer
 local defaultHost = "localhost"
 local defaultPort = 12345
@@ -30,7 +30,8 @@ function Client.new(game, host, port)
     game:addPlayer(playerName, player)
 
     local client = {
-        load = load, update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        load = load, update = update, draw = draw,
+        handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
         sendCommandsToServer = sendCommandsToServer, processServerPacket = processServerPacket,
         host = host or defaultHost, port = port or defaultPort,
         udp = udp, game = game, player = player,
@@ -118,7 +119,7 @@ function processServerPacket(self)
     local packet, _ = self.udp:receive()
     if packet then
         local payload = json:decode(packet)
-        assert(payload.gameTickPayload, payload.playerTickPayload)
+        -- assert(payload.gameTickPayload and payload.playerTickPayload)
 
         -- update all player state
         for playerName, player in pairs(payload.gameTickPayload.players) do
@@ -132,6 +133,13 @@ end
 function handleKeyPressed(self, key, scancode, isrepeat)
     self.playerController:handleKeyPressed(
         key, scancode, isrepeat, self.camera.mx, self.camera.my
+    )
+end
+
+function handleMousePressed(self, x, y, mouseButton, state)
+    -- ignore the given x/y, use the camera's
+    self.playerController:handleMousePressed(
+        self.camera.mx, self.camera.my, mouseButton, state
     )
 end
 

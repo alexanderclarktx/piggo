@@ -53,7 +53,7 @@ function cast(self, character)
                 self.shield.color.b - self.shield.color.b * self.dt / self.duration
             )
             love.graphics.setLineWidth(self.shield.width)
-            love.graphics.circle("line", character.body:getX(), character.body:getY(), character.meta.size + self.shield.radius)
+            love.graphics.circle("line", character.body:getX(), character.body:getY(), character.state.size + self.shield.radius)
             love.graphics.setLineWidth(1)
         end
     })

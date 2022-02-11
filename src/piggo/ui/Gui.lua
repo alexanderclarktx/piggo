@@ -32,7 +32,7 @@ function drawDebug(player)
     love.graphics.setColor(1, 1, 0, 0.7)
     love.graphics.print(debug:format(
         love.timer.getFPS(),
-        player.character.meta.hp,
+        player.character.state.hp,
         player.character.body:getX(),
         player.character.body:getY(),
         #player.character.effects

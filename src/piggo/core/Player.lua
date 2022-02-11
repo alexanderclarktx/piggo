@@ -5,7 +5,9 @@ local update, draw
 function Player.new(name, character)
     assert(name and character)
     return {
-        name = name,
+        state = {
+            name = name
+        },
         character = character,
         update = update,
         draw = draw,

@@ -4,13 +4,11 @@ local Client = require "src.piggo.net.Client"
 local Server = require "src.piggo.net.Server"
 local Aram = require "src.contrib.aram.Aram"
 
-local load, update, draw, handleKeyPressed, startServerThread
+local load, update, draw, handleKeyPressed, handleMousePressed, startServerThread
 
 -- top level application controller
 function Piggo.new()
     local piggo = {
-        load = load, update = update, draw = draw,
-        handleKeyPressed = handleKeyPressed,
         state = {
             scenes = {
                 MainMenu.new(),
@@ -24,7 +22,10 @@ function Piggo.new()
                 self.scenes[sceneNumber]:load()
                 self.currentScene = sceneNumber
             end
-        }
+        },
+        load = load, update = update, draw = draw,
+        handleKeyPressed = handleKeyPressed,
+        handleMousePressed = handleMousePressed,
     }
 
     return piggo
@@ -51,6 +52,11 @@ function handleKeyPressed(self, key, scancode, isrepeat)
     end
 
     self.state.scenes[self.state.currentScene]:handleKeyPressed(key, scancode, isrepeat)
+end
+
+function handleMousePressed(self, x, y, mouseButton)
+    debug("mouse pressed")
+    self.state.scenes[self.state.currentScene]:handleMousePressed(x, y, mouseButton, self.state)
 end
 
 function startServerThread(gameFile)

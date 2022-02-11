@@ -65,9 +65,12 @@ function handlePlayerCommands(self, players)
         for _, command in ipairs(player.commands) do
             debug("handling ", command.action, playerName)
             if command.action == "stop" then
-                self.state.players[playerName].character.meta.marker = nil
-                self.state.players[playerName].character.target = nil
+                self.state.players[playerName].character.state.marker = nil
+                self.state.players[playerName].character.state.target = nil
                 self.state.players[playerName].character.body:setLinearVelocity(0, 0)
+            elseif command.action == "move" then
+                assert(command.marker)
+                self.state.players[playerName].character.state.marker = command.marker
             end
         end
     end

@@ -13,7 +13,7 @@ function SkellyUlti.new()
 end
 
 function cast(self, character)
-    character.color = {0, 1, 0}
+    character.state.color = {0, 1, 0}
     table.insert(character.effects, {
         name = "Ulti",
         drawable = true,
@@ -24,7 +24,7 @@ function cast(self, character)
                 time = 0,
                 done = false,
                 cast = function(self, me)
-                    character.meta.speedfactor = 4
+                    character.state.speedfactor = 4
                 end
             },
             {
@@ -32,9 +32,9 @@ function cast(self, character)
                 done = false,
                 cast = function(self, me)
                     me:submitHurtboxCircle("Ulti", 9999999, character.body:getX(), character.body:getY(), 500)
-                    character.meta.hp = character.meta.hp + 150
-                    character.color = character.defaultColor
-                    character.meta.speedfactor = 1
+                    character.state.hp = character.state.hp + 150
+                    character.color = character.state.defaultColor
+                    character.state.speedfactor = 1
                 end
             }
         },
@@ -45,9 +45,9 @@ function cast(self, character)
 
                 love.graphics.setColor(1, 0, 0, 0.3)
                 love.graphics.setColor(math.random(), math.random(), math.random(), 0.8)
-                love.graphics.circle("line", character.body:getX(), character.body:getY(), character.meta.size + 50)
+                love.graphics.circle("line", character.body:getX(), character.body:getY(), character.state.size + 50)
                 love.graphics.setColor(math.random(), math.random(), math.random(), 0.8)
-                love.graphics.circle("fill", character.body:getX(), character.body:getY(), character.meta.size + 50)
+                love.graphics.circle("fill", character.body:getX(), character.body:getY(), character.state.size + 50)
 
                 -- TODO i'm resetting the color - this should be a call
                 love.graphics.setLineWidth(1)

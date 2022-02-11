@@ -21,9 +21,9 @@ function Minion.new(world, x, y, hp, marker, team)
     minion.frameLast = 0
     minion.framecd = 0.13
     minion.defaultMarker = marker
-    minion.meta.marker = marker
-    minion.color = {r = team == 2 and 1 or 0, g = team == 1 and 1 or 0, b = 0}
-    minion.team = team
+    minion.state.marker = marker
+    minion.state.color = {team == 2 and 1 or 0, team == 1 and 1 or 0, 0}
+    minion.state.team = team
     minion.fixture:setFriction(1)
 
     return minion
@@ -35,8 +35,8 @@ function update(self, dt, state)
 
     local target = nil
     for _, character in pairs(state.npcs) do
-        if character.team ~= self.team then
-            -- debug(string.format("me team %s checking team %s", self.team, character.team))
+        if character.state.team ~= self.state.team then
+            -- debug(string.format("me team %s checking team %s", self.state.team, character.state.team))
             if ShapeUtils.pointInCircle(character.body:getX(), character.body:getY(),
                 self.body:getX(), self.body:getY(), 200) then
                     target = character
@@ -44,11 +44,11 @@ function update(self, dt, state)
             end
         end
     end
-    self.target = target
+    self.state.target = target
 
     -- if nothing nearby, move on toward defaultMarker
-    if self.meta.marker == nil then
-        -- self.meta.marker = self.defaultMarker
+    if self.state.marker == nil then
+        -- self.state.marker = self.defaultMarker
     end
 
     -- update animation frame
@@ -68,11 +68,11 @@ function draw(self)
         self.image:setFilter("nearest", "nearest")
     end
 
-    love.graphics.setColor(self.color.r, self.color.g, self.color.b)
+    love.graphics.setColor(self.state.color)
     love.graphics.drawLayer(
         self.image, self.frame,
         self.body:getX(), self.body:getY(),
-        0, 3 * self.facingRight, 3, 8, 7
+        0, 3 * self.state.facingRight, 3, 8, 7
     )
 end
 

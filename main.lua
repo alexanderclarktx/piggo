@@ -25,3 +25,7 @@ end
 function love.keypressed(key, scancode, isrepeat)
     piggo:handleKeyPressed(key, scancode, isrepeat)
 end
+
+function love.mousepressed(x, y, mouseButton)
+    piggo:handleMousePressed(x, y, mouseButton)
+end

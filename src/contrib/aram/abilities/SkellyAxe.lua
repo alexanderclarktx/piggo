@@ -45,31 +45,31 @@ function cast(self, character, mouseX, mouseY)
             {
                 time = 0.45,
                 done = false,
-                cast = function(character, me, effect)
+                cast = function(self, character, effect)
                     effect.hitboxStyle = "fill"
 
                     -- damage
-                    me:submitHurtboxPoly("axe", 100, effect.hitboxPoints)
+                    character:submitHurtboxPoly("axe", 100, effect.hitboxPoints)
                 end
             }
         },
-        draw = function(character, me)
+        draw = function(self, character)
             -- first point is on edge of character
-            local p1 = {me.body:getX() + me.meta.size * character.xRatio, me.body:getY() + me.meta.size * character.yRatio}
+            local p1 = {character.body:getX() + character.state.size * self.xRatio, character.body:getY() + character.state.size * self.yRatio}
 
             -- outer points of triangle
-            local p2 = ShapeUtils.rotate({character.xRatio, character.yRatio}, -character.hitboxAngle, p1[1], p1[2], character.hitboxDistance)
-            local p3 = ShapeUtils.rotate({character.xRatio, character.yRatio}, character.hitboxAngle, p1[1], p1[2], character.hitboxDistance)
+            local p2 = ShapeUtils.rotate({self.xRatio, self.yRatio}, -self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
+            local p3 = ShapeUtils.rotate({self.xRatio, self.yRatio}, self.hitboxAngle, p1[1], p1[2], self.hitboxDistance)
 
             -- draw axe triangle
-            love.graphics.setColor(unpack(character.color))
-            love.graphics.polygon(character.hitboxStyle, {
+            love.graphics.setColor(self.color)
+            love.graphics.polygon(self.hitboxStyle, {
                 p1[1], p1[2],
                 p2[1], p2[2],
                 p3[1], p3[2]
             })
 
-            character.hitboxPoints = {p1[1], p1[2], p2[1], p2[2], p3[1], p3[2]}
+            self.hitboxPoints = {p1[1], p1[2], p2[1], p2[2], p3[1], p3[2]}
         end
     })
 end

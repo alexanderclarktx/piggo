@@ -36,7 +36,7 @@ end
 function update(self, dt, playerCommandsBuffer)
     -- kill all npcs that are dead :)
     for i, npc in ipairs(self.state.npcs) do
-        if npc.meta.hp <= 0 then
+        if npc.state.hp <= 0 then
             table.remove(self.state.npcs, i)
             debug("destroying body")
             npc.body:destroy()

@@ -1,12 +1,13 @@
 local PlayerController = {}
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
-local update, draw, handleKeyPressed, bufferCommand
+local update, draw, handleKeyPressed, handleMousePressed, bufferCommand
 
 function PlayerController.new(player)
     assert(player)
     return {
-        update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        update = update, draw = draw,
+        handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
         bufferCommand = bufferCommand,
         player = player,
         hovering = nil,
@@ -23,18 +24,10 @@ function update(self, dt, mouseX, mouseY, state)
     --     -- TODO logic for targeting CLOSEST (shift+click)
     --     if ShapeUtils.pointInCircle(
     --             mouseX, mouseY,
-    --             npc.body:getX(), npc.body:getY(), npc.meta.size + 16) then
+    --             npc.body:getX(), npc.body:getY(), npc.state.size + 16) then
     --         self.hovering = npc
     --         break
     --     end
-    -- end
-
-    -- player movement
-    -- if love.mouse.isDown(2) or love.mouse.isDown(1) then
-    --     self.player.character.meta.marker = {
-    --         x = mouseX,
-    --         y = mouseY
-    --     }
     -- end
 end
 
@@ -44,7 +37,7 @@ function draw(self)
         love.graphics.setColor(0.7, 0.2, 0.2)
         love.graphics.setLineWidth(4)
         if not self.hovering.body:isDestroyed() then
-            love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.meta.size + 2)
+            love.graphics.circle("line", self.hovering.body:getX(), self.hovering.body:getY(), self.hovering.state.size + 2)
         end
         love.graphics.setLineWidth(1)
     end
@@ -87,6 +80,14 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
     if key == "s" then -- stop
         self:bufferCommand({action = "stop"})
     end
+end
+
+function handleMousePressed(self, x, y, mouseButton, state)
+    self.player.character.state.marker = {x = x, y = y}
+    self:bufferCommand({
+        action = "move",
+        marker = self.player.character.state.marker
+    })
 end
 
 return PlayerController

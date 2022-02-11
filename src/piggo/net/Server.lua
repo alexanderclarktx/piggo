@@ -41,7 +41,7 @@ function update(self, dt)
     -- debug("players connected: " .. tostring(#self.connectedPlayers))
     self.dt = self.dt + dt
 
-    local playerCommand, msgOrIp, portOrNil
+    local msgOrIp, portOrNil
 
     -- buffer all data received from the players
     while true do
@@ -53,18 +53,15 @@ function update(self, dt)
         -- if this player has no record, create their player/character and add them
         local playerName = "KetoMojito" -- TODO get from player's connect payload
         if not self.connectedPlayers[playerName] then
-            self:connectPlayer(playerName, playerCommand, msgOrIp, portOrNil)
+            self:connectPlayer(playerName, msgOrIp, portOrNil)
         end
 
-        -- handle all player commands
+        -- buffer all player commands
         local playerCommands = json:decode(playerCommandsJson)
         for _, playerCommand in ipairs(playerCommands) do
-            -- add command to player's command buffer
             if playerCommand.action ~= nil then
-                if playerCommand.action == "stop" then
-                    debug("adding stop command to player.commands")
-                    table.insert(self.connectedPlayers[playerName].commands, playerCommand)
-                end
+                debug("received command, adding it to player.commands")
+                table.insert(self.connectedPlayers[playerName].commands, playerCommand)
             end
         end
     end
@@ -92,7 +89,7 @@ function update(self, dt)
 end
 
 -- connect a new player
-function connectPlayer(self, playerName, playerCommand, msgOrIp, portOrNil)
+function connectPlayer(self, playerName, msgOrIp, portOrNil)
     -- add the player to the game
     local player = Player.new(playerName, Skelly.new(self.game.state.world, 500, 250, 500))
     self.game:addPlayer(playerName, player)
@@ -136,7 +133,12 @@ end
 -- prepare data for the individual player
 function createPlayerTickPayload(self, player)
     local playerTickPayload = {
-        -- cds = player.cooldowns
+        player = {
+            state = player.player.state,
+            character = {
+                state = player.player.character.state
+            }
+        }
     }
     return playerTickPayload
 end

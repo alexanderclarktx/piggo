@@ -57,12 +57,12 @@ function draw(self)
     end
 
     -- draw skelly
-    assert(self.color)
-    love.graphics.setColor(self.color[1], self.color[2], self.color[3])
+    assert(self.state.color)
+    love.graphics.setColor(self.state.color)
     love.graphics.drawLayer(
         self.image, frameToDraw,
         self.body:getX(), self.body:getY(),
-        0, 4 * self.facingRight, 4, 6, 6
+        0, 4 * self.state.facingRight, 4, 6, 6
     )
 end
 

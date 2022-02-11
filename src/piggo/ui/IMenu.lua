@@ -1,7 +1,7 @@
 local IMenu = {}
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
-local load, update, draw, handleKeyPressed
+local load, update, draw, handleKeyPressed, handleMousePressed
 local addText, addTexture, addButton
 
 function IMenu.new(fonts)
@@ -9,7 +9,8 @@ function IMenu.new(fonts)
 
     -- attach methods for generic buttons/text/inputs
     local menu = {
-        load = load, update = update, draw = draw, handleKeyPressed = handleKeyPressed,
+        load = load, update = update, draw = draw,
+        handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
         addText = addText, addTexture = addTexture, addButton = addButton,
         texts = {}, textures = {}, buttons = {},
         fonts = fonts
@@ -45,24 +46,6 @@ function load(self) end
 
 function update(self, dt, state)
     assert(state)
-
-    -- check if a button was pressed
-    if love.mouse.isDown(1) then
-        local mouseX, mouseY = love.mouse.getPosition()
-
-        for _, button in ipairs(self.buttons) do
-            local mouseIsHoveringButton = ShapeUtils.pointInPolygon(mouseX, mouseY,
-                    button.x, button.y,
-                    button.x, button.y + button.height,
-                    button.x + button.width, button.y + button.height,
-                    button.x + button.width, button.y
-            )
-            if mouseIsHoveringButton then
-                button.callback(state)
-                break
-            end
-        end
-    end
 end
 
 function draw(self)
@@ -75,7 +58,7 @@ function draw(self)
         -- love.graphics.drawLayer(
         --     image, frameToDraw,
         --     self.body:getX(), self.body:getY(),
-        --     0, 4 * self.facingRight, 4, 6, 6
+        --     0, 4 * self.state.facingRight, 4, 6, 6
         -- )
     end
 
@@ -114,5 +97,20 @@ function draw(self)
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat) end
+
+function handleMousePressed(self, x, y, mouseButton, state)
+    for _, button in ipairs(self.buttons) do
+        local mouseIsHoveringButton = ShapeUtils.pointInPolygon(x, y,
+                button.x, button.y,
+                button.x, button.y + button.height,
+                button.x + button.width, button.y + button.height,
+                button.x + button.width, button.y
+        )
+        if mouseIsHoveringButton then
+            button.callback(state)
+            break
+        end
+    end
+end
 
 return IMenu
