@@ -10,17 +10,12 @@ local load, update, draw, handleKeyPressed, handleMousePressed, startServerThrea
 function Piggo.new()
     local piggo = {
         state = {
-            scenes = {
-                MainMenu.new(),
-                Client.new(Aram.new()),
-            },
-            currentScene = 1,
-            setScene = function(self, sceneNumber)
-                assert(sceneNumber and sceneNumber <= #self.scenes and sceneNumber ~= self.currentScene)
-
+            scene = MainMenu.new(),
+            setScene = function(self, scene)
+                assert(scene)
                 love.graphics.setNewFont(12)
-                self.scenes[sceneNumber]:load()
-                self.currentScene = sceneNumber
+                scene:load()
+                self.scene = scene
             end
         },
         load = load, update = update, draw = draw,
@@ -32,18 +27,18 @@ function Piggo.new()
 end
 
 function load(self)
-    self.state.scenes[self.state.currentScene]:load()
+    self.state.scene:load()
 
-    startServerThread("src.contrib.aram.Aram")
+    startServerThread("src.contrib.aram.Aram") -- TODO
 end
 
 function update(self, dt)
-    self.state.scenes[self.state.currentScene]:update(dt, self.state)
+    self.state.scene:update(dt, self.state)
     -- TODO server/client healthchecks?
 end
 
 function draw(self)
-    self.state.scenes[self.state.currentScene]:draw()
+    self.state.scene:draw()
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat)
@@ -51,12 +46,12 @@ function handleKeyPressed(self, key, scancode, isrepeat)
         love.event.quit()
     end
 
-    self.state.scenes[self.state.currentScene]:handleKeyPressed(key, scancode, isrepeat)
+    self.state.scene:handleKeyPressed(key, scancode, isrepeat, self.state)
 end
 
 function handleMousePressed(self, x, y, mouseButton)
     debug("mouse pressed")
-    self.state.scenes[self.state.currentScene]:handleMousePressed(x, y, mouseButton, self.state)
+    self.state.scene:handleMousePressed(x, y, mouseButton, self.state)
 end
 
 function startServerThread(gameFile)

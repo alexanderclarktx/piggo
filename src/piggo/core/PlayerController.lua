@@ -48,13 +48,17 @@ function draw(self)
     end
 end
 
-function bufferCommand(self, command)
+function bufferCommand(self, command, state)
     assert(command)
-    debug("buffering command: ", command.action)
+
+    -- append meta information
+    command.frame = state.scene.game.state.frame
+
+    debug("buffering command: ", command.action, command.frame)
     table.insert(self.bufferedCommands, command)
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
+function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
     assert(mouseX, mouseY)
 
     if key == "q" then
@@ -77,8 +81,8 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
             self.player.character, mouseX, mouseY
         )
     end
-    if key == "s" then -- stop
-        self:bufferCommand({action = "stop"})
+    if key == "s" then
+        self:bufferCommand({action = "stop"}, state)
     end
 end
 
@@ -87,7 +91,7 @@ function handleMousePressed(self, x, y, mouseButton, state)
     self:bufferCommand({
         action = "move",
         marker = self.player.character.state.marker
-    })
+    }, state)
 end
 
 return PlayerController

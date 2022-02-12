@@ -130,9 +130,9 @@ function processServerPacket(self)
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat)
+function handleKeyPressed(self, key, scancode, isrepeat, state)
     self.playerController:handleKeyPressed(
-        key, scancode, isrepeat, self.camera.mx, self.camera.my
+        key, scancode, isrepeat, self.camera.mx, self.camera.my, state
     )
 end
 

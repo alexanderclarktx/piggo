@@ -20,7 +20,7 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
         state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = p.newWorld(),
-            dt = 0
+            frame = 0, dt = 0
         }
     }
 
@@ -33,7 +33,8 @@ function load(self)
 end
 
 function update(self, dt)
-    -- increment state time
+    -- increment frame and dt
+    self.state.frame = self.state.frame + 1
     self.state.dt = self.state.dt + dt
 
     -- update damage controller
@@ -63,7 +64,7 @@ end
 function handlePlayerCommands(self, players)
     for playerName, player in pairs(players) do
         for _, command in ipairs(player.commands) do
-            debug("handling ", command.action, playerName)
+            debug("command ", playerName, command.action, command.frame, self.state.frame)
             if command.action == "stop" then
                 self.state.players[playerName].character.state.marker = nil
                 self.state.players[playerName].character.state.target = nil

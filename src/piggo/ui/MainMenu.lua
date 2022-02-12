@@ -1,5 +1,7 @@
 local MainMenu = {}
 local IMenu = require "src.piggo.ui.IMenu"
+local Aram = require "src.contrib.aram.Aram"
+local Client = require "src.piggo.net.Client"
 
 function MainMenu.new()
     local menu = IMenu.new({
@@ -23,7 +25,7 @@ end
 -- start the game
 function onclickStart(state)
     debug("start")
-    state:setScene(2)
+    state:setScene(Client.new(Aram.new()))
 end
 
 -- TODO open the settings overlay
