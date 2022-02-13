@@ -29,7 +29,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             size = size,
             facingRight = 1,
         },
-        dt = 0,
+        frame = 0,
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         submitHurtboxPoly = submitHurtboxPoly,
@@ -43,10 +43,12 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
     return character
 end
 
-function update(self, dt, state)
+function update(self, state)
+    self.frame = self.frame + 1
+
     if self.body:isDestroyed() then return end
     assert(state)
-    self.charUpdate(self, dt, state)
+    self.charUpdate(self, state)
 
     if self.target ~= nil and self.target.body == nil then
         self.state.target = nil
@@ -54,9 +56,6 @@ function update(self, dt, state)
 
     -- velocity to 0
     self.body:setLinearVelocity(0, 0)
-
-    -- accumulate total dt
-    self.dt = self.dt + dt
 
     -- if i'm targeting, check if i can auto attack them
     if self.target ~= nil then
@@ -69,10 +68,11 @@ function update(self, dt, state)
         ) then
             self.body:setLinearVelocity(0, 0)
 
-            if self.state.ranged then -- ranged auto attack
-                -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
+            if self.state.ranged then
                 debug("create ranged auto attack")
-            else -- melee auto attack
+                -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
+            else
+                debug("create melee auto attack")
                 self.target.state.hp = self.target.state.hp - 1
             end
         else -- walk toward the target
@@ -82,15 +82,26 @@ function update(self, dt, state)
 
     -- move toward marker
     if self.state.marker and self.state.canMove then
-        local xdiff = self.state.marker.x - self.body:getX()
-        local ydiff = self.state.marker.y - self.body:getY()
+        -- x and y distances to the marker
+        local xDiff = self.state.marker.x - self.body:getX()
+        local yDiff = self.state.marker.y - self.body:getY()
 
-        if math.abs(xdiff) <= 1 and math.abs(ydiff) <= 1 then
+        -- if we're close enough, snap to the marker
+        if math.abs(xDiff) <= 4 then
+            self.body:setX(self.state.marker.x)
+            xDiff = 0
+        end
+        if math.abs(yDiff) <= 4 then
+            self.body:setY(self.state.marker.y)
+            yDiff = 0
+        end
+
+        -- move toward marker or reset it
+        if math.abs(xDiff) <= 1 and math.abs(yDiff) <= 1 then
             self.state.marker = nil
-            -- self.body:setLinearVelocity(0, 0)
         else
-            local xRatio = .0 + xdiff / (math.abs(xdiff) + math.abs(ydiff))
-            local yRatio = .0 + ydiff / (math.abs(xdiff) + math.abs(ydiff))
+            local xRatio = .0 + xDiff / (math.abs(xDiff) + math.abs(yDiff))
+            local yRatio = .0 + yDiff / (math.abs(xDiff) + math.abs(yDiff))
 
             local xComponent = self.state.speed * self.state.speedfactor * xRatio
             local yComponent = self.state.speed * self.state.speedfactor * yRatio
@@ -108,21 +119,21 @@ function update(self, dt, state)
 
     -- update each ability
     for i, ability in pairs(self.abilities) do
-        ability:update(dt)
+        ability:update()
     end
 
     -- update each effect
     for i, effect in pairs(self.effects) do
-        effect.dt = effect.dt + dt
+        effect.frame = effect.frame + 1
 
         for _, segment in pairs(effect.segments) do
-            if not segment.done and segment.time <= effect.dt then
+            if not segment.done and segment.time <= effect.frame then
                 segment:cast(self, effect)
                 segment.done = true
             end
         end
 
-        if effect.dt > effect.duration then
+        if effect.frame > effect.duration then
             table.remove(self.effects, i)
         end
     end

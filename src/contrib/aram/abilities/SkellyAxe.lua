@@ -6,7 +6,7 @@ local cast, update, draw
 
 -- hold down to charge; release for AoE stun and damage
 function SkellyAxe.new()
-    local skellyAxe = IAbility.new("Skelly Axe", cast, update, draw, 2)
+    local skellyAxe = IAbility.new("Skelly Axe", cast, update, draw, 300)
 
     skellyAxe.charges = 4
     skellyAxe.maxCharges = 4
@@ -19,9 +19,8 @@ end
 function cast(self, character, mouseX, mouseY)
     assert(character and character.body and mouseX and mouseY)
 
-    if self.dt <= self.cd then return end
+    if self.frame <= self.cd then return end
     if self.charges <= 0 then return end
-    -- self.dt = 0
     self.charges = self.charges - 1
 
     -- calculate axe orientation
@@ -34,8 +33,8 @@ function cast(self, character, mouseX, mouseY)
         name = "Axe",
         drawable = true,
         color = {1, 0, 0, debug() and 0.3 or 0.6},
-        duration = 0.5,
-        dt = 0,
+        duration = 40,
+        frame = 0,
         hitboxDistance = 200,
         hitboxAngle = math.pi/8,
         hitboxStyle = "line",
@@ -43,7 +42,7 @@ function cast(self, character, mouseX, mouseY)
         yRatio = yRatio,
         segments = {
             {
-                time = 0.45,
+                time = 35,
                 done = false,
                 cast = function(self, character, effect)
                     effect.hitboxStyle = "fill"
@@ -74,7 +73,7 @@ function cast(self, character, mouseX, mouseY)
     })
 end
 
-function update(self, dt) end
+function update(self) end
 
 function draw(self) end
 

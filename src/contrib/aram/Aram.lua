@@ -14,7 +14,7 @@ function Aram.new()
     local aram = IGame.new(load, update, draw)
     aram.timers = {
         minionSpawn = {
-            cd = 10,
+            cd = 1000,
             lastRun = 0,
             run = spawnMinions
         }
@@ -33,12 +33,11 @@ function load(self)
     self:spawnMinions()
 end
 
-function update(self, dt, playerCommandsBuffer)
+function update(self)
     -- kill all npcs that are dead :)
     for i, npc in ipairs(self.state.npcs) do
         if npc.state.hp <= 0 then
             table.remove(self.state.npcs, i)
-            debug("destroying body")
             npc.body:destroy()
         end
     end
@@ -50,9 +49,9 @@ function update(self, dt, playerCommandsBuffer)
             timer.lastRun ~= nil and type(timer.lastRun) == "number" and
             timer.run ~= nil and type(timer.run) == "function"
         )
-        if self.state.dt - timer.lastRun >= timer.cd then
+        if self.state.frame - timer.lastRun >= timer.cd then
             timer.run(self)
-            timer.lastRun = self.state.dt
+            timer.lastRun = self.state.frame
         end
     end
 end

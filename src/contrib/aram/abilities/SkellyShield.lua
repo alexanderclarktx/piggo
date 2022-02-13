@@ -7,20 +7,19 @@ local cast, update, draw
 local rgb = {1, 0, 0, 0.6}
 
 function SkellyShield.new()
-    local skellyShield = IAbility.new("Skelly Shield", cast, update, draw, 2)
+    local skellyShield = IAbility.new("Skelly Shield", cast, update, draw, 300)
 
     return skellyShield
 end
 
 function cast(self, character)
-    if self.dt < self.cd then return end
+    if self.frame < self.cd then return end
 
-    self.dt = 0
     table.insert(character.effects, {
         name = "Shield",
         drawable = true,
-        duration = 3,
-        dt = 0,
+        duration = 80,
+        frame = 0,
         shield = {
             color = {r = 0.8, g = 0.8, b = 0.8, alpha = 1},
             radius = 2,
@@ -28,7 +27,7 @@ function cast(self, character)
         },
         segments = {
             {
-                time = 2.9,
+                time = 70,
                 done = false,
                 cast = function(self, me, effect)
                     effect.shield = {
@@ -39,7 +38,7 @@ function cast(self, character)
                 end
             },
             {
-                time = 2.95,
+                time = 75,
                 done = false,
                 cast = function(self, me)
                     me:submitHurtboxCircle("Shield", 140, character.body:getX(), character.body:getY(), 50)
@@ -49,8 +48,8 @@ function cast(self, character)
         draw = function(self, me)
             love.graphics.setColor(
                 self.shield.color.r,
-                self.shield.color.g - self.shield.color.g * self.dt / self.duration,
-                self.shield.color.b - self.shield.color.b * self.dt / self.duration
+                self.shield.color.g - self.shield.color.g * self.frame / self.duration,
+                self.shield.color.b - self.shield.color.b * self.frame / self.duration
             )
             love.graphics.setLineWidth(self.shield.width)
             love.graphics.circle("line", character.body:getX(), character.body:getY(), character.state.size + self.shield.radius)
@@ -59,7 +58,7 @@ function cast(self, character)
     })
 end
 
-function update(self, dt) end
+function update(self) end
 
 function draw(self) end
 

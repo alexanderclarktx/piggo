@@ -65,9 +65,13 @@ function startServerThread(gameFile)
         assert(game)
 
         local server = Server.new(game.new())
+
+        local lastFrameTime = love.timer.getTime()
         while true do
-            server:update(.05)
-            t.sleep(0.05)
+            local time = love.timer.getTime()
+            server:update(time - lastFrameTime)
+            lastFrameTime = time
+            t.sleep(0.0001)
         end
     ]])
     thread:start(gameFile)

@@ -13,13 +13,13 @@ function Minion.new(world, x, y, hp, marker, team)
     local minion = ICharacter.new(
         world,
         update, draw,
-        x, y, hp, 300, 300, 15,
+        x, y, hp, 300, 200, 15,
         {}
     )
 
-    minion.frame = 1
+    minion.animationFrame = 1
     minion.frameLast = 0
-    minion.framecd = 0.13
+    minion.framecd = 7
     minion.defaultMarker = marker
     minion.state.marker = marker
     minion.state.color = {team == 2 and 1 or 0, team == 1 and 1 or 0, 0}
@@ -29,7 +29,7 @@ function Minion.new(world, x, y, hp, marker, team)
     return minion
 end
 
-function update(self, dt, state)
+function update(self, state)
     assert(state)
     -- check surroundings for things to attack (minions, champions, structures)
 
@@ -52,9 +52,9 @@ function update(self, dt, state)
     end
 
     -- update animation frame
-    if self.dt - self.frameLast > self.framecd then
-        self.frameLast = self.dt
-        self.frame = (self.frame + 1) % 3 + 1
+    if self.frame - self.frameLast > self.framecd then
+        self.frameLast = self.frame
+        self.animationFrame = (self.frame + 1) % 3 + 1
     end
 end
 
@@ -70,7 +70,7 @@ function draw(self)
 
     love.graphics.setColor(self.state.color)
     love.graphics.drawLayer(
-        self.image, self.frame,
+        self.image, self.animationFrame,
         self.body:getX(), self.body:getY(),
         0, 3 * self.state.facingRight, 3, 8, 7
     )

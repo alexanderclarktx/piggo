@@ -7,7 +7,7 @@ local json = require "lib.json"
 local Player = require "src.piggo.core.Player"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
-local update, gameTick, openSocket, createGameTickPayload, createPlayerTickPayload, connectPlayer
+local update, gameFrame, openSocket, createGameFramePayload, createPlayerFramePayload, connectPlayer
 local defaultPort = 12345
 
 -- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
@@ -21,16 +21,15 @@ function Server.new(game, port)
     game:load()
 
     local server = {
-        update = update, gameTick = gameTick,
-        createGameTickPayload = createGameTickPayload,
-        createPlayerTickPayload = createPlayerTickPayload,
+        update = update, gameFrame = gameFrame,
+        createGameFramePayload = createGameFramePayload,
+        createPlayerFramePayload = createPlayerFramePayload,
         connectPlayer = connectPlayer,
         udp = udp, -- udp socket
         game = game, -- game object
         dt = 0, -- millis since server start
-        tick = 0, -- current tick
-        lastTick = 0,
-        tickrate = 64, -- server ticks per second
+        nextFrameTarget = 0,
+        framerate = 100, -- server frames per second
         connectedPlayers = {}
     }
 
@@ -38,6 +37,7 @@ function Server.new(game, port)
 end
 
 function update(self, dt)
+    -- debug(dt)
     -- debug("players connected: " .. tostring(#self.connectedPlayers))
     self.dt = self.dt + dt
 
@@ -60,29 +60,33 @@ function update(self, dt)
         local playerCommands = json:decode(playerCommandsJson)
         for _, playerCommand in ipairs(playerCommands) do
             if playerCommand.action ~= nil then
-                debug("received command, adding it to player.commands")
                 table.insert(self.connectedPlayers[playerName].commands, playerCommand)
             end
         end
     end
 
-    -- server tick
-    if self.lastTick == 0 or (self.dt - self.lastTick >= 1.0/self.tickrate) then
-        -- game tick
-        self:gameTick(dt)
+    -- server frame
+    if self.dt - self.nextFrameTarget > 0 then
+        if self.nextFrameTarget == 0 then self.nextFrameTarget = self.dt end
+        self.nextFrameTarget = self.nextFrameTarget + 1.0/self.framerate
 
-        -- create game tick payload
-        local gameTickPayload = self:createGameTickPayload()
+        -- debug(self.dt - self.lastFrameTime)
+        -- game frame
+        self:gameFrame(dt)
+
+        -- create game frame payload
+        local gameFramePayload = self:createGameFramePayload()
 
         -- send everyone the game and player states
         for _, player in pairs(self.connectedPlayers) do
-            -- create player tick payload
-            local playerTickPayload = self:createPlayerTickPayload(player)
+            -- create player frame payload
+            local playerFramePayload = self:createPlayerFramePayload(player)
 
-            -- send the tick payloads
+            -- send the frame payloads
             self.udp:sendto(json:encode({
-                gameTickPayload = gameTickPayload,
-                playerTickPayload = playerTickPayload
+                gameFramePayload = gameFramePayload,
+                playerFramePayload = playerFramePayload,
+                frame = self.game.state.frame
             }), player.ip, player.port)
         end
     end
@@ -105,8 +109,8 @@ function connectPlayer(self, playerName, msgOrIp, portOrNil)
 end
 
 -- prepare data for all players
-function createGameTickPayload(self)
-    local gameTickPayload = {
+function createGameFramePayload(self)
+    local gameFramePayload = {
         players = {},
         abilities = {},
         attacks = {},
@@ -117,7 +121,7 @@ function createGameTickPayload(self)
     for playerName, player in pairs(self.connectedPlayers) do
         local velocityX, velocityY = player.player.character.body:getLinearVelocity()
 
-        gameTickPayload.players[playerName] = {
+        gameFramePayload.players[playerName] = {
             x = player.player.character.body:getX(),
             y = player.player.character.body:getY(),
             velocity = {
@@ -127,12 +131,12 @@ function createGameTickPayload(self)
         }
     end
 
-    return gameTickPayload
+    return gameFramePayload
 end
 
 -- prepare data for the individual player
-function createPlayerTickPayload(self, player)
-    local playerTickPayload = {
+function createPlayerFramePayload(self, player)
+    local playerFramePayload = {
         player = {
             state = player.player.state,
             character = {
@@ -140,27 +144,23 @@ function createPlayerTickPayload(self, player)
             }
         }
     }
-    return playerTickPayload
+    return playerFramePayload
 end
 
--- run the game tick
-function gameTick(self, dt)
-    -- increment tick number
-    self.tick = self.tick + 1
-
+-- run the game frame
+function gameFrame(self, dt)
     -- handle all the buffered player commands
-    self.game:handlePlayerCommands(self.connectedPlayers)
+    for playerName, player in pairs(self.connectedPlayers) do
+        self.game:handlePlayerCommands(playerName, player.commands)
+    end
 
-    -- reset tick state
+    -- clear command buffer
     for _, player in pairs(self.connectedPlayers) do
         player.commands = {}
     end
 
     -- update the game
     self.game:update(dt)
-
-    -- record the last tick time
-    self.lastTick = self.dt
 end
 
 -- open server socket

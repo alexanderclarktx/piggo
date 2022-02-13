@@ -10,7 +10,7 @@ function DamageController.new()
     }
 end
 
-function update(self, dt, state)
+function update(self, state)
     assert(state)
     -- add all submitted hurtboxes
     for _, player in pairs(state.players) do
@@ -41,7 +41,7 @@ function update(self, dt, state)
     self.hurtboxes = {}
 end
 
-function draw(self, dt)
+function draw(self)
     -- draw damage text
 end
 

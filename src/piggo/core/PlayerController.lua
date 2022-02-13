@@ -15,20 +15,7 @@ function PlayerController.new(player)
     }
 end
 
-function update(self, dt, mouseX, mouseY, state)
-    assert(mouseX and mouseY and state)
-    -- -- for each npc, is the player clicking on it
-    -- self.hovering = nil
-    -- for _, npc in pairs(state.npcs) do
-    --     -- TODO not just NPCs
-    --     -- TODO logic for targeting CLOSEST (shift+click)
-    --     if ShapeUtils.pointInCircle(
-    --             mouseX, mouseY,
-    --             npc.body:getX(), npc.body:getY(), npc.state.size + 16) then
-    --         self.hovering = npc
-    --         break
-    --     end
-    -- end
+function update(self, mouseX, mouseY, state)
 end
 
 function draw(self)

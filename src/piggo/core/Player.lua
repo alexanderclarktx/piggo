@@ -15,9 +15,9 @@ function Player.new(name, character)
     }
 end
 
-function update(self, dt, state)
+function update(self, state)
     assert(state)
-    self.character:update(dt, state)
+    self.character:update(state)
 end
 
 function draw(self)

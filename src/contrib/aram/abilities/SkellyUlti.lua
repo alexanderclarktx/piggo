@@ -7,7 +7,7 @@ local cast, update, draw
 local rgb = {1, 0, 0, 0.6}
 
 function SkellyUlti.new()
-    local skellyUlti = IAbility.new("Skelly Ulti", cast, update, draw, 10)
+    local skellyUlti = IAbility.new("Skelly Ulti", cast, update, draw, 300)
 
     return skellyUlti
 end
@@ -17,8 +17,8 @@ function cast(self, character)
     table.insert(character.effects, {
         name = "Ulti",
         drawable = true,
-        duration = 2,
-        dt = 0,
+        duration = 200,
+        frame = 0,
         segments = {
             {
                 time = 0,
@@ -28,18 +28,18 @@ function cast(self, character)
                 end
             },
             {
-                time = 1.8,
+                time = 190,
                 done = false,
                 cast = function(self, me)
                     me:submitHurtboxCircle("Ulti", 9999999, character.body:getX(), character.body:getY(), 500)
                     character.state.hp = character.state.hp + 150
-                    character.color = character.state.defaultColor
+                    character.state.color = character.state.defaultColor
                     character.state.speedfactor = 1
                 end
             }
         },
         draw = function(self, me)
-            if self.dt > 1.8 then
+            if self.frame > 190 then
                 love.graphics.setLineWidth(1)
                 love.graphics.setLineWidth(400)
 

@@ -30,6 +30,20 @@ function Client.new(game, host, port)
     game:addPlayer(playerName, player)
 
     local client = {
+        frameBuffer = {
+            data = {},
+            size = 20,
+            push = function(self, data)
+                if #self.data >= self.size then
+                    table.remove(self.data, 1)
+                end
+                table.insert(self.data, data)
+            end,
+        },
+        serverFrame = nil,
+        dt = 0,
+        nextFrameTarget = 0,
+        framerate = 100, -- server frames per second
         load = load, update = update, draw = draw,
         handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
         sendCommandsToServer = sendCommandsToServer, processServerPacket = processServerPacket,
@@ -53,24 +67,30 @@ function load(self)
 end
 
 function update(self, dt)
+    -- debug(dt)
+    self.dt = self.dt + dt
+
+    -- debug(self.lastFrameTime)
+    if self.dt - self.nextFrameTarget > 0 then
+        if self.nextFrameTarget == 0 then self.nextFrameTarget = self.dt end
+        self.nextFrameTarget = self.nextFrameTarget + 1.0/self.framerate
+
+        -- process server packet
+        self:processServerPacket()
+
+        -- update game state
+        self.game:update(dt)
+
+        -- send player's commands to server
+        self:sendCommandsToServer()
+    end
+
     -- snap camera to player
     self.camera:follow(
         self.player.character.body:getX(),
         self.player.character.body:getY()
     )
     self.camera:update(dt)
-
-    -- update player controller
-    self.playerController:update(dt, self.camera.mx, self.camera.my, self.game.state)
-
-    -- send player's commands to server
-    self:sendCommandsToServer()
-
-    -- process server packet
-    self:processServerPacket()
-
-    -- update game state
-    self.game:update(dt)
 end
 
 function draw(self)
@@ -92,6 +112,17 @@ function draw(self)
     -- draw game-specific things
     self.game:draw()
 
+    -- debug draw where the server thinks i am
+    if debug() and self.serverFrame then
+        love.graphics.setColor(1, 0, 0, 0.5)
+        love.graphics.circle(
+            "fill",
+            self.serverFrame.gameFramePayload.players["KetoMojito"].x,
+            self.serverFrame.gameFramePayload.players["KetoMojito"].y,
+            10
+        )
+    end
+
     -- draw player indicators
     self.playerController:draw()
 
@@ -104,11 +135,14 @@ function draw(self)
 end
 
 function sendCommandsToServer(self)
-    local commandsToSend = self.playerController.bufferedCommands
+    if #self.playerController.bufferedCommands > 0 then
+        -- apply commands locally
+        self.game:handlePlayerCommands("KetoMojito", self.playerController.bufferedCommands)
 
-    if #commandsToSend > 0 then
-        debug("sending commands ", #commandsToSend, commandsToSend[1].action)
-        self.udp:send(json:encode(commandsToSend))
+        -- send commands to server
+        self.udp:send(json:encode(self.playerController.bufferedCommands))
+
+        -- reset command buffer
         self.playerController.bufferedCommands = {}
     else
         self.udp:send(json:encode({}))
@@ -116,17 +150,27 @@ function sendCommandsToServer(self)
 end
 
 function processServerPacket(self)
-    local packet, _ = self.udp:receive()
-    if packet then
+    while true do
+        local packet, _ = self.udp:receive()
+        if not packet then break end
+
         local payload = json:decode(packet)
-        -- assert(payload.gameTickPayload and payload.playerTickPayload)
+        -- assert(payload.gameFramePayload and payload.playerFramePayload and payload.frame)
+
+        -- debug(self.game.state.frame, payload.frame)
+        if self.game.state.frame - payload.frame < 2 then
+            self.game.state.frame = payload.frame + 5
+        end
+
+        self.serverFrame = payload
 
         -- update all player state
-        for playerName, player in pairs(payload.gameTickPayload.players) do
-            self.game.state.players[playerName]:setPosition(
-                player.x, player.y, player.velocity
-            )
-        end
+        -- for playerName, player in pairs(payload.gameFramePayload.players) do
+        --     -- if player.x >= self.frameBuffer[payload.frame]
+        --     self.game.state.players[playerName]:setPosition(
+        --         player.x, player.y, player.velocity
+        --     )
+        -- end
     end
 end
 
@@ -137,9 +181,9 @@ function handleKeyPressed(self, key, scancode, isrepeat, state)
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    -- ignore the given x/y, use the camera's
+    local markerX, markerY = self.camera:toWorldCoords(x, y)
     self.playerController:handleMousePressed(
-        self.camera.mx, self.camera.my, mouseButton, state
+        markerX, markerY, mouseButton, state
     )
 end
 

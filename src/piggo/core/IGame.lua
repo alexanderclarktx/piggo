@@ -20,7 +20,7 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
         state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = p.newWorld(),
-            frame = 0, dt = 0
+            frame = 0
         }
     }
 
@@ -32,28 +32,27 @@ function load(self)
     -- assert(#self.state.players >= 1 and self.state.camera and self.state.world)
 end
 
-function update(self, dt)
+function update(self)
     -- increment frame and dt
     self.state.frame = self.state.frame + 1
-    self.state.dt = self.state.dt + dt
 
     -- update damage controller
-    self.damageController:update(dt, self.state)
+    self.damageController:update(self.state)
 
     -- update all internal states
-    for _, player in pairs(self.state.players) do player:update(dt, self.state) end
+    for _, player in pairs(self.state.players) do player:update(self.state) end
 
     -- update all npcs
-    for index, npc in pairs(self.state.npcs) do npc:update(dt, self.state) end
+    for index, npc in pairs(self.state.npcs) do npc:update(self.state) end
 
     -- handle non-player non-npc objects
-    for _, object in pairs(self.state.objects) do object:update(dt) end
+    for _, object in pairs(self.state.objects) do object:update() end
 
     -- update game loop
     self.gameUpdate(self)
 
     -- collisions
-    self.state.world:update(dt)
+    self.state.world:update(1.0/100)
 end
 
 function draw(self)
@@ -61,18 +60,16 @@ function draw(self)
 end
 
 -- validate/process every player's commands
-function handlePlayerCommands(self, players)
-    for playerName, player in pairs(players) do
-        for _, command in ipairs(player.commands) do
-            debug("command ", playerName, command.action, command.frame, self.state.frame)
-            if command.action == "stop" then
-                self.state.players[playerName].character.state.marker = nil
-                self.state.players[playerName].character.state.target = nil
-                self.state.players[playerName].character.body:setLinearVelocity(0, 0)
-            elseif command.action == "move" then
-                assert(command.marker)
-                self.state.players[playerName].character.state.marker = command.marker
-            end
+function handlePlayerCommands(self, playerName, commands)
+    for _, command in ipairs(commands) do
+        debug("command ", playerName, command.action, command.frame, self.state.frame)
+        if command.action == "stop" then
+            self.state.players[playerName].character.state.marker = nil
+            self.state.players[playerName].character.state.target = nil
+            self.state.players[playerName].character.body:setLinearVelocity(0, 0)
+        elseif command.action == "move" then
+            assert(command.marker)
+            self.state.players[playerName].character.state.marker = command.marker
         end
     end
 end

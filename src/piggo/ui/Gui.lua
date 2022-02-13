@@ -25,16 +25,27 @@ function drawDebug(player)
     local debug = table.concat({
         "fps: %d",
         "hp: %s",
-        "position x: %d y: %d",
+        "position: x=%d y=%d",
+        "marker: x=%d y=%d",
+        "velocity: x=%d y=%d",
         "effects: %d"
     }, "\n")
+
+    local markerX, markerY = 0, 0
+    if player.character.state.marker then
+        markerX = player.character.state.marker.x
+        markerY = player.character.state.marker.y
+    end
+
+    local velocityX, velocityY = player.character.body:getLinearVelocity()
 
     love.graphics.setColor(1, 1, 0, 0.7)
     love.graphics.print(debug:format(
         love.timer.getFPS(),
         player.character.state.hp,
-        player.character.body:getX(),
-        player.character.body:getY(),
+        player.character.body:getX(), player.character.body:getY(),
+        markerX, markerY,
+        velocityX/100, velocityY/100,
         #player.character.effects
     ), 10, 10)
 end
@@ -52,16 +63,16 @@ function drawConsole(player)
     drawAbilityBackground(r.x, r.y)
 
     -- ability outlines
-    drawAbilityOutline(q.x, q.y, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawAbilityOutline(w.x, w.y, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawAbilityOutline(e.x, e.y, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawAbilityOutline(r.x, r.y, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawAbilityOutline(q.x, q.y, player.character.abilities.q.frame, player.character.abilities.q.cd)
+    drawAbilityOutline(w.x, w.y, player.character.abilities.w.frame, player.character.abilities.w.cd)
+    drawAbilityOutline(e.x, e.y, player.character.abilities.e.frame, player.character.abilities.e.cd)
+    drawAbilityOutline(r.x, r.y, player.character.abilities.r.frame, player.character.abilities.r.cd)
 
     -- cooldown indicators
-    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.dt, player.character.abilities.q.cd)
-    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.dt, player.character.abilities.w.cd)
-    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.dt, player.character.abilities.e.cd)
-    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.dt, player.character.abilities.r.cd)
+    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.frame, player.character.abilities.q.cd)
+    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.frame, player.character.abilities.w.cd)
+    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.frame, player.character.abilities.e.cd)
+    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.frame, player.character.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.9, .9, .2)
