@@ -21,13 +21,13 @@ function cast(self, character, mouseX, mouseY)
 
     -- cd check
     if self.frame >= self.cd then
-        log.debug("CAST " .. self.name)
+        log:debug("CAST " .. self.name)
         self:abilityCast(character, mouseX, mouseY)
 
         -- reset time delta
         self.frame = 0
     else
-        log.debug("CASTCD " .. self.name)
+        log:debug("CASTCD " .. self.name)
     end
 end
 

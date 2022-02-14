@@ -69,10 +69,10 @@ function update(self, state)
             self.body:setLinearVelocity(0, 0)
 
             if self.state.ranged then
-                log.debug("create ranged auto attack")
+                log:debug("create ranged auto attack")
                 -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
             else
-                log.debug("create melee auto attack")
+                log:debug("create melee auto attack")
                 self.target.state.hp = self.target.state.hp - 1
             end
         else -- walk toward the target

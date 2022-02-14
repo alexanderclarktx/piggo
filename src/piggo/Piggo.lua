@@ -1,8 +1,5 @@
 local Piggo = {}
 local MainMenu = require "src.piggo.ui.MainMenu"
-local Client = require "src.piggo.net.Client"
-local Server = require "src.piggo.net.Server"
-local Aram = require "src.contrib.aram.Aram"
 
 local load, update, draw, handleKeyPressed, handleMousePressed, startServerThread
 

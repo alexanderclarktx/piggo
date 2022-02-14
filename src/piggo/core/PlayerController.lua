@@ -39,9 +39,9 @@ function bufferCommand(self, command, state)
     assert(command)
 
     -- append meta information
-    command.frame = state.scene.game.state.frame
+    command.frame = state.scene.state.game.state.frame
 
-    log.debug("buffering command: ", command.action, command.frame)
+    log:debug("buffering command: ", command.action, command.frame)
     table.insert(self.bufferedCommands, command)
 end
 

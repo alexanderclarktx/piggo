@@ -53,7 +53,7 @@ function draw(self)
 
     -- draw all textures
     for _, texture in ipairs(self.textures) do
-        -- log.debug(texture)
+        -- log:debug(texture)
 
         -- love.graphics.drawLayer(
         --     image, frameToDraw,

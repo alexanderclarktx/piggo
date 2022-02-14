@@ -11,10 +11,52 @@ function Logger.new(debugFlag)
         debugFlag = debugFlag,
         info = info, warn = warn, error = error, debug = logdebug
     }
+
     return logger
 end
 
-function info(...)
+function info(self, ...)
+    assert(type(self) == "table")
+    if ... then
+        io.write(
+            "\27[32m[" ..
+            debugog.getinfo(2).source:match("%a+.lua") ..
+            "]\27[00m "
+        )
+        print(...)
+    end
+    return true
+end
+
+function logdebug(self, ...)
+    assert(type(self) == "table")
+    if not self.debugFlag then return end
+    if ... then
+        io.write(
+            "\27[34m[" ..
+            debugog.getinfo(2).source:match("%a+.lua") ..
+            "]\27[00m "
+        )
+        print(...)
+    end
+    return true
+end
+
+function warn(self, ...)
+    assert(type(self) == "table")
+    if ... then
+        io.write(
+            "\27[35m[" ..
+            debugog.getinfo(2).source:match("%a+.lua") ..
+            "]\27[00m "
+        )
+        print(...)
+    end
+    return true
+end
+
+function error(self, ...)
+    assert(type(self) == "table")
     if ... then
         io.write(
             "\27[31m[" ..
@@ -24,29 +66,6 @@ function info(...)
         print(...)
     end
     return true
-end
-
-function logdebug(...)
-    if type(...) == "function" then
-        -- return true
-    end
-    if ... then
-        io.write(
-            "\27[31m[" ..
-            debugog.getinfo(2).source:match("%a+.lua") ..
-            "]\27[00m "
-        )
-        print(...)
-    end
-    return true
-end
-
-function warn(...)
-
-end
-
-function error(...)
-
 end
 
 return Logger
