@@ -2,12 +2,12 @@ local Server = {}
 local socket = require "socket"
 
 local json = require "lib.json"
--- local hero = require "lib.hero"
 
 local Player = require "src.piggo.core.Player"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
-local update, gameFrame, openSocket, createGameFramePayload, createPlayerFramePayload, connectPlayer
+local update, runFrame, openSocket, bufferPlayerInputs
+local createGameFramePayload, createPlayerFramePayload, connectPlayer
 local defaultPort = 12345
 
 -- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
@@ -21,7 +21,9 @@ function Server.new(game, port)
     game:load()
 
     local server = {
-        update = update, gameFrame = gameFrame,
+        update = update,
+        runFrame = runFrame,
+        bufferPlayerInputs = bufferPlayerInputs,
         createGameFramePayload = createGameFramePayload,
         createPlayerFramePayload = createPlayerFramePayload,
         connectPlayer = connectPlayer,
@@ -37,58 +39,73 @@ function Server.new(game, port)
 end
 
 function update(self, dt)
-    -- debug(dt)
-    -- debug("players connected: " .. tostring(#self.connectedPlayers))
+    -- log.debug("players connected: " .. tostring(#self.connectedPlayers))
     self.dt = self.dt + dt
 
-    local msgOrIp, portOrNil
-
     -- buffer all data received from the players
-    while true do
-        -- check for data from players, breaking when nothing's left to receive
-        playerCommandsJson, msgOrIp, portOrNil = self.udp:receivefrom()
-        if playerCommandsJson == nil then break end
-        assert(msgOrIp and portOrNil)
-
-        -- if this player has no record, create their player/character and add them
-        local playerName = "KetoMojito" -- TODO get from player's connect payload
-        if not self.connectedPlayers[playerName] then
-            self:connectPlayer(playerName, msgOrIp, portOrNil)
-        end
-
-        -- buffer all player commands
-        local playerCommands = json:decode(playerCommandsJson)
-        for _, playerCommand in ipairs(playerCommands) do
-            if playerCommand.action ~= nil then
-                table.insert(self.connectedPlayers[playerName].commands, playerCommand)
-            end
-        end
-    end
+    while self:bufferPlayerInputs() do end
 
     -- server frame
     if self.dt - self.nextFrameTarget > 0 then
         if self.nextFrameTarget == 0 then self.nextFrameTarget = self.dt end
         self.nextFrameTarget = self.nextFrameTarget + 1.0/self.framerate
 
-        -- debug(self.dt - self.lastFrameTime)
-        -- game frame
-        self:gameFrame(dt)
+        self:runFrame(dt)
+    end
+end
 
-        -- create game frame payload
-        local gameFramePayload = self:createGameFramePayload()
+function bufferPlayerInputs(self)
+    -- check for data from players, breaking when nothing's left to receive
+    local playerCommandsJson, msgOrIp, portOrNil = self.udp:receivefrom()
+    if playerCommandsJson == nil then return false end
 
-        -- send everyone the game and player states
-        for _, player in pairs(self.connectedPlayers) do
-            -- create player frame payload
-            local playerFramePayload = self:createPlayerFramePayload(player)
+    -- if this player has no record, create their player/character and add them
+    assert(msgOrIp and portOrNil)
+    local playerName = "KetoMojito" -- TODO get from player's connect payload
+    if not self.connectedPlayers[playerName] then
+        self:connectPlayer(playerName, msgOrIp, portOrNil)
+    end
 
-            -- send the frame payloads
-            self.udp:sendto(json:encode({
-                gameFramePayload = gameFramePayload,
-                playerFramePayload = playerFramePayload,
-                frame = self.game.state.frame
-            }), player.ip, player.port)
+    -- buffer all player commands
+    local playerCommands = json:decode(playerCommandsJson)
+    for _, playerCommand in ipairs(playerCommands) do
+        if playerCommand.action ~= nil then
+            table.insert(self.connectedPlayers[playerName].commands, playerCommand)
         end
+    end
+
+    return true
+end
+
+-- run the game frame
+function runFrame(self, dt)
+    -- handle all the buffered player commands
+    for playerName, player in pairs(self.connectedPlayers) do
+        self.game:handlePlayerCommands(playerName, player.commands)
+    end
+
+    -- clear command buffer
+    for _, player in pairs(self.connectedPlayers) do
+        player.commands = {}
+    end
+
+    -- update the game
+    self.game:update(dt)
+
+    -- create game frame payload
+    local gameFramePayload = self:createGameFramePayload()
+
+    -- send everyone the game and player states
+    for _, player in pairs(self.connectedPlayers) do
+        -- create player frame payload
+        local playerFramePayload = createPlayerFramePayload(player)
+
+        -- send the frame payloads
+        self.udp:sendto(json:encode({
+            gameFramePayload = gameFramePayload,
+            playerFramePayload = playerFramePayload,
+            frame = self.game.state.frame
+        }), player.ip, player.port)
     end
 end
 
@@ -135,7 +152,7 @@ function createGameFramePayload(self)
 end
 
 -- prepare data for the individual player
-function createPlayerFramePayload(self, player)
+function createPlayerFramePayload(player)
     local playerFramePayload = {
         player = {
             state = player.player.state,
@@ -145,22 +162,6 @@ function createPlayerFramePayload(self, player)
         }
     }
     return playerFramePayload
-end
-
--- run the game frame
-function gameFrame(self, dt)
-    -- handle all the buffered player commands
-    for playerName, player in pairs(self.connectedPlayers) do
-        self.game:handlePlayerCommands(playerName, player.commands)
-    end
-
-    -- clear command buffer
-    for _, player in pairs(self.connectedPlayers) do
-        player.commands = {}
-    end
-
-    -- update the game
-    self.game:update(dt)
 end
 
 -- open server socket

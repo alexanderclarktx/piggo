@@ -16,6 +16,6 @@ function IEffect.new(effectUpdate, effectDraw)
 end
 
 function update(self, dt)
-    debug("IEffect update")
+    log.debug("IEffect update")
     self.effectUpdate(self, dt)
 end

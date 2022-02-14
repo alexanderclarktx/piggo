@@ -24,13 +24,13 @@ end
 
 -- start the game
 function onclickStart(state)
-    debug("start")
+    log.debug("start")
     state:setScene(Client.new(Aram.new()))
 end
 
 -- TODO open the settings overlay
 function onclickSettings(state)
-    debug("settings")
+    log.debug("settings")
 end
 
 return MainMenu

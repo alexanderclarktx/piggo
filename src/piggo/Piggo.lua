@@ -50,7 +50,6 @@ function handleKeyPressed(self, key, scancode, isrepeat)
 end
 
 function handleMousePressed(self, x, y, mouseButton)
-    debug("mouse pressed")
     self.state.scene:handleMousePressed(x, y, mouseButton, self.state)
 end
 
@@ -59,7 +58,7 @@ function startServerThread(gameFile)
     local thread = love.thread.newThread([[
         local t = require "love.timer"
         local Server = require "src.piggo.net.Server"
-        debug = require "src.piggo.util.debug"
+        log = require("src.piggo.util.Logger").new(false)
 
         local game = require(...)
         assert(game)

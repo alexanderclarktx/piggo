@@ -32,7 +32,7 @@ function cast(self, character, mouseX, mouseY)
     table.insert(character.effects, {
         name = "Axe",
         drawable = true,
-        color = {1, 0, 0, debug() and 0.3 or 0.6},
+        color = {1, 0, 0, debug and 0.3 or 0.6},
         duration = 40,
         frame = 0,
         hitboxDistance = 200,

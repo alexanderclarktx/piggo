@@ -17,7 +17,7 @@ function Gui.new(player)
 end
 
 function draw(self)
-    if debug() then drawDebug(self.player) end
+    if debug then drawDebug(self.player) end
     drawConsole(self.player)
 end
 

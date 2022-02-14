@@ -69,10 +69,10 @@ function update(self, state)
             self.body:setLinearVelocity(0, 0)
 
             if self.state.ranged then
-                debug("create ranged auto attack")
+                log.debug("create ranged auto attack")
                 -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
             else
-                debug("create melee auto attack")
+                log.debug("create melee auto attack")
                 self.target.state.hp = self.target.state.hp - 1
             end
         else -- walk toward the target
@@ -141,7 +141,7 @@ end
 
 function draw(self)
     -- draw line to marker
-    if debug() then
+    if debug then
         love.graphics.setColor(0.6, 0.6, 0.6)
         if self.state.marker then
             love.graphics.line(
@@ -152,7 +152,7 @@ function draw(self)
     end
 
     -- draw line to targeted enemy
-    -- if debug() then
+    -- if debug then
     --     love.graphics.setColor(self.state.team == 1 and 1 or 0, self.state.team == 2 and 1 or 0, 0)
     --     if self.target ~= nil and self.target.body ~= nil then
     --         love.graphics.line(
@@ -177,7 +177,7 @@ function draw(self)
 
     self.charDraw(self)
 
-    if debug() then
+    if debug then
         love.graphics.setColor(0, 0, 1, 0.6)
         love.graphics.circle("line", self.body:getX(), self.body:getY(), self.state.size)
     end

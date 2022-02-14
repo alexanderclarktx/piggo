@@ -36,7 +36,7 @@ function update(self, state)
     local target = nil
     for _, character in pairs(state.npcs) do
         if character.state.team ~= self.state.team then
-            -- debug(string.format("me team %s checking team %s", self.state.team, character.state.team))
+            -- log.debug(string.format("me team %s checking team %s", self.state.team, character.state.team))
             if ShapeUtils.pointInCircle(character.body:getX(), character.body:getY(),
                 self.body:getX(), self.body:getY(), 200) then
                     target = character

@@ -31,7 +31,7 @@ function DrawUtils.drawHealthbar(x, y, size, hp, maxhp)
     )
 
     -- print hp
-    if debug() then
+    if debug then
         love.graphics.print(hp, x + const.healthnumber.xoff, y + const.healthnumber.yoff - size)
     end
 

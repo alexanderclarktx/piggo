@@ -3,7 +3,6 @@ local socket = require "socket"
 
 local json = require "lib.json"
 local camera = require "lib.camera"
--- local hero = require "lib.hero"
 
 local Gui = require "src.piggo.ui.Gui"
 local Player = require "src.piggo.core.Player"
@@ -30,16 +29,17 @@ function Client.new(game, host, port)
     game:addPlayer(playerName, player)
 
     local client = {
-        frameBuffer = {
-            data = {},
-            size = 20,
-            push = function(self, data)
-                if #self.data >= self.size then
-                    table.remove(self.data, 1)
-                end
-                table.insert(self.data, data)
-            end,
-        },
+        frameBuffer = {},
+        -- {
+        --     data = {},
+        --     size = 20,
+        --     push = function(self, data)
+        --         if #self.data >= self.size then
+        --             table.remove(self.data, 1)
+        --         end
+        --         table.insert(self.data, data)
+        --     end,
+        -- },
         serverFrame = nil,
         dt = 0,
         nextFrameTarget = 0,
@@ -67,10 +67,10 @@ function load(self)
 end
 
 function update(self, dt)
-    -- debug(dt)
+    -- log.debug(dt)
     self.dt = self.dt + dt
 
-    -- debug(self.lastFrameTime)
+    -- log.debug(self.lastFrameTime)
     if self.dt - self.nextFrameTarget > 0 then
         if self.nextFrameTarget == 0 then self.nextFrameTarget = self.dt end
         self.nextFrameTarget = self.nextFrameTarget + 1.0/self.framerate
@@ -113,8 +113,8 @@ function draw(self)
     self.game:draw()
 
     -- debug draw where the server thinks i am
-    if debug() and self.serverFrame then
-        love.graphics.setColor(1, 0, 0, 0.5)
+    if debug and self.serverFrame then
+        love.graphics.setColor(0, 1, 0.9, 0.5)
         love.graphics.circle(
             "fill",
             self.serverFrame.gameFramePayload.players["KetoMojito"].x,
@@ -157,7 +157,7 @@ function processServerPacket(self)
         local payload = json:decode(packet)
         -- assert(payload.gameFramePayload and payload.playerFramePayload and payload.frame)
 
-        -- debug(self.game.state.frame, payload.frame)
+        -- log.debug(self.game.state.frame, payload.frame)
         if self.game.state.frame - payload.frame < 2 then
             self.game.state.frame = payload.frame + 5
         end

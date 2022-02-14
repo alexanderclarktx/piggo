@@ -41,7 +41,7 @@ function bufferCommand(self, command, state)
     -- append meta information
     command.frame = state.scene.game.state.frame
 
-    debug("buffering command: ", command.action, command.frame)
+    log.debug("buffering command: ", command.action, command.frame)
     table.insert(self.bufferedCommands, command)
 end
 

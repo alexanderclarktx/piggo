@@ -62,7 +62,7 @@ end
 -- validate/process every player's commands
 function handlePlayerCommands(self, playerName, commands)
     for _, command in ipairs(commands) do
-        debug("command ", playerName, command.action, command.frame, self.state.frame)
+        log.debug("command ", playerName, command.action, command.frame, self.state.frame)
         if command.action == "stop" then
             self.state.players[playerName].character.state.marker = nil
             self.state.players[playerName].character.state.target = nil
