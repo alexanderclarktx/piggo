@@ -1,6 +1,6 @@
 local Player = {}
 
-local update, draw, setPosition
+local update, draw, serialize, setPosition
 
 function Player.new(name, character)
     assert(name and character)
@@ -11,6 +11,7 @@ function Player.new(name, character)
         },
         update = update,
         draw = draw,
+        serialize = serialize,
         setPosition = setPosition
     }
 end
@@ -22,6 +23,13 @@ end
 
 function draw(self)
     self.state.character:draw()
+end
+
+function serialize(self)
+    return {
+        name = self.state.name,
+        character = self.state.character:serialize()
+    }
 end
 
 function setPosition(self, x, y, velocity)

@@ -116,8 +116,8 @@ function draw(self)
         love.graphics.setColor(0, 1, 0.9, 0.5)
         love.graphics.circle(
             "fill",
-            self.state.serverFrame.gameFramePayload.players["KetoMojito"].x,
-            self.state.serverFrame.gameFramePayload.players["KetoMojito"].y,
+            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.x,
+            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.y,
             10
         )
     end
@@ -180,7 +180,7 @@ function processServerPacket(self)
             self.state.game.state.frame = payload.frame
 
             -- set the game state
-            self.state.game:apply(payload.gameFramePayload)
+            self.state.game:deserialize(payload.gameFramePayload)
 
             -- game update
             for i = payload.frame, frameForward - 1, 1 do

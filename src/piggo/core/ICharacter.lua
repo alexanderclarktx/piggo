@@ -2,7 +2,7 @@ local ICharacter = {}
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 local DrawUtils = require "src.piggo.util.DrawUtils"
 
-local update, draw, submitHurtboxPoly, submitHurtboxCircle
+local update, draw, serialize, submitHurtboxPoly, submitHurtboxCircle
 
 function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
     assert(world)
@@ -35,6 +35,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
+        serialize = serialize,
         submitHurtboxPoly = submitHurtboxPoly,
         submitHurtboxCircle = submitHurtboxCircle,
     }
@@ -173,6 +174,18 @@ function draw(self)
         love.graphics.setColor(0, 0, 1, 0.6)
         love.graphics.circle("line", self.state.body:getX(), self.state.body:getY(), self.state.size)
     end
+end
+
+function serialize(self)
+    local velocityX, velocityY = self.state.body:getLinearVelocity()
+    return {
+        x = self.state.body:getX(),
+        y = self.state.body:getY(),
+        velocity = {
+            x = velocityX,
+            y = velocityY
+        }
+    }
 end
 
 function submitHurtboxPoly(self, name, damage, poly)

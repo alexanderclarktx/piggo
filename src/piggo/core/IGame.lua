@@ -3,7 +3,7 @@ local physics = require 'love.physics'
 local DamageController = require "src.piggo.core.DamageController"
 
 local load, update, draw
-local addPlayer, handlePlayerCommand, serialize, apply
+local addPlayer, handlePlayerCommand, serialize, deserialize
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
@@ -24,7 +24,7 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
         handlePlayerCommand = handlePlayerCommand,
         addPlayer = addPlayer,
         serialize = serialize,
-        apply = apply,
+        deserialize = deserialize,
     }
 
     return iGame
@@ -86,35 +86,26 @@ end
 -- serialize into a single table ready for json encoding
 function serialize(self)
     local framedata = {
-        players = {},
-        abilities = {},
-        attacks = {},
-        effects = {},
-        damage = {}
+        players = {}
     }
 
     for playerName, player in pairs(self.state.players) do
-        local velocityX, velocityY = player.state.character.state.body:getLinearVelocity()
+        framedata.players[playerName] = player:serialize()
+    end
 
-        framedata.players[playerName] = {
-            x = player.state.character.state.body:getX(),
-            y = player.state.character.state.body:getY(),
-            velocity = {
-                x = velocityX,
-                y = velocityY
-            }
-        }
+    for _, npc in pairs(self.state.npcs) do
+
     end
 
     return framedata
 end
 
-function apply(self, state)
+function deserialize(self, state)
     for playerName, player in pairs(state.players) do
         self.state.players[playerName]:setPosition(
-            player.x,
-            player.y,
-            player.velocity
+            player.character.x,
+            player.character.y,
+            player.character.velocity
         )
     end
 end
