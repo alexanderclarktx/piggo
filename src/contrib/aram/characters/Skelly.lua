@@ -33,9 +33,9 @@ end
 
 function update(self)
     -- update animation frame
-    if self.frame - self.frameLast > self.framecd then
-        self.frameLast = self.frame
-        self.animationFrame = (self.frame + 1) % 3 + 1
+    if self.state.frame - self.frameLast > self.framecd then
+        self.frameLast = self.state.frame
+        self.animationFrame = (self.state.frame + 1) % 3 + 1
     end
 end
 
@@ -51,7 +51,7 @@ function draw(self)
 
     -- pick animation frame
     local frameToDraw = self.animationFrame
-    local velocity = {self.body:getLinearVelocity()}
+    local velocity = {self.state.body:getLinearVelocity()}
     if 0 == velocity[1] and 0 == velocity[2] then
         frameToDraw = 1
     end
@@ -61,7 +61,7 @@ function draw(self)
     love.graphics.setColor(self.state.color)
     love.graphics.drawLayer(
         self.image, frameToDraw,
-        self.body:getX(), self.body:getY(),
+        self.state.body:getX(), self.state.body:getY(),
         0, 4 * self.state.facingRight, 4, 6, 6
     )
 end

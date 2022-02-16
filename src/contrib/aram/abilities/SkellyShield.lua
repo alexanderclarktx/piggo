@@ -15,7 +15,7 @@ end
 function cast(self, character)
     if self.frame < self.cd then return end
 
-    table.insert(character.effects, {
+    table.insert(character.state.effects, {
         name = "Shield",
         drawable = true,
         duration = 80,
@@ -41,10 +41,20 @@ function cast(self, character)
                 time = 75,
                 done = false,
                 cast = function(self, me)
-                    me:submitHurtboxCircle("Shield", 140, character.body:getX(), character.body:getY(), 50)
+                    me:submitHurtboxCircle("Shield", 140, character.state.body:getX(), character.state.body:getY(), 50)
                 end
             }
         },
+        update = function(self, character)
+            self.frame = self.frame + 1
+
+            for _, segment in pairs(self.segments) do
+                if not segment.done and segment.time <= self.frame then
+                    segment:cast(character, self)
+                    segment.done = true
+                end
+            end
+        end,
         draw = function(self, me)
             love.graphics.setColor(
                 self.shield.color.r,
@@ -52,7 +62,7 @@ function cast(self, character)
                 self.shield.color.b - self.shield.color.b * self.frame / self.duration
             )
             love.graphics.setLineWidth(self.shield.width)
-            love.graphics.circle("line", character.body:getX(), character.body:getY(), character.state.size + self.shield.radius)
+            love.graphics.circle("line", character.state.body:getX(), character.state.body:getY(), character.state.size + self.shield.radius)
             love.graphics.setLineWidth(1)
         end
     })

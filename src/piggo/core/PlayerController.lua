@@ -49,24 +49,16 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
     assert(mouseX, mouseY)
 
     if key == "q" then
-        self.player.character.abilities.q:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "q", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "w" then
-        self.player.character.abilities.w:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "w", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "e" then
-        self.player.character.abilities.e:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "e", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "r" then
-        self.player.character.abilities.r:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "r", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "s" then
         self:bufferCommand({action = "stop"}, state)
@@ -74,10 +66,10 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    self.player.character.state.marker = {x = x, y = y}
+    self.player.state.character.state.marker = {x = x, y = y}
     self:bufferCommand({
         action = "move",
-        marker = self.player.character.state.marker
+        marker = self.player.state.character.state.marker
     }, state)
 end
 

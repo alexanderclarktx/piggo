@@ -20,6 +20,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
 
     local character = {
         state = {
+            frame = 0,
             hp = hp, maxhp = maxhp,
             speed = speed, canMove = true, speedfactor = 1,
             marker = nil, target = nil,
@@ -28,25 +29,23 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             team = 2,
             size = size,
             facingRight = 1,
+            abilities = abilities, effects = {},
+            body = body, fixture = fixture,
+            hurtboxes = {},
         },
-        frame = 0,
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         submitHurtboxPoly = submitHurtboxPoly,
         submitHurtboxCircle = submitHurtboxCircle,
-        abilities = abilities,
-        body = body, fixture = fixture,
-        effects = {},
-        hurtboxes = {},
     }
 
     return character
 end
 
 function update(self, state)
-    self.frame = self.frame + 1
+    self.state.frame = self.state.frame + 1
 
-    if self.body:isDestroyed() then return end
+    if self.state.body:isDestroyed() then return end
     assert(state)
     self.charUpdate(self, state)
 
@@ -55,7 +54,7 @@ function update(self, state)
     end
 
     -- velocity to 0
-    self.body:setLinearVelocity(0, 0)
+    self.state.body:setLinearVelocity(0, 0)
 
     -- if i'm targeting, check if i can auto attack them
     if self.target ~= nil then
@@ -64,9 +63,9 @@ function update(self, state)
 
         if ShapeUtils.circleInCircle(
             self.target.body:getX(), self.target.body:getY(), self.target.state.size,
-            self.body:getX(), self.body:getY(), self.state.range
+            self.state.body:getX(), self.state.body:getY(), self.state.range
         ) then
-            self.body:setLinearVelocity(0, 0)
+            self.state.body:setLinearVelocity(0, 0)
 
             if self.state.ranged then
                 log:debug("create ranged auto attack")
@@ -83,16 +82,16 @@ function update(self, state)
     -- move toward marker
     if self.state.marker and self.state.canMove then
         -- x and y distances to the marker
-        local xDiff = self.state.marker.x - self.body:getX()
-        local yDiff = self.state.marker.y - self.body:getY()
+        local xDiff = self.state.marker.x - self.state.body:getX()
+        local yDiff = self.state.marker.y - self.state.body:getY()
 
         -- if we're close enough, snap to the marker
         if math.abs(xDiff) <= 4 then
-            self.body:setX(self.state.marker.x)
+            self.state.body:setX(self.state.marker.x)
             xDiff = 0
         end
         if math.abs(yDiff) <= 4 then
-            self.body:setY(self.state.marker.y)
+            self.state.body:setY(self.state.marker.y)
             yDiff = 0
         end
 
@@ -106,35 +105,28 @@ function update(self, state)
             local xComponent = self.state.speed * self.state.speedfactor * xRatio
             local yComponent = self.state.speed * self.state.speedfactor * yRatio
 
-            self.body:setLinearVelocity(xComponent, yComponent)
+            self.state.body:setLinearVelocity(xComponent, yComponent)
         end
     end
 
     -- update where character is facing
-    if self.state.marker and self.state.marker.x < self.body:getX() then
+    if self.state.marker and self.state.marker.x < self.state.body:getX() then
         self.state.facingRight = -1
-    elseif self.state.marker and self.state.marker.x > self.body:getX() then
+    elseif self.state.marker and self.state.marker.x > self.state.body:getX() then
         self.state.facingRight = 1
     end
 
     -- update each ability
-    for i, ability in pairs(self.abilities) do
+    for i, ability in pairs(self.state.abilities) do
         ability:update()
     end
 
     -- update each effect
-    for i, effect in pairs(self.effects) do
-        effect.frame = effect.frame + 1
-
-        for _, segment in pairs(effect.segments) do
-            if not segment.done and segment.time <= effect.frame then
-                segment:cast(self, effect)
-                segment.done = true
-            end
-        end
+    for i, effect in pairs(self.state.effects) do
+        effect:update(self)
 
         if effect.frame > effect.duration then
-            table.remove(self.effects, i)
+            table.remove(self.state.effects, i)
         end
     end
 end
@@ -145,7 +137,7 @@ function draw(self)
         love.graphics.setColor(0.6, 0.6, 0.6)
         if self.state.marker then
             love.graphics.line(
-                self.body:getX(), self.body:getY(),
+                self.state.body:getX(), self.state.body:getY(),
                 self.state.marker.x, self.state.marker.y
             )
         end
@@ -156,22 +148,22 @@ function draw(self)
     --     love.graphics.setColor(self.state.team == 1 and 1 or 0, self.state.team == 2 and 1 or 0, 0)
     --     if self.target ~= nil and self.target.body ~= nil then
     --         love.graphics.line(
-    --             self.body:getX(), self.body:getY(),
+    --             self.state.body:getX(), self.state.body:getY(),
     --             self.target.body:getX(), self.target.body:getY()
     --         )
     --     end
     -- end
 
     -- draw each effect
-    for _, effect in pairs(self.effects) do
+    for _, effect in pairs(self.state.effects) do
         if effect.drawable then
-            effect:draw(self)
+            effect:draw()
         end
     end
 
     -- draw healthbar
     DrawUtils.drawHealthbar(
-        self.body:getX(), self.body:getY(),
+        self.state.body:getX(), self.state.body:getY(),
         self.state.size, self.state.hp, self.state.maxhp
     )
 
@@ -179,18 +171,18 @@ function draw(self)
 
     if debug then
         love.graphics.setColor(0, 0, 1, 0.6)
-        love.graphics.circle("line", self.body:getX(), self.body:getY(), self.state.size)
+        love.graphics.circle("line", self.state.body:getX(), self.state.body:getY(), self.state.size)
     end
 end
 
 function submitHurtboxPoly(self, name, damage, poly)
-    table.insert(self.hurtboxes,
+    table.insert(self.state.hurtboxes,
         {type = "poly", name = name, damage = damage, poly = poly}
     )
 end
 
 function submitHurtboxCircle(self, name, damage, x, y, radius)
-    table.insert(self.hurtboxes,
+    table.insert(self.state.hurtboxes,
         {type = "circle", name = name, damage = damage, x = x, y = y, radius = radius}
     )
 end

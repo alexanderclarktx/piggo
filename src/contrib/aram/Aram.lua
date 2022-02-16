@@ -38,7 +38,7 @@ function update(self)
     for i, npc in ipairs(self.state.npcs) do
         if npc.state.hp <= 0 then
             table.remove(self.state.npcs, i)
-            npc.body:destroy()
+            npc.state.body:destroy()
         end
     end
 

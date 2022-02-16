@@ -86,8 +86,8 @@ function update(self, dt)
 
     -- snap camera to player
     self.state.camera:follow(
-        self.state.player.character.body:getX(),
-        self.state.player.character.body:getY()
+        self.state.player.state.character.state.body:getX(),
+        self.state.player.state.character.state.body:getY()
     )
     self.state.camera:update(dt)
 end

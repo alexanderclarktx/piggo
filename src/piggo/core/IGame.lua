@@ -16,12 +16,12 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
         state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = physics.newWorld(),
-            frame = 0
+            frame = 0,
+            damageController = damageController,
         },
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw,
         handlePlayerCommand = handlePlayerCommand,
-        damageController = damageController,
         addPlayer = addPlayer,
         serialize = serialize,
         apply = apply,
@@ -40,7 +40,7 @@ function update(self)
     self.state.frame = self.state.frame + 1
 
     -- update damage controller
-    self.damageController:update(self.state)
+    self.state.damageController:update(self.state)
 
     -- update all internal states
     for _, player in pairs(self.state.players) do player:update(self.state) end
@@ -62,15 +62,19 @@ function draw(self)
     self.gameDraw()
 end
 
--- validate/process every player's commands
+-- validate/process a player command
 function handlePlayerCommand(self, playerName, command)
+    local player = self.state.players[playerName]
     if command.action == "stop" then
-        self.state.players[playerName].character.state.marker = nil
-        self.state.players[playerName].character.state.target = nil
-        self.state.players[playerName].character.body:setLinearVelocity(0, 0)
+        player.state.character.state.marker = nil
+        player.state.character.state.target = nil
+        player.state.character.state.body:setLinearVelocity(0, 0)
     elseif command.action == "move" then
         assert(command.marker)
-        self.state.players[playerName].character.state.marker = command.marker
+        player.state.character.state.marker = command.marker
+    elseif command.action == "cast" then
+        assert(command.ability and command.mouseX and command.mouseY)
+        player.state.character.state.abilities[command.ability]:cast(player.state.character, command.mouseX, command.mouseY)
     end
 end
 
@@ -90,11 +94,11 @@ function serialize(self)
     }
 
     for playerName, player in pairs(self.state.players) do
-        local velocityX, velocityY = player.character.body:getLinearVelocity()
+        local velocityX, velocityY = player.state.character.state.body:getLinearVelocity()
 
         framedata.players[playerName] = {
-            x = player.character.body:getX(),
-            y = player.character.body:getY(),
+            x = player.state.character.state.body:getX(),
+            y = player.state.character.state.body:getY(),
             velocity = {
                 x = velocityX,
                 y = velocityY

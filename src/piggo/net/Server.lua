@@ -107,12 +107,11 @@ function runFrame(self, dt)
     -- send everyone the game and player states
     for _, player in pairs(self.state.connectedPlayers) do
         -- create player frame payload
-        local playerFramePayload = createPlayerFramePayload(player)
 
         -- send the frame payloads
         self.state.udp:sendto(json:encode({
             gameFramePayload = gameFramePayload,
-            playerFramePayload = playerFramePayload,
+            -- playerFramePayload = createPlayerFramePayload(player),
             frame = self.state.game.state.frame
         }), player.ip, player.port)
     end
@@ -125,7 +124,7 @@ function connectPlayer(self, playerName, msgOrIp, portOrNil)
     -- add the player to the game
     local player = Player.new(playerName, Skelly.new(self.state.game.state.world, 500, 250, 500))
     self.state.game:addPlayer(playerName, player)
-    player.character.body:setLinearVelocity(200, 0)
+    player.state.character.state.body:setLinearVelocity(200, 0)
 
     -- add player to connectedPlayers
     self.state.connectedPlayers[playerName] = {
@@ -140,9 +139,9 @@ end
 function createPlayerFramePayload(player)
     local playerFramePayload = {
         player = {
-            state = player.player.state,
+            -- state = player.player.state,
             character = {
-                state = player.player.character.state
+                state = player.player.state.character.state
             }
         }
     }

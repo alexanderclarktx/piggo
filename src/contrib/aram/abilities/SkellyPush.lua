@@ -13,7 +13,7 @@ function SkellyPush.new()
 end
 
 function cast(self, character)
-    table.insert(character.effects, {
+    table.insert(character.state.effects, {
         name = "Push",
         drawable = true,
         duration = 100,
@@ -39,10 +39,20 @@ function cast(self, character)
                 time = 95,
                 done = false,
                 cast = function(self, me)
-                    me:submitHurtboxCircle("Push", 140, character.body:getX(), character.body:getY(), 50)
+                    me:submitHurtboxCircle("Push", 140, character.state.body:getX(), character.state.body:getY(), 50)
                 end
             }
         },
+        update = function(self, character)
+            self.frame = self.frame + 1
+
+            for _, segment in pairs(self.segments) do
+                if not segment.done and segment.time <= self.frame then
+                    segment:cast(character, self)
+                    segment.done = true
+                end
+            end
+        end,
         draw = function(self, me) end
     })
 end

@@ -14,11 +14,11 @@ function update(self, state)
     assert(state)
     -- add all submitted hurtboxes
     for _, player in pairs(state.players) do
-        for i, hurtbox in ipairs(player.character.hurtboxes) do
+        for i, hurtbox in ipairs(player.state.character.state.hurtboxes) do
             assert(hurtbox.name and hurtbox.damage and (hurtbox.type == "poly" or hurtbox.type == "circle"))
             table.insert(self.hurtboxes, hurtbox)
         end
-        player.character.hurtboxes = {}
+        player.state.character.state.hurtboxes = {}
     end
 
     -- TODO non-damage effects (hurtbox:hit(npc))
@@ -27,12 +27,12 @@ function update(self, state)
         for _, npc in pairs(state.npcs) do
             if hurtbox.type == "poly" then
                 if ShapeUtils.circleInPolygon(
-                        npc.body:getX(), npc.body:getY(), npc.state.size, hurtbox.poly) then
+                        npc.state.body:getX(), npc.state.body:getY(), npc.state.size, hurtbox.poly) then
                     npc.state.hp = npc.state.hp - hurtbox.damage
                 end
             elseif hurtbox.type == "circle" then
                 if ShapeUtils.circleInCircle(
-                        npc.body:getX(), npc.body:getY(), npc.state.size, hurtbox.x, hurtbox.y, hurtbox.radius) then
+                        npc.state.body:getX(), npc.state.body:getY(), npc.state.size, hurtbox.x, hurtbox.y, hurtbox.radius) then
                     npc.state.hp = npc.state.hp - hurtbox.damage
                 end
             end

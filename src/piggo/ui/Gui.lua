@@ -32,21 +32,21 @@ function drawDebug(player)
     }, "\n")
 
     local markerX, markerY = 0, 0
-    if player.character.state.marker then
-        markerX = player.character.state.marker.x
-        markerY = player.character.state.marker.y
+    if player.state.character.state.marker then
+        markerX = player.state.character.state.marker.x
+        markerY = player.state.character.state.marker.y
     end
 
-    local velocityX, velocityY = player.character.body:getLinearVelocity()
+    local velocityX, velocityY = player.state.character.state.body:getLinearVelocity()
 
     love.graphics.setColor(1, 1, 0, 0.7)
     love.graphics.print(debug:format(
         love.timer.getFPS(),
-        player.character.state.hp,
-        player.character.body:getX(), player.character.body:getY(),
+        player.state.character.state.hp,
+        player.state.character.state.body:getX(), player.state.character.state.body:getY(),
         markerX, markerY,
         velocityX/100, velocityY/100,
-        #player.character.effects
+        #player.state.character.state.effects
     ), 10, 10)
 end
 
@@ -63,16 +63,16 @@ function drawConsole(player)
     drawAbilityBackground(r.x, r.y)
 
     -- ability outlines
-    drawAbilityOutline(q.x, q.y, player.character.abilities.q.frame, player.character.abilities.q.cd)
-    drawAbilityOutline(w.x, w.y, player.character.abilities.w.frame, player.character.abilities.w.cd)
-    drawAbilityOutline(e.x, e.y, player.character.abilities.e.frame, player.character.abilities.e.cd)
-    drawAbilityOutline(r.x, r.y, player.character.abilities.r.frame, player.character.abilities.r.cd)
+    drawAbilityOutline(q.x, q.y, player.state.character.state.abilities.q.frame, player.state.character.state.abilities.q.cd)
+    drawAbilityOutline(w.x, w.y, player.state.character.state.abilities.w.frame, player.state.character.state.abilities.w.cd)
+    drawAbilityOutline(e.x, e.y, player.state.character.state.abilities.e.frame, player.state.character.state.abilities.e.cd)
+    drawAbilityOutline(r.x, r.y, player.state.character.state.abilities.r.frame, player.state.character.state.abilities.r.cd)
 
     -- cooldown indicators
-    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.character.abilities.q.frame, player.character.abilities.q.cd)
-    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.character.abilities.w.frame, player.character.abilities.w.cd)
-    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.character.abilities.e.frame, player.character.abilities.e.cd)
-    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.character.abilities.r.frame, player.character.abilities.r.cd)
+    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.state.character.state.abilities.q.frame, player.state.character.state.abilities.q.cd)
+    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.state.character.state.abilities.w.frame, player.state.character.state.abilities.w.cd)
+    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.state.character.state.abilities.e.frame, player.state.character.state.abilities.e.cd)
+    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.state.character.state.abilities.r.frame, player.state.character.state.abilities.r.cd)
 
     -- keybinds
     love.graphics.setColor(.9, .9, .2)
@@ -83,10 +83,10 @@ function drawConsole(player)
 
     -- charge abilities
     love.graphics.setColor(.2, .9, .9)
-    drawCharges(player.character.abilities.q, q.x + 18, q.y + 30)
-    drawCharges(player.character.abilities.w, w.x + 18, w.y + 30)
-    drawCharges(player.character.abilities.e, e.x + 18, e.y + 30)
-    drawCharges(player.character.abilities.r, r.x + 18, r.y + 30)
+    drawCharges(player.state.character.state.abilities.q, q.x + 18, q.y + 30)
+    drawCharges(player.state.character.state.abilities.w, w.x + 18, w.y + 30)
+    drawCharges(player.state.character.state.abilities.e, e.x + 18, e.y + 30)
+    drawCharges(player.state.character.state.abilities.r, r.x + 18, r.y + 30)
 end
 
 function drawCharges(ability, x, y)
