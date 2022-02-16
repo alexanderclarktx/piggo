@@ -55,7 +55,7 @@ function startServerThread(gameFile)
     local thread = love.thread.newThread([[
         local t = require "love.timer"
         local Server = require "src.piggo.net.Server"
-        log = require("src.piggo.util.Logger").new(false)
+        log = require("src.piggo.util.Logger").new(true)
 
         local game = require(...)
         assert(game)

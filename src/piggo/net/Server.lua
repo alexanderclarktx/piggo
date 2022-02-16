@@ -1,13 +1,11 @@
 local Server = {}
 local socket = require "socket"
-
 local json = require "lib.json"
-
 local Player = require "src.piggo.core.Player"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
 local update, runFrame, openSocket, bufferPlayerInputs
-local createGameFramePayload, createPlayerFramePayload, connectPlayer
+local createPlayerFramePayload, connectPlayer
 local defaultPort = 12345
 
 -- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
@@ -31,7 +29,6 @@ function Server.new(game, port)
         },
         bufferPlayerInputs = bufferPlayerInputs,
         connectPlayer = connectPlayer,
-        createGameFramePayload = createGameFramePayload,
         createPlayerFramePayload = createPlayerFramePayload,
         runFrame = runFrame,
         update = update,
@@ -83,19 +80,29 @@ end
 function runFrame(self, dt)
     -- handle all the buffered player commands
     for playerName, player in pairs(self.state.connectedPlayers) do
-        self.state.game:handlePlayerCommands(playerName, player.commands)
-    end
+        local iToRemove = {}
 
-    -- clear command buffer
-    for _, player in pairs(self.state.connectedPlayers) do
-        player.commands = {}
+        -- handle commands for this frame
+        for i, command in ipairs(player.commands) do
+            if command.frame < self.state.game.state.frame then
+                table.insert(iToRemove, i)
+            elseif command.frame == self.state.game.state.frame then
+                log:debug("handling", command.action, self.state.game.state.frame)
+                self.state.game:handlePlayerCommand(playerName, command)
+            end
+        end
+
+        -- clear old commands
+        for _, i in ipairs(iToRemove) do
+            table.remove(player.commands, i)
+        end
     end
 
     -- update the game
     self.state.game:update(dt)
 
     -- create game frame payload
-    local gameFramePayload = self:createGameFramePayload()
+    local gameFramePayload = self.state.game:serialize()
 
     -- send everyone the game and player states
     for _, player in pairs(self.state.connectedPlayers) do
@@ -127,32 +134,6 @@ function connectPlayer(self, playerName, msgOrIp, portOrNil)
         port = portOrNil,
         commands = {}
     }
-end
-
--- prepare data for all players
-function createGameFramePayload(self)
-    local gameFramePayload = {
-        players = {},
-        abilities = {},
-        attacks = {},
-        effects = {},
-        damage = {}
-    }
-
-    for playerName, player in pairs(self.state.connectedPlayers) do
-        local velocityX, velocityY = player.player.character.body:getLinearVelocity()
-
-        gameFramePayload.players[playerName] = {
-            x = player.player.character.body:getX(),
-            y = player.player.character.body:getY(),
-            velocity = {
-                x = velocityX,
-                y = velocityY
-            }
-        }
-    end
-
-    return gameFramePayload
 end
 
 -- prepare data for the individual player

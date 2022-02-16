@@ -1,13 +1,11 @@
 local Client = {}
 local socket = require "socket"
-
 local json = require "lib.json"
 local camera = require "lib.camera"
-
+local TableUtils = require "src.piggo.util.TableUtils"
 local Gui = require "src.piggo.ui.Gui"
 local Player = require "src.piggo.core.Player"
 local PlayerController = require "src.piggo.core.PlayerController"
-
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
 
@@ -76,11 +74,14 @@ function update(self, dt)
         -- process server packet
         self:processServerPacket()
 
+        -- send player's commands to server
+        self:sendCommandsToServer()
+
         -- update game state
         self.state.game:update(dt)
 
-        -- send player's commands to server
-        self:sendCommandsToServer()
+        -- TODO move this
+        self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
     end
 
     -- snap camera to player
@@ -135,7 +136,9 @@ end
 function sendCommandsToServer(self)
     if #self.state.playerController.bufferedCommands > 0 then
         -- apply commands locally
-        self.state.game:handlePlayerCommands("KetoMojito", self.state.playerController.bufferedCommands)
+        for _, command in ipairs(self.state.playerController.bufferedCommands) do
+            self.state.game:handlePlayerCommand("KetoMojito", command)
+        end
 
         -- send commands to server
         self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
@@ -157,18 +160,33 @@ function processServerPacket(self)
 
         -- log:debug(self.state.game.state.frame, payload.frame)
         if self.state.game.state.frame - payload.frame < 2 then
+            log:warn("frame +5")
             self.state.game.state.frame = payload.frame + 5
         end
 
         self.state.serverFrame = payload
 
-        -- update all player state
-        -- for playerName, player in pairs(payload.gameFramePayload.players) do
-        --     -- if player.x >= self.state.frameBuffer[payload.frame]
-        --     self.state.game.state.players[playerName]:setPosition(
-        --         player.x, player.y, player.velocity
-        --     )
-        -- end
+        if TableUtils.deep_compare(
+            payload.gameFramePayload,
+            self.state.frameBuffer[payload.frame]
+        ) then
+            -- log:info("frames matched")
+        else
+            log:warn("client rollback")
+            -- frame to roll forward
+            local frameForward = self.state.game.state.frame
+
+            -- set the frame counter
+            self.state.game.state.frame = payload.frame
+
+            -- set the game state
+            self.state.game:apply(payload.gameFramePayload)
+
+            -- game update
+            for i = payload.frame, frameForward - 1, 1 do
+                self.state.game:update()
+            end
+        end
     end
 end
 

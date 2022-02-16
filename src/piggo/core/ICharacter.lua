@@ -1,5 +1,5 @@
 local ICharacter = {}
-local ShapeUtils = require "src.piggo.util.shapeutils"
+local ShapeUtils = require "src.piggo.util.ShapeUtils"
 local DrawUtils = require "src.piggo.util.DrawUtils"
 
 local update, draw, submitHurtboxPoly, submitHurtboxCircle
