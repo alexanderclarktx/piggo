@@ -49,7 +49,7 @@ function update(self, dt)
         if self.state.nextFrameTime == 0 then self.state.nextFrameTime = self.state.dt end
         self.state.nextFrameTime = self.state.nextFrameTime + 1.0/self.state.framerate
 
-        self:runFrame(dt)
+        self:runFrame()
     end
 end
 
@@ -77,7 +77,7 @@ function bufferPlayerInputs(self)
 end
 
 -- run the game frame
-function runFrame(self, dt)
+function runFrame(self)
     -- handle all the buffered player commands
     for playerName, player in pairs(self.state.connectedPlayers) do
         local iToRemove = {}
@@ -99,7 +99,7 @@ function runFrame(self, dt)
     end
 
     -- update the game
-    self.state.game:update(dt)
+    self.state.game:update()
 
     -- create game frame payload
     local gameFramePayload = self.state.game:serialize()

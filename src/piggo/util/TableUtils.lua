@@ -10,10 +10,16 @@ function TableUtils.deep_compare(a, b)
 	end
 	--bottomed out
 	if type(a) ~= "table" then
+		local isSame = false
         if type(a) == "number" and type(b) == "number" then
-            return tostring(a) == tostring(b)
-        end
-		return a == b
+            isSame = tostring(a) == tostring(b)
+		else
+			isSame = a == b
+		end
+		if not isSame then
+			log:debug("wasnt same", a, b)
+		end
+		return isSame
 	end
 	for k, v in pairs(a) do
 		if not TableUtils.deep_compare(v, b[k]) then

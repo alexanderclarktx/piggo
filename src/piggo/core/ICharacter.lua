@@ -1,8 +1,9 @@
 local ICharacter = {}
-local ShapeUtils = require "src.piggo.util.ShapeUtils"
 local DrawUtils = require "src.piggo.util.DrawUtils"
+local MathUtils = require 'src.piggo.util.MathUtils'
+local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
-local update, draw, serialize, submitHurtboxPoly, submitHurtboxCircle
+local update, draw, serialize, setPosition, submitHurtboxPoly, submitHurtboxCircle
 
 function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
     assert(world)
@@ -36,6 +37,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
         serialize = serialize,
+        setPosition = setPosition,
         submitHurtboxPoly = submitHurtboxPoly,
         submitHurtboxCircle = submitHurtboxCircle,
     }
@@ -56,6 +58,11 @@ function update(self, state)
 
     -- velocity to 0
     self.state.body:setLinearVelocity(0, 0)
+    self.state.body:setAngularVelocity(0)
+    self.state.body:setInertia(0)
+    self.state.body:setMass(0)
+    self.state.body:setBullet(true)
+    self.state.body:setFixedRotation(true)
 
     -- if i'm targeting, check if i can auto attack them
     if self.target ~= nil then
@@ -177,15 +184,21 @@ function draw(self)
 end
 
 function serialize(self)
-    local velocityX, velocityY = self.state.body:getLinearVelocity()
     return {
         x = self.state.body:getX(),
         y = self.state.body:getY(),
-        velocity = {
-            x = velocityX,
-            y = velocityY
-        }
+        -- x = MathUtils.round(self.state.body:getX(), 2),
+        -- y = MathUtils.round(self.state.body:getY(), 2),
+        marker = self.state.marker
     }
+end
+
+function setPosition(self, x, y, marker)
+    assert(x and y)
+
+    self.state.body:setX(x)
+    self.state.body:setY(y)
+    if marker then self.state.marker = marker else self.state.marker = nil end
 end
 
 function submitHurtboxPoly(self, name, damage, poly)

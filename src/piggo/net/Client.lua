@@ -158,7 +158,6 @@ function processServerPacket(self)
         local payload = json:decode(packet)
         -- assert(payload.gameFramePayload and payload.playerFramePayload and payload.frame)
 
-        -- log:debug(self.state.game.state.frame, payload.frame)
         if self.state.game.state.frame - payload.frame < 2 then
             log:warn("frame +5")
             self.state.game.state.frame = payload.frame + 5
@@ -172,7 +171,9 @@ function processServerPacket(self)
         ) then
             -- log:info("frames matched")
         else
-            log:warn("client rollback")
+            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
+            log:debug(json:encode(payload.gameFramePayload.npcs))
+            log:warn("client rollback", love.timer.getTime())
             -- frame to roll forward
             local frameForward = self.state.game.state.frame
 
@@ -181,11 +182,16 @@ function processServerPacket(self)
 
             -- set the game state
             self.state.game:deserialize(payload.gameFramePayload)
+            self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
 
             -- game update
             for i = payload.frame, frameForward - 1, 1 do
                 self.state.game:update()
+                -- TODO move this
+                self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
             end
+            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
+            log:warn("done client rollback", love.timer.getTime())
         end
     end
 end

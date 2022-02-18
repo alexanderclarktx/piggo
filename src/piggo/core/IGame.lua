@@ -3,7 +3,8 @@ local physics = require 'love.physics'
 local DamageController = require "src.piggo.core.DamageController"
 
 local load, update, draw
-local addPlayer, handlePlayerCommand, serialize, deserialize
+local addPlayer, addNpc, handlePlayerCommand
+local serialize, deserialize
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
@@ -18,11 +19,13 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
             world = physics.newWorld(),
             frame = 0,
             damageController = damageController,
+            npcName = 1
         },
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
         load = load, update = update, draw = draw,
         handlePlayerCommand = handlePlayerCommand,
         addPlayer = addPlayer,
+        addNpc = addNpc,
         serialize = serialize,
         deserialize = deserialize,
     }
@@ -46,7 +49,7 @@ function update(self)
     for _, player in pairs(self.state.players) do player:update(self.state) end
 
     -- update all npcs
-    for index, npc in pairs(self.state.npcs) do npc:update(self.state) end
+    for _, npc in pairs(self.state.npcs) do npc:update(self.state) end
 
     -- handle non-player non-npc objects
     for _, object in pairs(self.state.objects) do object:update() end
@@ -83,30 +86,49 @@ function addPlayer(self, playerName, player)
     self.state.players[playerName] = player
 end
 
+function addNpc(self, npc)
+    assert(npc)
+    self.state.npcs[tostring(self.state.npcName)] = npc
+    self.state.npcName = self.state.npcName + 1
+end
+
 -- serialize into a single table ready for json encoding
 function serialize(self)
     local framedata = {
-        players = {}
+        players = {},
+        npcs = {}
     }
 
     for playerName, player in pairs(self.state.players) do
         framedata.players[playerName] = player:serialize()
     end
 
-    for _, npc in pairs(self.state.npcs) do
-
+    for npcName, npc in pairs(self.state.npcs) do
+        framedata.npcs[npcName] = npc:serialize()
     end
 
     return framedata
 end
 
-function deserialize(self, state)
-    for playerName, player in pairs(state.players) do
-        self.state.players[playerName]:setPosition(
+function deserialize(self, framedata)
+    for playerName, player in pairs(framedata.players) do
+        self.state.players[playerName].state.character:setPosition(
             player.character.x,
             player.character.y,
-            player.character.velocity
+            player.character.marker
         )
+    end
+
+    for npcName, npc in pairs(framedata.npcs) do
+        self.state.npcs[npcName]:setPosition(
+            npc.x,
+            npc.y,
+            npc.marker
+        )
+        -- log:debug(self.state.npcs[npcName].state.body:getMass())
+        -- log:debug(npcName)
+        -- log:debug(npc.y)
+        -- log:debug(self.state.npcs[npcName].state.body:getPosition())
     end
 end
 

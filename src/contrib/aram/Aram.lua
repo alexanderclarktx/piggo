@@ -15,7 +15,7 @@ function Aram.new()
     aram.timers = {
         minionSpawn = {
             cd = 1000,
-            lastRun = 0,
+            lastRun = -800,
             run = spawnMinions
         }
     }
@@ -30,14 +30,14 @@ function load(self)
     self:spawnTerrain()
 
     -- spawn first minion waves
-    self:spawnMinions()
+    -- self:spawnMinions()
 end
 
 function update(self)
     -- kill all npcs that are dead :)
-    for i, npc in ipairs(self.state.npcs) do
+    for name, npc in pairs(self.state.npcs) do
         if npc.state.hp <= 0 then
-            table.remove(self.state.npcs, i)
+            self.state.npcs[name] = nil
             npc.state.body:destroy()
         end
     end
@@ -63,17 +63,15 @@ end
 function spawnMinions(self)
     -- spawn team 1 minions
     for i = 1, 5, 1 do
-        table.insert(self.state.npcs,
-            Minion.new(self.state.world,
-                2000 - 10 * i, 100, math.random(300), {x = 0, y = 100}, 1)
+        self:addNpc(
+            Minion.new(self.state.world, 2000 - 10 * i, 100, math.random(300), {x = 0, y = 100}, 1)
         )
     end
 
     -- spawn team 2 minions
     for i = 1, 5, 1 do
-        table.insert(self.state.npcs,
-            Minion.new(self.state.world,
-                -400 - 10 * i, 100, math.random(300), {x = 1400, y = 100}, 2)
+        self:addNpc(
+            Minion.new(self.state.world, -400 - 10 * i, 100, math.random(300), {x = 1400, y = 100}, 2)
         )
     end
 end

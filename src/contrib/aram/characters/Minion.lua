@@ -24,7 +24,7 @@ function Minion.new(world, x, y, hp, marker, team)
     minion.state.marker = marker
     minion.state.color = {team == 2 and 1 or 0, team == 1 and 1 or 0, 0}
     minion.state.team = team
-    minion.state.fixture:setFriction(1)
+    minion.state.fixture:setFriction(0)
 
     return minion
 end
@@ -33,18 +33,18 @@ function update(self, state)
     assert(state)
     -- check surroundings for things to attack (minions, champions, structures)
 
-    local target = nil
-    for _, character in pairs(state.npcs) do
-        if character.state.team ~= self.state.team then
-            -- log:debug(string.format("me team %s checking team %s", self.state.team, character.state.team))
-            if ShapeUtils.pointInCircle(character.state.body:getX(), character.state.body:getY(),
-                self.state.body:getX(), self.state.body:getY(), 200) then
-                    target = character
-                    break
-            end
-        end
-    end
-    self.state.target = target
+    -- local target = nil
+    -- for _, character in pairs(state.npcs) do
+    --     if character.state.team ~= self.state.team then
+    --         -- log:debug(string.format("me team %s checking team %s", self.state.team, character.state.team))
+    --         if ShapeUtils.pointInCircle(character.state.body:getX(), character.state.body:getY(),
+    --             self.state.body:getX(), self.state.body:getY(), 200) then
+    --                 target = character
+    --                 break
+    --         end
+    --     end
+    -- end
+    -- self.state.target = target
 
     -- if nothing nearby, move on toward defaultMarker
     if self.state.marker == nil then
