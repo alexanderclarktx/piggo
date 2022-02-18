@@ -26,16 +26,16 @@ function Skelly.new(world, x, y, hp)
 
     skelly.frame = 1
     skelly.frameLast = 0
-    skelly.framecd = 0.13
+    skelly.framecd = 13
 
     return skelly
 end
 
-function update(self, dt)
+function update(self)
     -- update animation frame
-    if self.dt - self.frameLast > self.framecd then
-        self.frameLast = self.dt
-        self.frame = (self.frame + 1) % 3 + 1
+    if self.state.frame - self.frameLast > self.framecd then
+        self.frameLast = self.state.frame
+        self.animationFrame = (self.state.frame + 1) % 3 + 1
     end
 end
 
@@ -50,8 +50,8 @@ function draw(self)
     end
 
     -- pick animation frame
-    local frameToDraw = self.frame
-    local velocity = {self.body:getLinearVelocity()}
+    local frameToDraw = self.animationFrame
+    local velocity = {self.state.body:getLinearVelocity()}
     if 0 == velocity[1] and 0 == velocity[2] then
         frameToDraw = 1
     end
@@ -61,7 +61,7 @@ function draw(self)
     love.graphics.setColor(self.state.color)
     love.graphics.drawLayer(
         self.image, frameToDraw,
-        self.body:getX(), self.body:getY(),
+        self.state.body:getX(), self.state.body:getY(),
         0, 4 * self.state.facingRight, 4, 6, 6
     )
 end

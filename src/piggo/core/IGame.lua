@@ -1,8 +1,10 @@
 local IGame = {}
+local physics = require 'love.physics'
 local DamageController = require "src.piggo.core.DamageController"
-local p = require 'love.physics'
 
-local load, update, draw, addPlayer, handlePlayerCommands
+local load, update, draw
+local addPlayer, addNpc, handlePlayerCommand
+local serialize, deserialize
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
@@ -12,16 +14,20 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
     local damageController = DamageController.new()
 
     local iGame = {
-        gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
-        load = load, update = update, draw = draw,
-        handlePlayerCommands = handlePlayerCommands,
-        damageController = damageController,
-        addPlayer = addPlayer,
         state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
-            world = p.newWorld(),
-            dt = 0
-        }
+            world = physics.newWorld(),
+            frame = 0,
+            damageController = damageController,
+            npcName = 1
+        },
+        gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
+        load = load, update = update, draw = draw,
+        handlePlayerCommand = handlePlayerCommand,
+        addPlayer = addPlayer,
+        addNpc = addNpc,
+        serialize = serialize,
+        deserialize = deserialize,
     }
 
     return iGame
@@ -32,53 +38,98 @@ function load(self)
     -- assert(#self.state.players >= 1 and self.state.camera and self.state.world)
 end
 
-function update(self, dt)
-    -- increment state time
-    self.state.dt = self.state.dt + dt
+function update(self)
+    -- increment frame and dt
+    self.state.frame = self.state.frame + 1
 
     -- update damage controller
-    self.damageController:update(dt, self.state)
+    self.state.damageController:update(self.state)
 
     -- update all internal states
-    for _, player in pairs(self.state.players) do player:update(dt, self.state) end
+    for _, player in pairs(self.state.players) do player:update(self.state) end
 
     -- update all npcs
-    for index, npc in pairs(self.state.npcs) do npc:update(dt, self.state) end
+    for _, npc in pairs(self.state.npcs) do npc:update(self.state) end
 
     -- handle non-player non-npc objects
-    for _, object in pairs(self.state.objects) do object:update(dt) end
+    for _, object in pairs(self.state.objects) do object:update() end
 
     -- update game loop
     self.gameUpdate(self)
 
     -- collisions
-    self.state.world:update(dt)
+    self.state.world:update(1.0/100)
 end
 
 function draw(self)
     self.gameDraw()
 end
 
--- validate/process every player's commands
-function handlePlayerCommands(self, players)
-    for playerName, player in pairs(players) do
-        for _, command in ipairs(player.commands) do
-            debug("handling ", command.action, playerName)
-            if command.action == "stop" then
-                self.state.players[playerName].character.state.marker = nil
-                self.state.players[playerName].character.state.target = nil
-                self.state.players[playerName].character.body:setLinearVelocity(0, 0)
-            elseif command.action == "move" then
-                assert(command.marker)
-                self.state.players[playerName].character.state.marker = command.marker
-            end
-        end
+-- validate/process a player command
+function handlePlayerCommand(self, playerName, command)
+    local player = self.state.players[playerName]
+    if command.action == "stop" then
+        player.state.character.state.marker = nil
+        player.state.character.state.target = nil
+        player.state.character.state.body:setLinearVelocity(0, 0)
+    elseif command.action == "move" then
+        assert(command.marker)
+        player.state.character.state.marker = command.marker
+    elseif command.action == "cast" then
+        assert(command.ability and command.mouseX and command.mouseY)
+        player.state.character.state.abilities[command.ability]:cast(player.state.character, command.mouseX, command.mouseY)
     end
 end
 
 function addPlayer(self, playerName, player)
     assert(playerName and player)
     self.state.players[playerName] = player
+end
+
+function addNpc(self, npc)
+    assert(npc)
+    self.state.npcs[tostring(self.state.npcName)] = npc
+    self.state.npcName = self.state.npcName + 1
+end
+
+-- serialize into a single table ready for json encoding
+function serialize(self)
+    local framedata = {
+        players = {},
+        npcs = {}
+    }
+
+    for playerName, player in pairs(self.state.players) do
+        framedata.players[playerName] = player:serialize()
+    end
+
+    for npcName, npc in pairs(self.state.npcs) do
+        framedata.npcs[npcName] = npc:serialize()
+    end
+
+    return framedata
+end
+
+function deserialize(self, framedata)
+    for playerName, player in pairs(framedata.players) do
+        self.state.players[playerName].state.character:setPosition(
+            player.character.x,
+            player.character.y,
+            player.character.marker
+        )
+    end
+
+    for npcName, npc in pairs(framedata.npcs) do
+        self.state.npcs[npcName]:setPosition(
+            npc.x,
+            npc.y,
+            npc.marker
+        )
+        -- log:debug(self.state.npcs[npcName].state.body:getMass())
+        -- log:debug(npcName)
+        -- log:debug(npc.y)
+        -- log:debug(self.state.npcs[npcName].state.body:getPosition())
+    end
 end
 
 return IGame

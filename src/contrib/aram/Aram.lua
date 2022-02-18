@@ -14,8 +14,8 @@ function Aram.new()
     local aram = IGame.new(load, update, draw)
     aram.timers = {
         minionSpawn = {
-            cd = 10,
-            lastRun = 0,
+            cd = 1000,
+            lastRun = -800,
             run = spawnMinions
         }
     }
@@ -30,16 +30,15 @@ function load(self)
     self:spawnTerrain()
 
     -- spawn first minion waves
-    self:spawnMinions()
+    -- self:spawnMinions()
 end
 
-function update(self, dt, playerCommandsBuffer)
+function update(self)
     -- kill all npcs that are dead :)
-    for i, npc in ipairs(self.state.npcs) do
+    for name, npc in pairs(self.state.npcs) do
         if npc.state.hp <= 0 then
-            table.remove(self.state.npcs, i)
-            debug("destroying body")
-            npc.body:destroy()
+            self.state.npcs[name] = nil
+            npc.state.body:destroy()
         end
     end
 
@@ -50,9 +49,9 @@ function update(self, dt, playerCommandsBuffer)
             timer.lastRun ~= nil and type(timer.lastRun) == "number" and
             timer.run ~= nil and type(timer.run) == "function"
         )
-        if self.state.dt - timer.lastRun >= timer.cd then
+        if self.state.frame - timer.lastRun >= timer.cd then
             timer.run(self)
-            timer.lastRun = self.state.dt
+            timer.lastRun = self.state.frame
         end
     end
 end
@@ -64,17 +63,15 @@ end
 function spawnMinions(self)
     -- spawn team 1 minions
     for i = 1, 5, 1 do
-        table.insert(self.state.npcs,
-            Minion.new(self.state.world,
-                2000 - 10 * i, 100, math.random(300), {x = 0, y = 100}, 1)
+        self:addNpc(
+            Minion.new(self.state.world, 2000 - 10 * i, 100, math.random(300), {x = 0, y = 100}, 1)
         )
     end
 
     -- spawn team 2 minions
     for i = 1, 5, 1 do
-        table.insert(self.state.npcs,
-            Minion.new(self.state.world,
-                -400 - 10 * i, 100, math.random(300), {x = 1400, y = 100}, 2)
+        self:addNpc(
+            Minion.new(self.state.world, -400 - 10 * i, 100, math.random(300), {x = 1400, y = 100}, 2)
         )
     end
 end

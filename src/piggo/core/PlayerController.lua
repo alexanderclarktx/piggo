@@ -15,20 +15,7 @@ function PlayerController.new(player)
     }
 end
 
-function update(self, dt, mouseX, mouseY, state)
-    assert(mouseX and mouseY and state)
-    -- -- for each npc, is the player clicking on it
-    -- self.hovering = nil
-    -- for _, npc in pairs(state.npcs) do
-    --     -- TODO not just NPCs
-    --     -- TODO logic for targeting CLOSEST (shift+click)
-    --     if ShapeUtils.pointInCircle(
-    --             mouseX, mouseY,
-    --             npc.body:getX(), npc.body:getY(), npc.state.size + 16) then
-    --         self.hovering = npc
-    --         break
-    --     end
-    -- end
+function update(self, mouseX, mouseY, state)
 end
 
 function draw(self)
@@ -48,46 +35,42 @@ function draw(self)
     end
 end
 
-function bufferCommand(self, command)
+function bufferCommand(self, command, state)
     assert(command)
-    debug("buffering command: ", command.action)
+
+    -- append meta information
+    command.frame = state.scene.state.game.state.frame
+
+    log:debug("buffering command: ", command.action, command.frame)
     table.insert(self.bufferedCommands, command)
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY)
+function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
     assert(mouseX, mouseY)
 
     if key == "q" then
-        self.player.character.abilities.q:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "q", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "w" then
-        self.player.character.abilities.w:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "w", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "e" then
-        self.player.character.abilities.e:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "e", mouseX = mouseX, mouseY = mouseY}, state)
     end
     if key == "r" then
-        self.player.character.abilities.r:cast(
-            self.player.character, mouseX, mouseY
-        )
+        self:bufferCommand({action = "cast", ability = "r", mouseX = mouseX, mouseY = mouseY}, state)
     end
-    if key == "s" then -- stop
-        self:bufferCommand({action = "stop"})
+    if key == "s" then
+        self:bufferCommand({action = "stop"}, state)
     end
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    self.player.character.state.marker = {x = x, y = y}
+    self.player.state.character.state.marker = {x = x, y = y}
     self:bufferCommand({
         action = "move",
-        marker = self.player.character.state.marker
-    })
+        marker = self.player.state.character.state.marker
+    }, state)
 end
 
 return PlayerController

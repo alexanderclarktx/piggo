@@ -1,14 +1,11 @@
 local Client = {}
 local socket = require "socket"
-
 local json = require "lib.json"
 local camera = require "lib.camera"
--- local hero = require "lib.hero"
-
+local TableUtils = require "src.piggo.util.TableUtils"
 local Gui = require "src.piggo.ui.Gui"
 local Player = require "src.piggo.core.Player"
 local PlayerController = require "src.piggo.core.PlayerController"
-
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
 
@@ -30,116 +27,185 @@ function Client.new(game, host, port)
     game:addPlayer(playerName, player)
 
     local client = {
+        state = {
+            camera = camera(),
+            dt = 0,
+            frameBuffer = {},
+            framerate = 100,
+            game = game,
+            gui = Gui.new(player),
+            host = host or defaultHost,
+            nextFrameTime = 0,
+            player = player,
+            playerController = PlayerController.new(player),
+            port = port or defaultPort,
+            serverFrame = nil,
+            udp = udp,
+        },
+        handleKeyPressed = handleKeyPressed,
+        handleMousePressed = handleMousePressed,
         load = load, update = update, draw = draw,
-        handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
-        sendCommandsToServer = sendCommandsToServer, processServerPacket = processServerPacket,
-        host = host or defaultHost, port = port or defaultPort,
-        udp = udp, game = game, player = player,
-        gui = Gui.new(player), playerController = PlayerController.new(player),
-        camera = camera()
+        processServerPacket = processServerPacket,
+        sendCommandsToServer = sendCommandsToServer,
     }
 
     return client
 end
 
 function load(self)
-    self.game:load()
+    self.state.game:load()
 
     love.mouse.setGrabbed(true)
 
     -- camera fade in
-    self.camera.fade_color = {0, 0, 0, 1}
-    self.camera:fade(2, {0, 0, 0, 0})
+    self.state.camera.fade_color = {0, 0, 0, 1}
+    self.state.camera:fade(2, {0, 0, 0, 0})
 end
 
 function update(self, dt)
+    -- log:debug(dt)
+    self.state.dt = self.state.dt + dt
+
+    -- log:debug(self.lastFrameTime)
+    if self.state.dt - self.state.nextFrameTime > 0 then
+        if self.state.nextFrameTime == 0 then self.state.nextFrameTime = self.state.dt end
+        self.state.nextFrameTime = self.state.nextFrameTime + 1.0/self.state.framerate
+
+        -- process server packet
+        self:processServerPacket()
+
+        -- send player's commands to server
+        self:sendCommandsToServer()
+
+        -- update game state
+        self.state.game:update(dt)
+
+        -- TODO move this
+        self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
+    end
+
     -- snap camera to player
-    self.camera:follow(
-        self.player.character.body:getX(),
-        self.player.character.body:getY()
+    self.state.camera:follow(
+        self.state.player.state.character.state.body:getX(),
+        self.state.player.state.character.state.body:getY()
     )
-    self.camera:update(dt)
-
-    -- update player controller
-    self.playerController:update(dt, self.camera.mx, self.camera.my, self.game.state)
-
-    -- send player's commands to server
-    self:sendCommandsToServer()
-
-    -- process server packet
-    self:processServerPacket()
-
-    -- update game state
-    self.game:update(dt)
+    self.state.camera:update(dt)
 end
 
 function draw(self)
     -- attach camera
-    self.camera:attach()
+    self.state.camera:attach()
 
     -- draw all terrain
-    for _, terrain in pairs(self.game.state.terrains) do terrain:draw() end
+    for _, terrain in pairs(self.state.game.state.terrains) do terrain:draw() end
 
     -- draw all players
-    for _, player in pairs(self.game.state.players) do player:draw() end
+    for _, player in pairs(self.state.game.state.players) do player:draw() end
 
     -- draw all npcs
-    for _, npc in pairs(self.game.state.npcs) do npc:draw() end
+    for _, npc in pairs(self.state.game.state.npcs) do npc:draw() end
 
     -- draw all non-npc objects
-    for _, object in pairs(self.game.state.objects) do object:draw() end
+    for _, object in pairs(self.state.game.state.objects) do object:draw() end
 
     -- draw game-specific things
-    self.game:draw()
+    self.state.game:draw()
+
+    -- debug draw where the server thinks i am
+    if debug and self.state.serverFrame then
+        love.graphics.setColor(0, 1, 0.9, 0.5)
+        love.graphics.circle(
+            "fill",
+            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.x,
+            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.y,
+            10
+        )
+    end
 
     -- draw player indicators
-    self.playerController:draw()
+    self.state.playerController:draw()
 
     -- draw and detach camera
-    self.camera:detach()
-    self.camera:draw()
+    self.state.camera:detach()
+    self.state.camera:draw()
 
     -- draw the GUI
-    self.gui:draw()
+    self.state.gui:draw()
 end
 
 function sendCommandsToServer(self)
-    local commandsToSend = self.playerController.bufferedCommands
+    if #self.state.playerController.bufferedCommands > 0 then
+        -- apply commands locally
+        for _, command in ipairs(self.state.playerController.bufferedCommands) do
+            self.state.game:handlePlayerCommand("KetoMojito", command)
+        end
 
-    if #commandsToSend > 0 then
-        debug("sending commands ", #commandsToSend, commandsToSend[1].action)
-        self.udp:send(json:encode(commandsToSend))
-        self.playerController.bufferedCommands = {}
+        -- send commands to server
+        self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
+
+        -- reset command buffer
+        self.state.playerController.bufferedCommands = {}
     else
-        self.udp:send(json:encode({}))
+        self.state.udp:send(json:encode({}))
     end
 end
 
 function processServerPacket(self)
-    local packet, _ = self.udp:receive()
-    if packet then
-        local payload = json:decode(packet)
-        -- assert(payload.gameTickPayload and payload.playerTickPayload)
+    while true do
+        local packet, _ = self.state.udp:receive()
+        if not packet then break end
 
-        -- update all player state
-        for playerName, player in pairs(payload.gameTickPayload.players) do
-            self.game.state.players[playerName]:setPosition(
-                player.x, player.y, player.velocity
-            )
+        local payload = json:decode(packet)
+        -- assert(payload.gameFramePayload and payload.playerFramePayload and payload.frame)
+
+        if self.state.game.state.frame - payload.frame < 2 then
+            log:warn("frame +5")
+            self.state.game.state.frame = payload.frame + 5
+        end
+
+        self.state.serverFrame = payload
+
+        if TableUtils.deep_compare(
+            payload.gameFramePayload,
+            self.state.frameBuffer[payload.frame]
+        ) then
+            -- log:info("frames matched")
+        else
+            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
+            log:debug(json:encode(payload.gameFramePayload.npcs))
+            log:warn("client rollback", love.timer.getTime())
+            -- frame to roll forward
+            local frameForward = self.state.game.state.frame
+
+            -- set the frame counter
+            self.state.game.state.frame = payload.frame
+
+            -- set the game state
+            self.state.game:deserialize(payload.gameFramePayload)
+            self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
+
+            -- game update
+            for i = payload.frame, frameForward - 1, 1 do
+                self.state.game:update()
+                -- TODO move this
+                self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
+            end
+            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
+            log:warn("done client rollback", love.timer.getTime())
         end
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat)
-    self.playerController:handleKeyPressed(
-        key, scancode, isrepeat, self.camera.mx, self.camera.my
+function handleKeyPressed(self, key, scancode, isrepeat, state)
+    self.state.playerController:handleKeyPressed(
+        key, scancode, isrepeat, self.state.camera.mx, self.state.camera.my, state
     )
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    -- ignore the given x/y, use the camera's
-    self.playerController:handleMousePressed(
-        self.camera.mx, self.camera.my, mouseButton, state
+    local markerX, markerY = self.state.camera:toWorldCoords(x, y)
+    self.state.playerController:handleMousePressed(
+        markerX, markerY, mouseButton, state
     )
 end
 

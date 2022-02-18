@@ -1,16 +1,16 @@
 local Piggo = require "src.piggo.Piggo"
+local Logger = require "src.piggo.util.Logger"
 
 local piggo = Piggo.new()
 
 function love.load(arg)
-    -- handle debug flag
+    -- default render mode
     love.graphics.setDefaultFilter("nearest", "nearest")
-    if arg[1] and arg[1] == "--debug" then
-        debug = require("src.piggo.util.debug")
-    else
-        debug = function() return false end
-    end
 
+    -- initialize logging
+    log = Logger.new(arg[1] and arg[1] == "--debug")
+
+    -- load the game
     piggo:load()
 end
 

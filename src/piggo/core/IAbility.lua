@@ -7,12 +7,11 @@ local update, draw
 function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abilityCd)
     local iAbility = {
         cast = cast, update = update, draw = draw,
-
-        name = abilityName, cd = abilityCd, dt = abilityCd,
-        abilityCast = abilityCast, abilityUpdate = abilityUpdate, abilityDraw = abilityDraw, ability
+        name = abilityName, cd = abilityCd, frame = abilityCd,
+        abilityCast = abilityCast, abilityUpdate = abilityUpdate, abilityDraw = abilityDraw,
     }
 
-    assert(iAbility.name and iAbility.cast and iAbility.update and iAbility.draw and iAbility.cd and iAbility.dt)
+    assert(iAbility.name and iAbility.cast and iAbility.update and iAbility.draw and iAbility.cd and iAbility.frame)
 
     return iAbility
 end
@@ -21,19 +20,19 @@ function cast(self, character, mouseX, mouseY)
     assert(character and mouseX and mouseY)
 
     -- cd check
-    if self.dt >= self.cd then
-        debug("CAST " .. self.name)
+    if self.frame >= self.cd then
+        log:debug("CAST " .. self.name)
         self:abilityCast(character, mouseX, mouseY)
 
         -- reset time delta
-        self.dt = 0
+        self.frame = 0
     else
-        debug("CASTCD " .. self.name)
+        log:debug("CASTCD " .. self.name)
     end
 end
 
-function update(self, dt)
-    self.dt = self.dt + dt
+function update(self)
+    self.frame = self.frame + 1
     self.abilityUpdate(self)
 
     -- handle abilities with charges
@@ -47,7 +46,7 @@ function update(self, dt)
 
         -- increment chargeDt if not at max
         if self.charges < self.maxCharges then
-            self.chargeDt = self.chargeDt + dt
+            self.chargeDt = self.chargeDt + 1
         end
     end
 end

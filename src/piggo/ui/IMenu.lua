@@ -53,7 +53,7 @@ function draw(self)
 
     -- draw all textures
     for _, texture in ipairs(self.textures) do
-        -- debug(texture)
+        -- log:debug(texture)
 
         -- love.graphics.drawLayer(
         --     image, frameToDraw,
@@ -96,7 +96,7 @@ function draw(self)
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat) end
+function handleKeyPressed(self, key, scancode, isrepeat, state) end
 
 function handleMousePressed(self, x, y, mouseButton, state)
     for _, button in ipairs(self.buttons) do
