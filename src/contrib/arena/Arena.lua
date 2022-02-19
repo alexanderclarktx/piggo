@@ -28,7 +28,6 @@ end
 
 function spawnTerrain(self)
     self.state.terrains = {
-        -- top
         Terrain.new(self.state.world, 0, 0, {
             0, 0,
             0, 100,
@@ -70,12 +69,6 @@ function spawnTerrain(self)
             1000, 2300,
             1600, 1600,
             1500, 1600,
-            -- 1000, 2200,
-            -- 1000, 2300,
-            -- 1300, 2300,
-            -- 1600, 1900,
-            -- 1600, 1600,
-            -- 1500, 1600,
         }),
         Terrain.new(self.state.world, 0, 0, {
             1600, 1600,
