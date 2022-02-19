@@ -59,7 +59,7 @@ function load(self)
 
     -- camera fade in
     self.state.camera.fade_color = {0, 0, 0, 1}
-    self.state.camera:fade(2, {0, 0, 0, 0})
+    self.state.camera:fade(1, {0, 0, 0, 0})
 end
 
 function update(self, dt)
@@ -82,14 +82,14 @@ function update(self, dt)
 
         -- TODO move this
         self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
-    end
 
-    -- snap camera to player
-    self.state.camera:follow(
-        self.state.player.state.character.state.body:getX(),
-        self.state.player.state.character.state.body:getY()
-    )
-    self.state.camera:update(dt)
+        -- snap camera to player
+        self.state.camera:follow(
+            self.state.player.state.character.state.body:getX(),
+            self.state.player.state.character.state.body:getY()
+        )
+        self.state.camera:update(dt)
+    end
 end
 
 function draw(self)
@@ -171,9 +171,9 @@ function processServerPacket(self)
         ) then
             -- log:info("frames matched")
         else
-            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
-            log:debug(json:encode(payload.gameFramePayload.npcs))
-            log:warn("client rollback", love.timer.getTime())
+            -- log:debug(json:encode(self.state.frameBuffer[payload.frame]))
+            -- log:debug(json:encode(payload.gameFramePayload.npcs))
+            log:warn("client rollback")
             -- frame to roll forward
             local frameForward = self.state.game.state.frame
 
@@ -190,8 +190,7 @@ function processServerPacket(self)
                 -- TODO move this
                 self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
             end
-            log:debug(json:encode(self.state.frameBuffer[payload.frame]))
-            log:warn("done client rollback", love.timer.getTime())
+            -- log:debug(json:encode(self.state.frameBuffer[payload.frame]))
         end
     end
 end

@@ -1,8 +1,8 @@
 function love.conf(t)
-    t.window.width = 1920
-    t.window.height = 1080
+    t.window.width = 2440
+    t.window.height = 1440
     t.window.fullscreen = false
-    t.window.borderless = false
+    t.window.borderless = true
     -- t.window.fullscreentype = ""
     t.window.usedpiscaling = false
     t.window.vsync = 0

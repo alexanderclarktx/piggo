@@ -1,7 +1,7 @@
 local Piggo = {}
 local MainMenu = require "src.piggo.ui.MainMenu"
 
-local load, update, draw, handleKeyPressed, handleMousePressed, startServerThread
+local load, update, draw, handleKeyPressed, handleMousePressed
 
 -- top level application controller
 function Piggo.new()
@@ -25,8 +25,6 @@ end
 
 function load(self)
     self.state.scene:load()
-
-    startServerThread("src.contrib.aram.Aram") -- TODO
 end
 
 function update(self, dt)
@@ -48,30 +46,6 @@ end
 
 function handleMousePressed(self, x, y, mouseButton)
     self.state.scene:handleMousePressed(x, y, mouseButton, self.state)
-end
-
-function startServerThread(gameFile)
-    assert(gameFile)
-    local thread = love.thread.newThread([[
-        local t = require "love.timer"
-        local Server = require "src.piggo.net.Server"
-        log = require("src.piggo.util.Logger").new(true)
-
-        local game = require(...)
-        assert(game)
-
-        local server = Server.new(game.new())
-
-        local lastFrameTime = love.timer.getTime()
-        while true do
-            local time = love.timer.getTime()
-            server:update(time - lastFrameTime)
-            lastFrameTime = time
-            t.sleep(0.0001)
-        end
-    ]])
-    thread:start(gameFile)
-    return thread
 end
 
 return Piggo

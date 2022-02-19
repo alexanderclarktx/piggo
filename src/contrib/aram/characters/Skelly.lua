@@ -15,7 +15,7 @@ function Skelly.new(world, x, y, hp)
     local skelly = ICharacter.new(
         world,
         update, draw,
-        x, y, hp, 1000, 400, 20,
+        x, y, hp, 1000, 350, 20,
         {
             q = SkellyAxe.new(),
             w = SkellyShield.new(),

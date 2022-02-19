@@ -25,7 +25,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             hp = hp, maxhp = maxhp,
             speed = speed, canMove = true, speedfactor = 1,
             marker = nil, target = nil,
-            defaultColor = {0.7, 0.5, 0}, color = {0.7, 0.5, 0},
+            defaultColor = {0.7, 0.5, 0}, color = {1, 1, 1},
             ranged = false, range = 50,
             team = 2,
             size = size,
@@ -94,14 +94,14 @@ function update(self, state)
         local yDiff = self.state.marker.y - self.state.body:getY()
 
         -- if we're close enough, snap to the marker
-        if math.abs(xDiff) <= 4 then
-            self.state.body:setX(self.state.marker.x)
-            xDiff = 0
-        end
-        if math.abs(yDiff) <= 4 then
-            self.state.body:setY(self.state.marker.y)
-            yDiff = 0
-        end
+        -- if math.abs(xDiff) <= 4 then
+        --     self.state.body:setX(self.state.marker.x)
+        --     xDiff = 0
+        -- end
+        -- if math.abs(yDiff) <= 4 then
+        --     self.state.body:setY(self.state.marker.y)
+        --     yDiff = 0
+        -- end
 
         -- move toward marker or reset it
         if math.abs(xDiff) <= 1 and math.abs(yDiff) <= 1 then
@@ -142,7 +142,7 @@ end
 function draw(self)
     -- draw line to marker
     if debug then
-        love.graphics.setColor(0.6, 0.6, 0.6)
+        love.graphics.setColor(0.8, 0.8, 0.9)
         if self.state.marker then
             love.graphics.line(
                 self.state.body:getX(), self.state.body:getY(),

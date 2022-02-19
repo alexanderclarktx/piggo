@@ -1,7 +1,10 @@
 local MainMenu = {}
 local IMenu = require "src.piggo.ui.IMenu"
 local Aram = require "src.contrib.aram.Aram"
+local Arena = require "src.contrib.arena.Arena"
 local Client = require "src.piggo.net.Client"
+
+local onclickARAM, onclickArena, onclickSettings, startServerThread
 
 function MainMenu.new()
     local menu = IMenu.new({
@@ -13,24 +16,58 @@ function MainMenu.new()
     -- title
     menu:addText("Piggo", 0, 100, windowWidth, 1)
 
-    -- start button
-    menu:addButton("start", windowWidth/2 - 100, 300, 200, 50, 2, onclickStart)
+    -- ARAM button
+    menu:addButton("ARAM", windowWidth/2 - 100, 300, 200, 50, 2, onclickARAM)
+
+    -- Arena button
+    menu:addButton("Arena", windowWidth/2 - 100, 375, 200, 50, 2, onclickArena)
 
     -- settings button
-    menu:addButton("settings", windowWidth/2 - 100, 375, 200, 50, 2, onclickSettings)
+    menu:addButton("Settings", windowWidth/2 - 100, 450, 200, 50, 2, onclickSettings)
 
     return menu
 end
 
 -- start the game
-function onclickStart(state)
-    log:debug("start")
+function onclickARAM(state)
+    log:info("ARAM")
     state:setScene(Client.new(Aram.new()))
+    startServerThread("src.contrib.aram.Aram")
 end
 
--- TODO open the settings overlay
+function onclickArena(state)
+    log:info("Arena")
+    state:setScene(Client.new(Arena.new()))
+    startServerThread("src.contrib.arena.Arena")
+end
+
+-- TODO settings overlay
 function onclickSettings(state)
-    log:debug("settings")
+    log:info("settings")
+end
+
+function startServerThread(gameFile)
+    assert(gameFile)
+    local thread = love.thread.newThread([[
+        local t = require "love.timer"
+        local Server = require "src.piggo.net.Server"
+        log = require("src.piggo.util.Logger").new(true)
+
+        local game = require(...)
+        assert(game)
+
+        local server = Server.new(game.new())
+
+        local lastFrameTime = love.timer.getTime()
+        while true do
+            local time = love.timer.getTime()
+            server:update(time - lastFrameTime)
+            lastFrameTime = time
+            t.sleep(0.0001)
+        end
+    ]])
+    thread:start(gameFile)
+    return thread
 end
 
 return MainMenu

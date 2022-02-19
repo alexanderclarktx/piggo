@@ -20,7 +20,8 @@ function update(self, dt) end
 
 function draw(self)
     -- draw terrain
-    love.graphics.setColor(0.85, 0.65, 0.4, 0.3)
+    -- love.graphics.setColor(0.85, 0.65, 0.4, 0.3)
+    love.graphics.setColor(246/256.0, 212/256.0, 100/256.0, 0.8)
     love.graphics.polygon("fill", self.body:getWorldPoints(unpack(self.poly)))
 
     -- draw terrain outlines
@@ -34,7 +35,7 @@ function draw(self)
         for i=1, #self.poly, 2 do
             local debugVertices = "%d,%d"
 
-            love.graphics.setColor(1, 1, 1, 0.3)
+            love.graphics.setColor(1, 1, 1)
             love.graphics.print(
                 debugVertices:format(self.body:getWorldPoints(self.poly[i], self.poly[i+1])),
                 self.body:getWorldPoints(self.poly[i], self.poly[i+1] - 5)

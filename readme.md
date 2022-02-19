@@ -19,8 +19,6 @@ A 2D multiplayer online battle arena
 
 #### Mechanics
 
-* end-to-end ARAM game logic
-
 * auto attacks
 
 * gold/resources
@@ -28,6 +26,8 @@ A 2D multiplayer online battle arena
 * player death and respawn
 
 #### UI
+
+* scoreboard (tab)
 
 * minimap
 
@@ -39,14 +39,10 @@ A 2D multiplayer online battle arena
 
 * ability tooltips
 
-## refactors
+## Known Bugs
 
-* client/server
-
-## Bugs
-
-* movement and ability targeting is not honoring pythagoras
+* netcode doesn't handle minion death
+* window resize not handled by camera/menu
+* direction/distance calculation
   * characters move faster in cardinal directions than diagonally
   * abilities are longer when facing cardinal directions
-* camera position not handling window resize
-* menu items not handling window resize
