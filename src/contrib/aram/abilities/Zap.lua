@@ -1,19 +1,19 @@
-local SkellyAxe = {}
+local Zap = {}
 local IAbility = require "src.piggo.core.IAbility"
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
 local cast, update, draw
 
 -- hold down to charge; release for AoE stun and damage
-function SkellyAxe.new()
-    local skellyAxe = IAbility.new("Skelly Axe", cast, update, draw, 300)
+function Zap.new()
+    local zap = IAbility.new("Skelly Axe", cast, update, draw, 300)
 
-    skellyAxe.charges = 4
-    skellyAxe.maxCharges = 4
-    skellyAxe.chargeCd = 1
-    skellyAxe.chargeDt = 0
+    zap.charges = 4
+    zap.maxCharges = 4
+    zap.chargeCd = 1
+    zap.chargeDt = 0
 
-    return skellyAxe
+    return zap
 end
 
 function cast(self, character, mouseX, mouseY)
@@ -84,4 +84,4 @@ function update(self) end
 
 function draw(self) end
 
-return SkellyAxe
+return Zap

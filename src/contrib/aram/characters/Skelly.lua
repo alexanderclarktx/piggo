@@ -2,10 +2,10 @@ local Skelly = {}
 
 local ICharacter = require "src.piggo.core.ICharacter"
 
-local SkellyAxe = require "src.contrib.aram.abilities.SkellyAxe"
-local SkellyShield = require "src.contrib.aram.abilities.SkellyShield"
-local SkellyPush = require "src.contrib.aram.abilities.SkellyPush"
-local SkellyUlti = require "src.contrib.aram.abilities.SkellyUlti"
+local Zap = require "src.contrib.aram.abilities.Zap"
+local Shield = require "src.contrib.aram.abilities.Shield"
+local Blink = require "src.contrib.aram.abilities.Blink"
+local Rush = require "src.contrib.aram.abilities.Rush"
 
 local update, draw
 
@@ -17,10 +17,10 @@ function Skelly.new(world, x, y, hp)
         update, draw,
         x, y, hp, 1000, 350, 20,
         {
-            q = SkellyAxe.new(),
-            w = SkellyShield.new(),
-            e = SkellyPush.new(),
-            r = SkellyUlti.new(),
+            q = Zap.new(),
+            w = Shield.new(),
+            e = Blink.new(),
+            r = Rush.new(),
         }
     )
 

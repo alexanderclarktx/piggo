@@ -1,4 +1,4 @@
-local SkellyUlti = {}
+local Rush = {}
 local IAbility = require "src.piggo.core.IAbility"
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
@@ -6,10 +6,10 @@ local cast, update, draw
 
 local rgb = {1, 0, 0, 0.6}
 
-function SkellyUlti.new()
-    local skellyUlti = IAbility.new("Skelly Ulti", cast, update, draw, 300)
+function Rush.new()
+    local rush = IAbility.new("Skelly Ulti", cast, update, draw, 300)
 
-    return skellyUlti
+    return rush
 end
 
 function cast(self, character)
@@ -70,4 +70,4 @@ function update(self, dt) end
 
 function draw(self) end
 
-return SkellyUlti
+return Rush
