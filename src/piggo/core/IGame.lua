@@ -3,7 +3,7 @@ local physics = require 'love.physics'
 local DamageController = require "src.piggo.core.DamageController"
 
 local load, update, draw
-local addPlayer, addNpc, handlePlayerCommand
+local addPlayer, addNpc, handlePlayerCommand, handleMouseMoved
 local serialize, deserialize
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
@@ -28,6 +28,7 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
         addNpc = addNpc,
         serialize = serialize,
         deserialize = deserialize,
+        handleMouseMoved = handleMouseMoved,
     }
 
     return iGame
@@ -62,7 +63,7 @@ function update(self)
 end
 
 function draw(self)
-    self.gameDraw()
+    self.gameDraw(self)
 end
 
 -- validate/process a player command
@@ -90,6 +91,12 @@ function addNpc(self, npc)
     assert(npc)
     self.state.npcs[tostring(self.state.npcName)] = npc
     self.state.npcName = self.state.npcName + 1
+end
+
+function handleMouseMoved(self, x, y, state)
+    for _, terrain in ipairs(self.state.terrains) do
+        terrain:handleMouseMoved(x, y, state)
+    end
 end
 
 -- serialize into a single table ready for json encoding

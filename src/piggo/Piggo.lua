@@ -1,7 +1,7 @@
 local Piggo = {}
 local MainMenu = require "src.piggo.ui.MainMenu"
 
-local load, update, draw, handleKeyPressed, handleMousePressed
+local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 
 -- top level application controller
 function Piggo.new()
@@ -18,6 +18,7 @@ function Piggo.new()
         load = load, update = update, draw = draw,
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
+        handleMouseMoved = handleMouseMoved,
     }
 
     return piggo
@@ -46,6 +47,10 @@ end
 
 function handleMousePressed(self, x, y, mouseButton)
     self.state.scene:handleMousePressed(x, y, mouseButton, self.state)
+end
+
+function handleMouseMoved(self, x, y)
+    self.state.scene:handleMouseMoved(x, y, self.state)
 end
 
 return Piggo

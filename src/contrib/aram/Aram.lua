@@ -30,7 +30,7 @@ function load(self)
     self:spawnTerrain()
 
     -- spawn first minion waves
-    -- self:spawnMinions()
+    self:spawnMinions()
 end
 
 function update(self)

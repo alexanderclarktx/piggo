@@ -9,7 +9,7 @@ local PlayerController = require "src.piggo.core.PlayerController"
 local Skelly = require "src.contrib.aram.characters.Skelly"
 
 
-local load, update, draw, handleKeyPressed, handleMousePressed
+local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local sendCommandsToServer, processServerPacket, connectToServer
 local defaultHost = "localhost"
 local defaultPort = 12345
@@ -44,6 +44,7 @@ function Client.new(game, host, port)
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
+        handleMouseMoved = handleMouseMoved,
         load = load, update = update, draw = draw,
         processServerPacket = processServerPacket,
         sendCommandsToServer = sendCommandsToServer,
@@ -79,6 +80,11 @@ function update(self, dt)
 
         -- update game state
         self.state.game:update(dt)
+
+        -- TODO
+        for _, terrain in ipairs(self.state.game.state.terrains) do
+            terrain:update()
+        end
 
         -- TODO move this
         self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
@@ -205,6 +211,22 @@ function handleMousePressed(self, x, y, mouseButton, state)
     local markerX, markerY = self.state.camera:toWorldCoords(x, y)
     self.state.playerController:handleMousePressed(
         markerX, markerY, mouseButton, state
+    )
+end
+ 
+function handleMouseMoved(self, x, y, state)
+    local markerX, markerY = self.state.camera:toWorldCoords(x, y)
+
+    -- self.state.playerController:handleMouseMoved(
+    --     markerX, markerY, state
+    -- )
+
+    -- self.state.gui:handleMouseMoved(
+    --     markerX, markerY, state
+    -- )
+
+    self.state.game:handleMouseMoved(
+        markerX, markerY, state
     )
 end
 

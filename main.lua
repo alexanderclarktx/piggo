@@ -29,3 +29,7 @@ end
 function love.mousepressed(x, y, mouseButton)
     piggo:handleMousePressed(x, y, mouseButton)
 end
+
+function love.mousemoved(x, y, dx, dy)
+    piggo:handleMouseMoved(x, y)
+end

@@ -2,6 +2,7 @@ local MainMenu = {}
 local IMenu = require "src.piggo.ui.IMenu"
 local Aram = require "src.contrib.aram.Aram"
 local Arena = require "src.contrib.arena.Arena"
+local AutoChess = require "src.contrib.autochess.AutoChess"
 local Client = require "src.piggo.net.Client"
 
 local onclickARAM, onclickArena, onclickSettings, startServerThread
@@ -22,8 +23,11 @@ function MainMenu.new()
     -- Arena button
     menu:addButton("Arena", windowWidth/2 - 100, 375, 200, 50, 2, onclickArena)
 
+    -- AutoChess button
+    menu:addButton("AutoChess", windowWidth/2 - 100, 450, 200, 50, 2, onclickAutoChess)
+
     -- settings button
-    menu:addButton("Settings", windowWidth/2 - 100, 450, 200, 50, 2, onclickSettings)
+    menu:addButton("Settings", windowWidth/2 - 100, 525, 200, 50, 2, onclickSettings)
 
     return menu
 end
@@ -39,6 +43,12 @@ function onclickArena(state)
     log:info("Arena")
     state:setScene(Client.new(Arena.new()))
     startServerThread("src.contrib.arena.Arena")
+end
+
+function onclickAutoChess(state)
+    log:info("AutoChess")
+    state:setScene(Client.new(AutoChess.new()))
+    startServerThread("src.contrib.autochess.AutoChess")
 end
 
 -- TODO settings overlay

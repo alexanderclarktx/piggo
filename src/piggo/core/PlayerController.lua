@@ -73,4 +73,6 @@ function handleMousePressed(self, x, y, mouseButton, state)
     }, state)
 end
 
+function handleMouseMoved(self, x, y, state) end
+
 return PlayerController

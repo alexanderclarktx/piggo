@@ -1,7 +1,7 @@
 local IMenu = {}
 local ShapeUtils = require "src.piggo.util.ShapeUtils"
 
-local load, update, draw, handleKeyPressed, handleMousePressed
+local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local addText, addTexture, addButton
 
 function IMenu.new(fonts)
@@ -10,7 +10,9 @@ function IMenu.new(fonts)
     -- attach methods for generic buttons/text/inputs
     local menu = {
         load = load, update = update, draw = draw,
-        handleKeyPressed = handleKeyPressed, handleMousePressed = handleMousePressed,
+        handleKeyPressed = handleKeyPressed,
+        handleMousePressed = handleMousePressed,
+        handleMouseMoved = handleMouseMoved,
         addText = addText, addTexture = addTexture, addButton = addButton,
         texts = {}, textures = {}, buttons = {},
         fonts = fonts
@@ -112,5 +114,7 @@ function handleMousePressed(self, x, y, mouseButton, state)
         end
     end
 end
+
+function handleMouseMoved(self, x, y, state) end
 
 return IMenu
