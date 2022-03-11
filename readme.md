@@ -12,7 +12,7 @@ A 2D multiplayer online battle arena
   ```
 * run the game
   ```
-  love .
+  love piggo-client
   ```
 
 ## working features
