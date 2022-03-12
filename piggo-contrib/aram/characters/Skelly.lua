@@ -27,6 +27,7 @@ function Skelly.new(world, x, y, hp)
     skelly.frame = 1
     skelly.frameLast = 0
     skelly.framecd = 13
+    skelly.animationFrame = 1
 
     return skelly
 end

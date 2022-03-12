@@ -87,7 +87,7 @@ function runFrame(self)
             if command.frame < self.state.game.state.frame then
                 table.insert(iToRemove, i)
             elseif command.frame == self.state.game.state.frame then
-                log:debug("handling", command.action, self.state.game.state.frame)
+                log:debug("handling", playerName, command.action)
                 self.state.game:handlePlayerCommand(playerName, command)
             end
         end
