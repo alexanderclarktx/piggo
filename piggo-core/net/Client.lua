@@ -8,11 +8,10 @@ local Skelly = require "piggo-contrib.aram.characters.Skelly"
 local socket = require "socket"
 local TableUtils = require "piggo-core.util.TableUtils"
 
-
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local sendCommandsToServer, processLatestServerPacket, connectToServer
-local defaultHost = "localhost"
--- local defaultHost = "35.192.204.114"
+-- local defaultHost = "localhost"
+local defaultHost = "piggo.io"
 local defaultPort = 12345
 
 function Client.new(game, host, port)
