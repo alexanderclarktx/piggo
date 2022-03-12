@@ -11,7 +11,7 @@ function App() {
         </header>
       </div>
       <div>
-        <img src="7.png" width="50%"></img>
+        <img src="7.png" width="50%" alt=""></img>
       </div>
       <div>
         <p>Piggo is a 2D multiplayer ARAM, MOBA, Autochess, and more!</p>
