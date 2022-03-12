@@ -8,12 +8,9 @@ local update, runFrame, openSocket, bufferPlayerInputs
 local createPlayerFramePayload, connectPlayer
 local defaultPort = 12345
 
--- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
--- ref https://web.archive.org/web/20200415042448/http://w3.impa.br/~diego/software/luasocket/udp.html
 function Server.new(game, port)
     assert(game)
 
-    -- open the server socket
     local udp = openSocket(port or defaultPort)
 
     game:load()

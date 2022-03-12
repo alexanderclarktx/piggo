@@ -1,25 +1,23 @@
 local Client = {}
-local socket = require "socket"
-local json = require "lib.json"
 local camera = require "lib.camera"
-local TableUtils = require "piggo-core.util.TableUtils"
 local Gui = require "piggo-client.src.ui.Gui"
+local json = require "lib.json"
 local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.src.PlayerController"
 local Skelly = require "piggo-contrib.aram.characters.Skelly"
+local socket = require "socket"
+local TableUtils = require "piggo-core.util.TableUtils"
 
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local sendCommandsToServer, processLatestServerPacket, connectToServer
 local defaultHost = "localhost"
+-- local defaultHost = "35.192.204.114"
 local defaultPort = 12345
 
--- ref https://love2d.org/wiki/Tutorial:Networking_with_UDP
--- ref https://web.archive.org/web/20200415042448/http://w3.impa.br/~diego/software/luasocket/udp.html
 function Client.new(game, host, port)
     assert(game)
 
-    -- connect to game server
     local udp = connectToServer(host or defaultHost, port or defaultPort)
 
     local playerName = "KetoMojito" -- TODO
