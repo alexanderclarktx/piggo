@@ -4,8 +4,6 @@ local ShapeUtils = require "piggo-core.util.ShapeUtils"
 local update, handleMouseMoved
 
 function Clickable.new(poly, onHover, onNotHover, onClick)
-    print("...")
-    for i, j in ipairs(poly) do print(j) end
     local clickable = {
         state = {
             poly = poly

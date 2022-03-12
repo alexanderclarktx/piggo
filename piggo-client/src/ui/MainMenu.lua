@@ -36,19 +36,19 @@ end
 function onclickARAM(state)
     log:info("ARAM")
     state:setScene(Client.new(Aram.new()))
-    startServerThread("piggo-contrib.aram.Aram")
+    -- startServerThread("piggo-contrib.aram.Aram")
 end
 
 function onclickArena(state)
     log:info("Arena")
     state:setScene(Client.new(Arena.new()))
-    startServerThread("piggo-contrib.arena.Arena")
+    -- startServerThread("piggo-contrib.arena.Arena")
 end
 
 function onclickAutoChess(state)
     log:info("AutoChess")
     state:setScene(Client.new(AutoChess.new()))
-    startServerThread("piggo-contrib.autochess.AutoChess")
+    -- startServerThread("piggo-contrib.autochess.AutoChess")
 end
 
 -- TODO settings overlay

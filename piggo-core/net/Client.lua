@@ -10,7 +10,7 @@ local Skelly = require "piggo-contrib.aram.characters.Skelly"
 
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
-local sendCommandsToServer, processServerPacket, connectToServer
+local sendCommandsToServer, processLatestServerPacket, connectToServer
 local defaultHost = "localhost"
 local defaultPort = 12345
 
@@ -46,7 +46,7 @@ function Client.new(game, host, port)
         handleMousePressed = handleMousePressed,
         handleMouseMoved = handleMouseMoved,
         load = load, update = update, draw = draw,
-        processServerPacket = processServerPacket,
+        processLatestServerPacket = processLatestServerPacket,
         sendCommandsToServer = sendCommandsToServer,
     }
 
@@ -73,7 +73,7 @@ function update(self, dt)
         self.state.nextFrameTime = self.state.nextFrameTime + 1.0/self.state.framerate
 
         -- process server packet
-        self:processServerPacket()
+        self:processLatestServerPacket()
 
         -- send player's commands to server
         self:sendCommandsToServer()
@@ -156,48 +156,56 @@ function sendCommandsToServer(self)
     end
 end
 
-function processServerPacket(self)
+function processLatestServerPacket(self)
+    local latestPayload = nil
     while true do
+        -- get packet from the socket
         local packet, _ = self.state.udp:receive()
         if not packet then break end
 
+        -- update latestPayload if this data is newer
         local payload = json:decode(packet)
-        -- assert(payload.gameFramePayload and payload.playerFramePayload and payload.frame)
-
-        if self.state.game.state.frame - payload.frame < 2 then
-            log:warn("frame +5")
-            self.state.game.state.frame = payload.frame + 5
+        if latestPayload == nil or latestPayload.frame < payload.frame then
+            latestPayload = payload
         end
+    end
 
-        self.state.serverFrame = payload
+    if not latestPayload then return end
 
-        if TableUtils.deep_compare(
-            payload.gameFramePayload,
-            self.state.frameBuffer[payload.frame]
-        ) then
-            -- log:info("frames matched")
-        else
-            -- log:debug(json:encode(self.state.frameBuffer[payload.frame]))
-            -- log:debug(json:encode(payload.gameFramePayload.npcs))
-            log:warn("client rollback")
-            -- frame to roll forward
-            local frameForward = self.state.game.state.frame
+    if self.state.game.state.frame - latestPayload.frame < 2 then
+        log:warn("frame +5")
+        self.state.game.state.frame = latestPayload.frame + 5
+    end
 
-            -- set the frame counter
-            self.state.game.state.frame = payload.frame
+    self.state.serverFrame = latestPayload
 
-            -- set the game state
-            self.state.game:deserialize(payload.gameFramePayload)
+    if TableUtils.deep_compare(
+        latestPayload.gameFramePayload,
+        self.state.frameBuffer[latestPayload.frame]
+    ) then
+        -- log:info("frames matched")
+    else
+        -- log:debug(json:encode(self.state.frameBuffer[latestPayload.frame]))
+        -- log:debug(json:encode(latestPayload.gameFramePayload.npcs))
+        log:warn("client rollback")
+        -- frame to roll forward
+        -- local frameForward = self.state.game.state.frame
+        local frameForward = latestPayload.frame + 5
+
+        -- set the frame counter
+        self.state.game.state.frame = latestPayload.frame
+
+        -- set the game state
+        self.state.game:deserialize(latestPayload.gameFramePayload)
+        self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
+
+        -- game update
+        for i = latestPayload.frame, frameForward - 1, 1 do
+            self.state.game:update()
+            -- TODO move this
             self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
-
-            -- game update
-            for i = payload.frame, frameForward - 1, 1 do
-                self.state.game:update()
-                -- TODO move this
-                self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
-            end
-            -- log:debug(json:encode(self.state.frameBuffer[payload.frame]))
         end
+        -- log:debug(json:encode(self.state.frameBuffer[latestPayload.frame]))
     end
 end
 

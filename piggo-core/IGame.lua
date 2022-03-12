@@ -127,11 +127,11 @@ function deserialize(self, framedata)
     end
 
     for npcName, npc in pairs(framedata.npcs) do
-        self.state.npcs[npcName]:setPosition(
-            npc.x,
-            npc.y,
-            npc.marker
-        )
+        -- self.state.npcs[npcName]:setPosition(
+        --     npc.x,
+        --     npc.y,
+        --     npc.marker
+        -- )
         -- log:debug(self.state.npcs[npcName].state.body:getMass())
         -- log:debug(npcName)
         -- log:debug(npc.y)
