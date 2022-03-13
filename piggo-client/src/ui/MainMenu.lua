@@ -1,9 +1,9 @@
 local MainMenu = {}
+local Client = require "piggo-client.src.Client"
 local IMenu = require "piggo-client.src.ui.IMenu"
 local Aram = require "piggo-contrib.aram.Aram"
 local Arena = require "piggo-contrib.arena.Arena"
 local AutoChess = require "piggo-contrib.autochess.AutoChess"
-local Client = require "piggo-core.net.Client"
 
 local onclickARAM, onclickArena, onclickSettings, startServerThread
 

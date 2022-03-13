@@ -4,10 +4,10 @@ local Terrain = require "piggo-core.Terrain"
 
 local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 
-local load, update, draw, spawnTerrain
+local load, update, draw, handleMouseMoved, spawnTerrain
 
 function Arena.new()
-    local arena = IGame.new(load, update, draw)
+    local arena = IGame.new(load, update, draw, handleMouseMoved)
 
     arena.spawnTerrain = spawnTerrain
 
@@ -24,6 +24,12 @@ end
 
 function draw(self)
     love.graphics.setBackgroundColor(backgroundColor)
+end
+
+function handleMouseMoved(self, x, y, state)
+    for _, terrain in ipairs(self.state.terrains) do
+        terrain:handleMouseMoved(x, y, state)
+    end
 end
 
 function spawnTerrain(self)

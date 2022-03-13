@@ -1,5 +1,5 @@
 local PiggoServer = {}
-local Server = require "piggo-core.net.Server"
+local Server = require "piggo-server.src.Server"
 local Aram = require "piggo-contrib.aram.Aram"
 local Arena = require "piggo-contrib.arena.Arena"
 

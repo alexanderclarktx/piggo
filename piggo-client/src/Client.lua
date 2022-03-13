@@ -99,18 +99,6 @@ function draw(self)
     -- attach camera
     self.state.camera:attach()
 
-    -- draw all terrain
-    for _, terrain in pairs(self.state.game.state.terrains) do terrain:draw() end
-
-    -- draw all players
-    for _, player in pairs(self.state.game.state.players) do player:draw() end
-
-    -- draw all npcs
-    for _, npc in pairs(self.state.game.state.npcs) do npc:draw() end
-
-    -- draw all non-npc objects
-    for _, object in pairs(self.state.game.state.objects) do object:draw() end
-
     -- draw game-specific things
     self.state.game:draw()
 

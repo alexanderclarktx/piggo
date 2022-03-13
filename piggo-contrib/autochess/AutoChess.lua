@@ -5,19 +5,19 @@ local ChessBoard = require "piggo-contrib.autochess.ChessBoard"
 
 local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 
-local load, update, draw, spawnTerrain
+local load, update, draw, handleMouseMoved, spawnTerrain
 
 function AutoChess.new()
-    local autoChess = IGame.new(load, update, draw)
+    local autoChess = IGame.new(load, update, draw, handleMouseMoved)
 
-    autoChess.spawnTerrain = spawnTerrain
+    -- autoChess.spawnTerrain = spawnTerrain
     autoChess.state.chessboard = ChessBoard.new()
 
     return autoChess
 end
 
 function load(self)
-    self:spawnTerrain()
+    -- self:spawnTerrain()
 end
 
 function update(self)
@@ -28,6 +28,13 @@ function draw(self)
     love.graphics.setBackgroundColor(backgroundColor)
 
     self.state.chessboard:draw()
+end
+
+function handleMouseMoved(self, x, y, state)
+    -- for _, terrain in ipairs(self.state.terrains) do
+    --     terrain:handleMouseMoved(x, y, state)
+    -- end
+    self.state.chessboard:handleMouseMoved(x, y, state)
 end
 
 function spawnTerrain(self)

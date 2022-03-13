@@ -8,13 +8,13 @@ local serialize, deserialize
 
 -- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
 -- the state must be initialized with a first player
-function IGame.new(gameLoad, gameUpdate, gameDraw)
+function IGame.new(gameLoad, gameUpdate, gameDraw, gameHandleMouseMoved)
     assert(gameLoad and gameUpdate and gameDraw)
 
     local damageController = DamageController.new()
 
     local iGame = {
-        state = {
+        state = {                                                   --TODO
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = physics.newWorld(),
             frame = 0,
@@ -22,6 +22,7 @@ function IGame.new(gameLoad, gameUpdate, gameDraw)
             npcName = 1
         },
         gameLoad = gameLoad, gameUpdate = gameUpdate, gameDraw = gameDraw,
+        gameHandleMouseMoved = gameHandleMouseMoved,
         load = load, update = update, draw = draw,
         handlePlayerCommand = handlePlayerCommand,
         addPlayer = addPlayer,
@@ -64,6 +65,18 @@ end
 
 function draw(self)
     self.gameDraw(self)
+
+    -- draw all terrain
+    for _, terrain in pairs(self.state.terrains) do terrain:draw() end
+
+    -- draw all players
+    for _, player in pairs(self.state.players) do player:draw() end
+
+    -- draw all npcs
+    for _, npc in pairs(self.state.npcs) do npc:draw() end
+
+    -- draw all non-npc objects
+    for _, object in pairs(self.state.objects) do object:draw() end
 end
 
 -- validate/process a player command
@@ -94,8 +107,8 @@ function addNpc(self, npc)
 end
 
 function handleMouseMoved(self, x, y, state)
-    for _, terrain in ipairs(self.state.terrains) do
-        terrain:handleMouseMoved(x, y, state)
+    if self.gameHandleMouseMoved then
+        self:gameHandleMouseMoved(x, y, state)
     end
 end
 

@@ -66,11 +66,13 @@ function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    self.player.state.character.state.marker = {x = x, y = y}
-    self:bufferCommand({
-        action = "move",
-        marker = self.player.state.character.state.marker
-    }, state)
+    if mouseButton == 2 then -- rightclick
+        self.player.state.character.state.marker = {x = x, y = y}
+        self:bufferCommand({
+            action = "move",
+            marker = self.player.state.character.state.marker
+        }, state)
+    end
 end
 
 function handleMouseMoved(self, x, y, state) end

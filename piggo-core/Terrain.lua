@@ -3,6 +3,8 @@ local Clickable = require "piggo-core.Clickable"
 
 local update, draw, handleMouseMoved
 
+local bgColor = {0.1, 0.1, 0.2}
+
 function Terrain.new(world, x, y, poly)
     assert(#poly % 2 == 0)
 
@@ -11,15 +13,16 @@ function Terrain.new(world, x, y, poly)
 
     return {
         state = {
+            color = bgColor,
             poly = poly,
             body = body, fixture = fixture,
             clickable = Clickable.new(
                 {body:getWorldPoints(unpack(poly))},
-                function(terrain)
-                    terrain.color = {1, 1, 1}
+                function(this)
+                    this.state.color = {0.4, 0.4, 0.6}
                 end,
-                function(terrain)
-                    terrain.color = {0, 0, 0}
+                function(this)
+                    this.state.color = bgColor
                 end,
                 nil
             )
@@ -36,7 +39,7 @@ function draw(self)
     -- draw terrain
     -- love.graphics.setColor(0.85, 0.65, 0.4, 0.3)
     love.graphics.setColor(246/256.0, 212/256.0, 100/256.0, 0.8)
-    if self.color then love.graphics.setColor(self.color) end
+    love.graphics.setColor(self.state.color)
     love.graphics.polygon("fill", self.state.body:getWorldPoints(unpack(self.state.poly)))
 
     -- draw terrain outlines
