@@ -16,6 +16,9 @@ function ChessBoard.new()
                 {ChessTile.new(6, 0), ChessTile.new(6, 1), ChessTile.new(6, 2), ChessTile.new(6, 3), ChessTile.new(6, 4), ChessTile.new(6, 5), ChessTile.new(6, 6), ChessTile.new(6, 7)},
                 {ChessTile.new(7, 0), ChessTile.new(7, 1), ChessTile.new(7, 2), ChessTile.new(7, 3), ChessTile.new(7, 4), ChessTile.new(7, 5), ChessTile.new(7, 6), ChessTile.new(7, 7)},
             },
+            bench = {
+                ChessTile.new(0, 9), ChessTile.new(1, 9), ChessTile.new(2, 9), ChessTile.new(3, 9), ChessTile.new(4, 9), ChessTile.new(5, 9), ChessTile.new(6, 9), ChessTile.new(7, 9)
+            }
         },
         update = update, draw = draw,
         handleMouseMoved = handleMouseMoved
@@ -35,13 +38,21 @@ function draw(self)
             tile:draw()
         end
     end
+
+    for _, tile in ipairs(self.state.bench) do
+        tile:draw()
+    end
 end
 
 function handleMouseMoved(self, x, y, state)
-    for i, row in ipairs(self.state.tiles) do
-        for j, tile in ipairs(row) do
+    for _, row in ipairs(self.state.tiles) do
+        for _, tile in ipairs(row) do
             tile:handleMouseMoved(x, y, state)
         end
+    end
+
+    for _, tile in ipairs(self.state.bench) do
+        tile:handleMouseMoved(x, y, state)
     end
 end
 

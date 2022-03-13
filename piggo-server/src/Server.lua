@@ -2,7 +2,7 @@ local Server = {}
 local socket = require "socket"
 local json = require "lib.json"
 local Player = require "piggo-core.Player"
-local Skelly = require "piggo-contrib.aram.characters.Skelly"
+local Skelly = require "piggo-contrib.characters.Skelly"
 
 local update, runFrame, openSocket, bufferPlayerInputs
 local createPlayerFramePayload, connectPlayer

@@ -2,15 +2,15 @@ local Skelly = {}
 
 local ICharacter = require "piggo-core.ICharacter"
 
-local Zap = require "piggo-contrib.aram.abilities.Zap"
-local Shield = require "piggo-contrib.aram.abilities.Shield"
-local Blink = require "piggo-contrib.aram.abilities.Blink"
-local Rush = require "piggo-contrib.aram.abilities.Rush"
+local Zap = require "piggo-contrib.abilities.Zap"
+local Shield = require "piggo-contrib.abilities.Shield"
+local Blink = require "piggo-contrib.abilities.Blink"
+local Rush = require "piggo-contrib.abilities.Rush"
 
 local update, draw
 
 function Skelly.new(world, x, y, hp)
-    assert(hp > 0 and x >= 0 and y >= 0)
+    assert(hp > 0 and type(x) == "number" and type(y) == "number")
 
     local skelly = ICharacter.new(
         world,

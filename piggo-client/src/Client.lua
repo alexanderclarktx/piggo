@@ -4,7 +4,7 @@ local Gui = require "piggo-client.src.ui.Gui"
 local json = require "lib.json"
 local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.src.PlayerController"
-local Skelly = require "piggo-contrib.aram.characters.Skelly"
+local Skelly = require "piggo-contrib.characters.Skelly"
 local socket = require "socket"
 local TableUtils = require "piggo-core.util.TableUtils"
 
@@ -20,7 +20,7 @@ function Client.new(game, host, port)
     local udp = connectToServer(host or defaultHost, port or defaultPort)
 
     local playerName = "KetoMojito" -- TODO
-    local player = Player.new(playerName, Skelly.new(game.state.world, 500, 250, 500))
+    local player = Player.new(playerName, Skelly.new(game.state.world, 200, 500, 500))
     game:addPlayer(playerName, player)
 
     local client = {

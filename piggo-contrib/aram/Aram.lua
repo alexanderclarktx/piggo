@@ -1,7 +1,7 @@
 local Aram = {}
 local IGame = require "piggo-core.IGame"
 local Terrain = require "piggo-core.Terrain"
-local Minion = require "piggo-contrib.aram.characters.Minion"
+local Minion = require "piggo-contrib.characters.Minion"
 local load, update, draw, spawnMinions, spawnTerrain
 
 local backgroundColor = {0, 0.1, 0.3}
