@@ -1,6 +1,6 @@
 # Piggo
 
-A 2D multiplayer online battle arena
+A 2D multiplayer online battle arena! Play at https://alexanderclarktx.github.io/piggo/
 
 ![](./screenshots/8.png)
 
