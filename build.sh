@@ -1,4 +1,5 @@
 #!/bin/bash
+set +x
 
 # dependencies
 # npm -g i love.js
@@ -9,6 +10,10 @@ FOLDER="docs"
 
 # cleanup
 rm -rf $FOLDER
+
+# cleanup
+rm piggo.zip
+rm piggo.love
 
 # zip up into a .love file
 zip -9 -r piggo.love .
@@ -23,4 +28,4 @@ rm piggo.love
 cp lib/js/consolewrapper.js $FOLDER/consolewrapper.js
 
 # start server
-npx http-server $FOLDER
+npx http-server -c-1 $FOLDER

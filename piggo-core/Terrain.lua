@@ -3,7 +3,7 @@ local Clickable = require "piggo-core.Clickable"
 
 local update, draw, handleMouseMoved
 
-local bgColor = {0.1, 0.1, 0.2}
+local bgColor = {0.6, 0.3, 0.1}
 
 function Terrain.new(world, x, y, poly)
     assert(#poly % 2 == 0)

@@ -1,5 +1,7 @@
 local Logger = {}
 
+require "lib/js/js" -- JS
+
 local info, warn, error, logdebug
 
 function Logger.new(debugFlag)
@@ -16,13 +18,15 @@ end
 
 local function writestuff(colorNumber, ...)
     if ... then
-        io.write(table.concat({
-            "\27[",
-            tostring(colorNumber),
-            "m[",
-            debugog.getinfo(2).source:match("%a+.lua"),
-            "]\27[00m "
-        }))
+        local z = 'console.log(%s);'
+        JS.callJS(z:format(...))
+        -- io.write(table.concat({
+        --     "\27[",
+        --     tostring(colorNumber),
+        --     "m[",
+        --     debugog.getinfo(2).source:match("%a+.lua"),
+        --     "]\27[00m "
+        -- }))
         print(...)
     end
     return true

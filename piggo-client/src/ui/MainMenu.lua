@@ -9,7 +9,7 @@ local onclickARAM, onclickArena, onclickSettings, startServerThread
 
 function MainMenu.new()
     local menu = IMenu.new({
-        love.graphics.newFont("res/fonts/Hussar.otf", 100),
+        love.graphics.newFont("piggo-client/res/fonts/Hussar.otf", 100),
         love.graphics.newFont(25)
     })
     local windowWidth, _ = love.graphics.getDimensions()

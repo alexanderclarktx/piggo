@@ -28,6 +28,11 @@ function Skelly.new(world, x, y, hp)
     skelly.frameLast = 0
     skelly.framecd = 13
     skelly.animationFrame = 1
+    skelly.image = {
+        love.graphics.newImage("piggo-client/res/skelly/skelly1.png"),
+        love.graphics.newImage("piggo-client/res/skelly/skelly2.png"),
+        love.graphics.newImage("piggo-client/res/skelly/skelly3.png"),
+    }
 
     return skelly
 end
@@ -41,15 +46,6 @@ function update(self)
 end
 
 function draw(self)
-    if self.image == nil then
-        self.image = love.graphics.newArrayImage({
-            "res/skelly/skelly1.png",
-            "res/skelly/skelly2.png",
-            "res/skelly/skelly3.png",
-        })
-        self.image:setFilter("nearest", "nearest")
-    end
-
     -- pick animation frame
     local frameToDraw = self.animationFrame
     local velocity = {self.state.body:getLinearVelocity()}
@@ -60,8 +56,8 @@ function draw(self)
     -- draw skelly
     assert(self.state.color)
     love.graphics.setColor(self.state.color)
-    love.graphics.drawLayer(
-        self.image, frameToDraw,
+    love.graphics.draw(
+        self.image[frameToDraw],
         self.state.body:getX(), self.state.body:getY(),
         0, 4 * self.state.facingRight, 4, 6, 6
     )

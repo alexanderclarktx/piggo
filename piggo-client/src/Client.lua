@@ -5,7 +5,7 @@ local json = require "lib.json"
 local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.src.PlayerController"
 local Skelly = require "piggo-contrib.characters.Skelly"
-local socket = require "socket"
+-- local socket = require "socket"
 local TableUtils = require "piggo-core.util.TableUtils"
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
@@ -16,8 +16,9 @@ local defaultPort = 12345
 
 function Client.new(game, host, port)
     assert(game)
+    log:info("new client")
 
-    local udp = connectToServer(host or defaultHost, port or defaultPort)
+    -- local udp = connectToServer(host or defaultHost, port or defaultPort)
 
     local playerName = "KetoMojito" -- TODO
     local player = Player.new(playerName, Skelly.new(game.state.world, 200, 500, 500))
@@ -37,7 +38,7 @@ function Client.new(game, host, port)
             playerController = PlayerController.new(player),
             port = port or defaultPort,
             serverFrame = nil,
-            udp = udp,
+            -- udp = udp,
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
@@ -70,7 +71,7 @@ function update(self, dt)
         self.state.nextFrameTime = self.state.nextFrameTime + 1.0/self.state.framerate
 
         -- process server packet
-        self:processLatestServerPacket()
+        -- self:processLatestServerPacket()
 
         -- send player's commands to server
         self:sendCommandsToServer()
@@ -132,28 +133,28 @@ function sendCommandsToServer(self)
         end
 
         -- send commands to server
-        self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
+        -- self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
 
         -- reset command buffer
         self.state.playerController.bufferedCommands = {}
     else
-        self.state.udp:send(json:encode({}))
+        -- self.state.udp:send(json:encode({}))
     end
 end
 
 function processLatestServerPacket(self)
     local latestPayload = nil
-    while true do
-        -- get packet from the socket
-        local packet, _ = self.state.udp:receive()
-        if not packet then break end
+    -- while true do
+    --     -- get packet from the socket
+    --     local packet, _ = self.state.udp:receive()
+    --     if not packet then break end
 
-        -- update latestPayload if this data is newer
-        local payload = json:decode(packet)
-        if latestPayload == nil or latestPayload.frame < payload.frame then
-            latestPayload = payload
-        end
-    end
+    --     -- update latestPayload if this data is newer
+    --     local payload = json:decode(packet)
+    --     if latestPayload == nil or latestPayload.frame < payload.frame then
+    --         latestPayload = payload
+    --     end
+    -- end
 
     if not latestPayload then return end
 
@@ -223,11 +224,11 @@ function handleMouseMoved(self, x, y, state)
     )
 end
 
-function connectToServer(host, port)
-    local udp = socket.udp()
-    udp:settimeout(0)
-    udp:setpeername(host, port)
-    return udp
-end
+-- function connectToServer(host, port)
+--     local udp = socket.udp()
+--     udp:settimeout(0)
+--     udp:setpeername(host, port)
+--     return udp
+-- end
 
 return Client

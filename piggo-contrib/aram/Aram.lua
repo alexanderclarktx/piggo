@@ -4,13 +4,14 @@ local Terrain = require "piggo-core.Terrain"
 local Minion = require "piggo-contrib.characters.Minion"
 local load, update, draw, spawnMinions, spawnTerrain
 
-local backgroundColor = {0, 0.1, 0.3}
+local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 
 -- rules:
 --   * single lane
 --   * no recalling
 --   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
+    log:info("aram new")
     local aram = IGame.new(load, update, draw)
     aram.timers = {
         minionSpawn = {
@@ -22,15 +23,18 @@ function Aram.new()
     aram.spawnMinions = spawnMinions
     aram.spawnTerrain = spawnTerrain
 
+    log:info("aram new done")
     return aram
 end
 
 function load(self)
+    log:info("aram load")
     -- create the terrain
     self:spawnTerrain()
+    log:info("aram terrain spawn done")
 
     -- spawn first minion waves
-    self:spawnMinions()
+    -- self:spawnMinions()
 end
 
 function update(self)

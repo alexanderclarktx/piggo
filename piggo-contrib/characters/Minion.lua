@@ -26,6 +26,14 @@ function Minion.new(world, x, y, hp, marker, team)
     minion.state.team = team
     minion.state.fixture:setFriction(0)
 
+    log:debug("minion image")
+    minion.image = {
+        love.graphics.newImage("piggo-client/res/piggo/piggo1.png"),
+        love.graphics.newImage("piggo-client/res/piggo/piggo2.png"),
+        love.graphics.newImage("piggo-client/res/piggo/piggo3.png")
+    }
+    log:debug("minion image done")
+
     return minion
 end
 
@@ -59,21 +67,20 @@ function update(self, state)
 end
 
 function draw(self)
-    if self.image == nil then
-        self.image = love.graphics.newArrayImage({
-            "res/piggo/piggo1.png",
-            "res/piggo/piggo2.png",
-            "res/piggo/piggo3.png",
-        })
-        self.image:setFilter("nearest", "nearest")
+    -- pick animation frame
+    local frameToDraw = self.animationFrame
+    local velocity = {self.state.body:getLinearVelocity()}
+    if 0 == velocity[1] and 0 == velocity[2] then
+        frameToDraw = 1
     end
 
     love.graphics.setColor(self.state.color)
-    love.graphics.drawLayer(
-        self.image, self.animationFrame,
+    love.graphics.draw(
+        self.image[frameToDraw],
         self.state.body:getX(), self.state.body:getY(),
         0, 3 * self.state.facingRight, 3, 8, 7
     )
+    log:debug("minion draw done")
 end
 
 return Minion

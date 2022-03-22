@@ -9,6 +9,8 @@ function love.load(arg)
 
     -- load the game
     piggo:load()
+
+    love.mouse.setVisible(false)
 end
 
 function love.update(dt)

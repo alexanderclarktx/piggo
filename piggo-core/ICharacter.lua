@@ -25,7 +25,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             hp = hp, maxhp = maxhp,
             speed = speed, canMove = true, speedfactor = 1,
             marker = nil, target = nil,
-            defaultColor = {0.7, 0.5, 0}, color = {1, 1, 1},
+            defaultColor = {1, 1, 1}, color = {1, 1, 1},
             ranged = false, range = 50,
             team = 2,
             size = size,

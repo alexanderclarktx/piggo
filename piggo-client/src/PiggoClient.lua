@@ -38,10 +38,6 @@ function draw(self)
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat)
-    if key == "space" then
-        love.event.quit()
-    end
-
     self.state.scene:handleKeyPressed(key, scancode, isrepeat, self.state)
 end
 
