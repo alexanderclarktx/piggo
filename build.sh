@@ -19,7 +19,7 @@ rm piggo.love
 zip -9 -r piggo.love .
 
 # make lovejs bundle
-npx love.js -c -t piggo -m 300000000 piggo.love $FOLDER
+npx love.js -c -t piggo -m 400000000 piggo.love $FOLDER
 
 # cleanup
 rm piggo.love
