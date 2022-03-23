@@ -1,31 +1,37 @@
 #!/bin/bash
 set +x
 
-# dependencies
-# npm -g i love.js
-# npm -g i http-server
-
-# folder for lovejs bundle
-FOLDER="docs"
-
-# cleanup
-rm -rf $FOLDER
+# folders
+ROOT=$(git rev-parse --show-toplevel)
+DOCS="$ROOT/docs"
+PIGGO_GAME="$ROOT/piggo-game"
+PIGGO_WEB="$ROOT/piggo-web"
 
 # cleanup
-rm piggo.zip
-rm piggo.love
+rm -rf $DOCS
+rm $PIGGO_GAME/piggo.zip
+rm $PIGGO_GAME/piggo.love
 
-# zip up into a .love file
+# build piggo-game
+cd $PIGGO_GAME
 zip -9 -r piggo.love .
 
-# make lovejs bundle
-npx love.js -c -t piggo -m 400000000 piggo.love $FOLDER
+# build piggo-web
+cd $PIGGO_WEB
+npm install
+npx love.js -c -t piggo -m 400000000 $PIGGO_GAME/piggo.love $DOCS
+cp $PIGGO_WEB/lib/js/consolewrapper.js $DOCS/
+cp $PIGGO_WEB/lib/js/webdb.js $DOCS/
+cd $DOCS
+node ../lib/js/globalizeFS.js
 
 # cleanup
-rm piggo.love
-
-# add consolewrapper dependency
-cp lib/js/consolewrapper.js $FOLDER/consolewrapper.js
+rm $PIGGO_GAME/piggo.love
 
 # start server
-npx http-server -c-1 $FOLDER
+cd $ROOT
+npx http-server -c-1 $DOCS
+
+# <script src="consolewrapper.js"></script>
+# <script src="webdb.js"></script>
+# FS.filesystems.IDBFS.dbs["/home/web_user/love"]

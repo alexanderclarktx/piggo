@@ -12,11 +12,16 @@ A 2D multiplayer online battle arena! Play at https://alexanderclarktx.github.io
   ```
 * run the game
   ```
-  love piggo-client
+  love piggo
   ```
 * run the standalone server
   ```
+  cd piggo
   love piggo-server
+  ```
+* host the web server
+  ```
+  ./build.sh
   ```
 
 ## working features

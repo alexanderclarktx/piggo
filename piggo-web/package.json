@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "http-server": "^14.1.0",
+    "love.js": "^11.3.1"
+  }
+}
