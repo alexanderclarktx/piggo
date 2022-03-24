@@ -17,6 +17,9 @@ var __webTunnel = ""
 var __currRequest = null
 async function __getWebDB(dbName)
 {
+    if (!FS.analyzePath("/home/web_user/love/game").exists) {
+        FS.mkdir("/home/web_user/love/game")
+    }
     if(__webTunnel == "")
         __webTunnel = dbName;
     return new Promise(function(resolve, reject)
