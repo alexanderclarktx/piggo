@@ -3,4 +3,6 @@
 log
 logs
 scratch*
+random
 debug
+node_modules

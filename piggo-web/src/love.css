@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    font-size: 36pt;
+    color: rgb(255, 255, 255);
+}
+
+body {
+    background-color: #000a1e;
+    font-family: arial;
+    margin: 0;
+    padding: none;
+    color: rgb( 28, 78, 104 );
+}
+
+footer {
+    font-family: arial;
+    font-size: 12px;
+    padding-left: 10px;
+    position:absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+}
+a:link {
+    color: rgb( 233, 73, 154 );
+}
+a:visited {
+    color: rgb( 110, 30, 71 );
+}
+a:hover {
+    color: rgb( 252, 207, 230 );
+}
+
+/* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+#canvas {
+    padding-right: 0;
+    display: display;
+    border: 0px none;
+    visibility: hidden;
+}
