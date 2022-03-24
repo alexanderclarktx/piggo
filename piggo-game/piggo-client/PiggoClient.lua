@@ -34,8 +34,6 @@ function load(self)
             function(wh)
                 local w, h = wh:match("(%d*):(%d*)")
                 love.window.setMode(w * .9, h * .85)
-                print(w)
-                print(h)
             end
         )
         JS.retrieveData(.01)

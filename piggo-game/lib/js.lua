@@ -42,7 +42,6 @@ end
 --it timeouts
 local function retrieveJS(funcToCall, id)
     --Used for retrieveData function
-    print(os)
     JS.callJS("FS.writeFile('"..love.filesystem.getSaveDirectory().."/__temp"..id.."', "..funcToCall..");")
 end
 
