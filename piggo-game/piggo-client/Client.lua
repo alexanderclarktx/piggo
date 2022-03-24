@@ -60,7 +60,7 @@ function load(self)
     self.state.camera:fade(1, {0, 0, 0, 0})
 end
 
-function update(self, dt)
+function update(self, dt, state)
     self.state.dt = self.state.dt + dt
 
     -- log:debug(self.lastFrameTime)
@@ -70,6 +70,10 @@ function update(self, dt)
 
         -- process server packet
         -- self:processLatestServerPacket()
+
+        -- update the player controller
+        local markerX, markerY = self.state.camera:toWorldCoords(love.mouse.getPosition())
+        self.state.playerController:update(markerX, markerY, state)
 
         -- send player's commands to server
         self:sendCommandsToServer()
@@ -200,10 +204,6 @@ function handleKeyPressed(self, key, scancode, isrepeat, state)
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    local markerX, markerY = self.state.camera:toWorldCoords(x, y)
-    self.state.playerController:handleMousePressed(
-        markerX, markerY, mouseButton, state
-    )
 end
  
 function handleMouseMoved(self, x, y, state)

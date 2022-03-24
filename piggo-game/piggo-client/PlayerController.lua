@@ -16,6 +16,13 @@ function PlayerController.new(player)
 end
 
 function update(self, mouseX, mouseY, state)
+    if love.mouse.isDown(2) then
+        self.player.state.character.state.marker = {x = mouseX, y = mouseY}
+        self:bufferCommand({
+            action = "move",
+            marker = self.player.state.character.state.marker
+        }, state)
+    end
 end
 
 function draw(self)

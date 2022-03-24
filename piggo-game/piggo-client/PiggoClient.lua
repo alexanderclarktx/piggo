@@ -38,7 +38,6 @@ function load(self)
                 print(h)
             end
         )
-        -- socket.sleep()
         JS.retrieveData(.01)
     end
 
@@ -48,7 +47,6 @@ function load(self)
 end
 
 function update(self, dt)
-    -- update the active js calls
     JS.retrieveData(dt)
 
     self.state.scene:update(dt, self.state)
