@@ -12,14 +12,17 @@ if(!window.indexedDB)
     alert("Please, update your browser to newer versions or you won't be able to save your game")
 }
 
+async function createDirectory(path) {
+    if (!FS.analyzePath(path).exists) {
+        FS.mkdir(path)
+    }
+}
+
 var __webDb = null;
 var __webTunnel = ""
 var __currRequest = null
 async function __getWebDB(dbName)
 {
-    if (!FS.analyzePath("/home/web_user/love/game").exists) {
-        FS.mkdir("/home/web_user/love/game")
-    }
     if(__webTunnel == "")
         __webTunnel = dbName;
     return new Promise(function(resolve, reject)
