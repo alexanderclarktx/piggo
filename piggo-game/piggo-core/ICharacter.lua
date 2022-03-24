@@ -87,21 +87,18 @@ function update(self, state)
         end
     end
 
+    -- update where character is facing
+    if self.state.marker and self.state.marker.x < self.state.body:getX() then
+        self.state.facingRight = -1
+    elseif self.state.marker and self.state.marker.x > self.state.body:getX() then
+        self.state.facingRight = 1
+    end
+
     -- move toward marker
     if self.state.marker and self.state.canMove then
         -- x and y distances to the marker
         local xDiff = self.state.marker.x - self.state.body:getX()
         local yDiff = self.state.marker.y - self.state.body:getY()
-
-        -- if we're close enough, snap to the marker
-        -- if math.abs(xDiff) <= 4 then
-        --     self.state.body:setX(self.state.marker.x)
-        --     xDiff = 0
-        -- end
-        -- if math.abs(yDiff) <= 4 then
-        --     self.state.body:setY(self.state.marker.y)
-        --     yDiff = 0
-        -- end
 
         -- move toward marker or reset it
         if math.abs(xDiff) <= 1 and math.abs(yDiff) <= 1 then
@@ -114,14 +111,23 @@ function update(self, state)
             local yComponent = self.state.speed * self.state.speedfactor * yRatio
 
             self.state.body:setLinearVelocity(xComponent, yComponent)
-        end
-    end
 
-    -- update where character is facing
-    if self.state.marker and self.state.marker.x < self.state.body:getX() then
-        self.state.facingRight = -1
-    elseif self.state.marker and self.state.marker.x > self.state.body:getX() then
-        self.state.facingRight = 1
+            -- if we're close enough, snap to the marker
+            local xVel, yVel = self.state.body:getLinearVelocity()
+            if math.abs(xDiff) <= math.abs(xVel)/100 then
+                log:info(xDiff, xVel)
+                self.state.body:setX(self.state.marker.x)
+                xVel = 0
+            end
+            if math.abs(yDiff) <= math.abs(yVel)/100 then
+                self.state.body:setY(self.state.marker.y)
+                yVel = 0
+            end
+            if xVel == 0 and yVel == 0 then
+                self.state.marker = nil
+            end
+            self.state.body:setLinearVelocity(xVel, yVel)
+        end
     end
 
     -- update each ability

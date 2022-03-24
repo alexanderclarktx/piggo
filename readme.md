@@ -2,7 +2,7 @@
 
 Piggo is a 2D multiplayer online battle arena!
 
-play at https://alexanderclarktx.github.io/piggo/
+play at https://alexanderclarktx.github.io/piggo
 
 ![](./screenshots/8.png)
 
@@ -18,15 +18,10 @@ play at https://alexanderclarktx.github.io/piggo/
   ```
 * run the standalone server
   ```
-  cd piggo
+  cd piggo-game
   love piggo-server
   ```
 * host the web server
-  ```
-  # dependencies
-  brew install jq
-  pip3 install xmltodict
-  ```
   ```
   ./build.sh
   ```
