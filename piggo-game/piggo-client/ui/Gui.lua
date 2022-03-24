@@ -27,7 +27,7 @@ function drawDebug(player)
         "hp: %s",
         "position: x=%d y=%d",
         "marker: x=%d y=%d",
-        "velocity: x=%d y=%d",
+        "velocity: x=%.2f y=%.2f",
         "effects: %d"
     }, "\n")
 
@@ -45,7 +45,7 @@ function drawDebug(player)
         player.state.character.state.hp,
         player.state.character.state.body:getX(), player.state.character.state.body:getY(),
         markerX, markerY,
-        velocityX/100, velocityY/100,
+        velocityX/100.0, velocityY/100.0,
         #player.state.character.state.effects
     ), 10, 10)
 end

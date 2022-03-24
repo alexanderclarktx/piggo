@@ -8,7 +8,7 @@ PIGGO_GAME="$ROOT/piggo-game"
 PIGGO_WEB="$ROOT/piggo-web"
 
 # cleanup
-rm -rf $DOCS
+rm -r $DOCS
 rm $PIGGO_GAME/piggo.zip
 rm $PIGGO_GAME/piggo.love
 
