@@ -20,10 +20,12 @@ zip -9 -r piggo.love .
 cd $PIGGO_WEB
 npm install
 npx love.js -c -t piggo -m 400000000 $PIGGO_GAME/piggo.love $DOCS
-cp $PIGGO_WEB/lib/js/consolewrapper.js $DOCS/
-cp $PIGGO_WEB/lib/js/webdb.js $DOCS/
+cp $PIGGO_WEB/lib/consolewrapper.js $DOCS/
+cp $PIGGO_WEB/lib/webdb.js $DOCS/
+cp $PIGGO_WEB/src/index.html $DOCS/
+cp $PIGGO_WEB/src/love.css $DOCS/theme/
 cd $DOCS
-node ../lib/js/globalizeFS.js
+node $PIGGO_WEB/lib/globalizeFS.js
 
 # cleanup
 rm $PIGGO_GAME/piggo.love
@@ -31,7 +33,3 @@ rm $PIGGO_GAME/piggo.love
 # start server
 cd $ROOT
 npx http-server -c-1 $DOCS
-
-# <script src="consolewrapper.js"></script>
-# <script src="webdb.js"></script>
-# FS.filesystems.IDBFS.dbs["/home/web_user/love"]

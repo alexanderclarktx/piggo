@@ -1,5 +1,6 @@
 local Piggo = {}
 local MainMenu = require "piggo-client.ui.MainMenu"
+local socket = require "socket"
 
 require "lib/js" -- JS
 
@@ -9,7 +10,7 @@ local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 function Piggo.new()
     local piggo = {
         state = {
-            scene = MainMenu.new(),
+            scene = nil,
             setScene = function(self, scene)
                 assert(scene)
                 love.graphics.setNewFont(12)
@@ -27,16 +28,30 @@ function Piggo.new()
 end
 
 function load(self)
+    -- get the screen size
+    if JS then
+        JS.newRequest("`${window.innerWidth}:${window.innerHeight}`",
+            function(wh)
+                local w, h = wh:match("(%d*):(%d*)")
+                love.window.setMode(w * .9, h * .85)
+                print(w)
+                print(h)
+            end
+        )
+        -- socket.sleep()
+        JS.retrieveData(.01)
+    end
+
+    -- load the menu
+    self.state:setScene(MainMenu.new())
     self.state.scene:load()
-    JS.newRequest("`${window.innerWidth}:${window.innerHeight}`", function(x)
-        -- love.window.setMode()
-        print(x)
-    end)
 end
 
 function update(self, dt)
+    -- update the active js calls
+    JS.retrieveData(dt)
+
     self.state.scene:update(dt, self.state)
-    -- TODO server/client healthchecks?
 end
 
 function draw(self)

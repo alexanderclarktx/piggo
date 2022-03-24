@@ -63,9 +63,6 @@ end
 function update(self, dt)
     self.state.dt = self.state.dt + dt
 
-    -- update the active js calls
-    JS.retrieveData(dt)
-
     -- log:debug(self.lastFrameTime)
     if self.state.dt - self.state.nextFrameTime > 0 then
         if self.state.nextFrameTime == 0 then self.state.nextFrameTime = self.state.dt end
