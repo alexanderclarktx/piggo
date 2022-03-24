@@ -29,15 +29,16 @@ end
 
 function load(self)
     -- get the screen size
-    if JS then
-        JS.newRequest("`${window.innerWidth}:${window.innerHeight}`",
-            function(wh)
-                local w, h = wh:match("(%d*):(%d*)")
-                love.window.setMode(w * .9, h * .85)
-            end
-        )
-        JS.retrieveData(.01)
-    end
+    -- if JS then
+    --     socket.sleep(1)
+    --     JS.newRequest("`${window.innerWidth}:${window.innerHeight}`",
+    --         function(wh)
+    --             local w, h = wh:match("(%d*):(%d*)")
+    --             love.window.setMode(w * .9, h * .85)
+    --         end
+    --     )
+    --     JS.retrieveData(.01)
+    -- end
 
     -- load the menu
     self.state:setScene(MainMenu.new())
