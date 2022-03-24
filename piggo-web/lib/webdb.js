@@ -149,3 +149,5 @@ if(typeof FS === 'undefined')
         __storeWebDB(content, "FILE_DATA", where);
     }
 }
+
+FS.mkdir("/home/web_user/love/game")
