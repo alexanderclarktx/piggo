@@ -1,6 +1,8 @@
 # Piggo
 
-A 2D multiplayer online battle arena! Play at https://alexanderclarktx.github.io/piggo/
+Piggo is a 2D multiplayer online battle arena!
+
+play at https://alexanderclarktx.github.io/piggo/
 
 ![](./screenshots/8.png)
 
@@ -29,48 +31,10 @@ A 2D multiplayer online battle arena! Play at https://alexanderclarktx.github.io
   ./build.sh
   ```
 
-## working features
-
-#### mechanics
-```
-* mostly working client/server with rollback netcode
-* player, minions, abilities
-* minion damage and death
-```
-
-#### ui
-```
-* main menu launch screen
-* camera-lock, cooldown indicators
-```
-
-## TODOs
-
-#### Mechanics
+## upcoming features
 
 ```
-* auto attacks
-* gold/resources
-* player death and respawn
-```
-
-#### UI
-
-```
-* scoreboard (tab)
-* minimap
-* damage indicators
-* HUD (health, resources)
-* player inventory
-* ability tooltips
-```
-
-## Known Bugs
-
-```
-* netcode doesn't handle minion death
-* window resize not handled by camera/menu
-* direction/distance calculation
-  * characters move faster in cardinal directions than diagonally
-  * abilities are longer when facing cardinal directions
+multiplayer
+items/abilities/inventory
+web3 wallet login
 ```
