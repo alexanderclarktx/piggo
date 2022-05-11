@@ -75,7 +75,7 @@ function drawConsole(player)
     drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.state.character.state.abilities.r.frame, player.state.character.state.abilities.r.cd)
 
     -- keybinds
-    love.graphics.setColor(.9, .9, .2)
+    love.graphics.setColor(.9, .7, .2, 1)
     love.graphics.print("q", q.x + 5, q.y + 30)
     love.graphics.print("w", w.x + 5, w.y + 30)
     love.graphics.print("e", e.x + 5, e.y + 30)
@@ -99,7 +99,7 @@ function drawCharges(ability, x, y)
 end
 
 function drawAbilityBackground(x, y)
-    love.graphics.setColor(1, 1, 1, 0.5)
+    love.graphics.setColor(.6, .3, .8, 0.9)
     love.graphics.rectangle("fill", x, y, boxWidth, boxHeight)
 end
 

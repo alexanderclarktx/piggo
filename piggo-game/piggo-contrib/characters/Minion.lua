@@ -26,19 +26,13 @@ function Minion.new(world, x, y, hp, marker, team)
     minion.state.team = team
     minion.state.fixture:setFriction(0)
 
-    minion.image = {
-        love.graphics.newImage("res/piggo/piggo1.png"),
-        love.graphics.newImage("res/piggo/piggo2.png"),
-        love.graphics.newImage("res/piggo/piggo3.png")
-    }
-
     return minion
 end
 
 function update(self, state)
     assert(state)
-    -- check surroundings for things to attack (minions, champions, structures)
 
+    -- check surroundings for things to attack (minions, champions, structures)
     -- local target = nil
     -- for _, character in pairs(state.npcs) do
     --     if character.state.team ~= self.state.team then
@@ -65,6 +59,14 @@ function update(self, state)
 end
 
 function draw(self)
+    if self.image == nil then
+        self.image = {
+            love.graphics.newImage("res/piggo/piggo1.png"),
+            love.graphics.newImage("res/piggo/piggo2.png"),
+            love.graphics.newImage("res/piggo/piggo3.png")
+        }
+    end
+
     -- pick animation frame
     local frameToDraw = self.animationFrame
     local velocity = {self.state.body:getLinearVelocity()}

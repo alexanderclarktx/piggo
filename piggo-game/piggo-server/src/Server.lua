@@ -1,6 +1,7 @@
 local Server = {}
 local socket = require "socket"
 local json = require "lib.json"
+local wsServer = require "lib.lua-websocket.server"
 local Player = require "piggo-core.Player"
 local Skelly = require "piggo-contrib.characters.Skelly"
 
@@ -11,7 +12,7 @@ local defaultPort = 12345
 function Server.new(game, port)
     assert(game)
 
-    local udp = openSocket(port or defaultPort)
+    openSocket(port or defaultPort)
 
     game:load()
 
@@ -22,7 +23,7 @@ function Server.new(game, port)
             framerate = 100,
             game = game,
             nextFrameTime = 0,
-            udp = udp,
+            -- udp = udp,
         },
         bufferPlayerInputs = bufferPlayerInputs,
         connectPlayer = connectPlayer,
@@ -34,12 +35,14 @@ function Server.new(game, port)
     return server
 end
 
-function update(self, dt) 
+function update(self, dt)
     -- increment time
     self.state.dt = self.state.dt + dt
 
+    wsServer:update()
+
     -- buffer all data received from the players
-    while self:bufferPlayerInputs() do end
+    -- while self:bufferPlayerInputs() do end
 
     -- run game frame on 100fps schedule
     if self.state.dt - self.state.nextFrameTime > 0 then
@@ -121,7 +124,7 @@ function connectPlayer(self, playerName, msgOrIp, portOrNil)
     -- add the player to the game
     local player = Player.new(playerName, Skelly.new(self.state.game.state.world, 500, 250, 500))
     self.state.game:addPlayer(playerName, player)
-    player.state.character.state.body:setLinearVelocity(200, 0)
+    -- player.state.character.state.body:setLinearVelocity(200, 0)
 
     -- add player to connectedPlayers
     self.state.connectedPlayers[playerName] = {
@@ -147,10 +150,15 @@ end
 
 -- open server socket
 function openSocket(port)
-    local udp = socket.udp()
-    udp:settimeout(0)
-    udp:setsockname("*", port)
-    return udp
+    wsServer:init({
+        port = 12345,
+        hostname = "localhost"
+    })
+    -- wsServer.connClass.received = function(self, data) log:warn("ALEX") end
+    -- local udp = socket.tcp()
+    -- udp:settimeout(0)
+    -- udp:setsockname("*", port)
+    -- return udp
 end
 
 return Server

@@ -98,7 +98,7 @@ function draw(self)
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat, state) end
+function handleKeyPressed(self) end
 
 function handleMousePressed(self, x, y, mouseButton, state)
     for _, button in ipairs(self.buttons) do

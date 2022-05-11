@@ -2,6 +2,7 @@ local ICharacter = {}
 local DrawUtils = require "piggo-core.util.DrawUtils"
 local MathUtils = require "piggo-core.util.MathUtils"
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
+local IWeapon = require "piggo-core.IWeapon"
 
 local update, draw, serialize, setPosition, submitHurtboxPoly, submitHurtboxCircle
 
@@ -33,6 +34,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             abilities = abilities, effects = {},
             body = body, fixture = fixture,
             hurtboxes = {},
+            weapon = IWeapon.new(true, 200, 20)
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
@@ -49,12 +51,13 @@ function update(self, state)
     self.state.frame = self.state.frame + 1
 
     if self.state.body:isDestroyed() then return end
+
     assert(state)
     self.charUpdate(self, state)
 
-    if self.target ~= nil and self.target.body == nil then
-        self.state.target = nil
-    end
+    -- if self.target ~= nil and self.target.body == nil then
+    --     self.state.target = nil
+    -- end
 
     -- velocity to 0
     self.state.body:setLinearVelocity(0, 0)
@@ -65,27 +68,27 @@ function update(self, state)
     self.state.body:setFixedRotation(true)
 
     -- if i'm targeting, check if i can auto attack them
-    if self.target ~= nil then
-        -- remove marker since we are in range
-        self.state.marker = nil
+    -- if self.target ~= nil then
+    --     -- remove marker since we are in range
+    --     self.state.marker = nil
 
-        if ShapeUtils.circleInCircle(
-            self.target.body:getX(), self.target.body:getY(), self.target.state.size,
-            self.state.body:getX(), self.state.body:getY(), self.state.range
-        ) then
-            self.state.body:setLinearVelocity(0, 0)
+    --     if ShapeUtils.circleInCircle(
+    --         self.target.body:getX(), self.target.body:getY(), self.target.state.size,
+    --         self.state.body:getX(), self.state.body:getY(), self.state.range
+    --     ) then
+    --         self.state.body:setLinearVelocity(0, 0)
 
-            if self.state.ranged then
-                log:debug("create ranged auto attack")
-                -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
-            else
-                log:debug("create melee auto attack")
-                self.target.state.hp = self.target.state.hp - 1
-            end
-        else -- walk toward the target
-            self.state.marker = {x = self.target.body:getX(), y = self.target.body:getY()}
-        end
-    end
+    --         if self.state.ranged then
+    --             log:debug("create ranged auto attack")
+    --             -- table.insert(state.objects, AutoAttack.new(self.state.range, 70))
+    --         else
+    --             log:debug("create melee auto attack")
+    --             self.target.state.hp = self.target.state.hp - 1
+    --         end
+    --     else -- walk toward the target
+    --         self.state.marker = {x = self.target.body:getX(), y = self.target.body:getY()}
+    --     end
+    -- end
 
     -- update where character is facing
     if self.state.marker and self.state.marker.x < self.state.body:getX() then
@@ -110,23 +113,22 @@ function update(self, state)
             local xComponent = self.state.speed * self.state.speedfactor * xRatio
             local yComponent = self.state.speed * self.state.speedfactor * yRatio
 
-            self.state.body:setLinearVelocity(xComponent, yComponent)
+            -- self.state.body:setLinearVelocity(xComponent, yComponent)
 
             -- if we're close enough, snap to the marker
-            local xVel, yVel = self.state.body:getLinearVelocity()
-            if math.abs(xDiff) <= math.abs(xVel)/100 then
-                log:info(xDiff, xVel)
+            -- local xVel, yVel = self.state.body:getLinearVelocity()
+            if math.abs(xDiff) <= math.abs(xComponent)/100 then
                 self.state.body:setX(self.state.marker.x)
-                xVel = 0
+                xComponent = 0
             end
-            if math.abs(yDiff) <= math.abs(yVel)/100 then
+            if math.abs(yDiff) <= math.abs(yComponent)/100 then
                 self.state.body:setY(self.state.marker.y)
-                yVel = 0
+                yComponent = 0
             end
-            if xVel == 0 and yVel == 0 then
+            if xComponent == 0 and yComponent == 0 then
                 self.state.marker = nil
             end
-            self.state.body:setLinearVelocity(xVel, yVel)
+            self.state.body:applyLinearImpulse(xComponent, yComponent)
         end
     end
 

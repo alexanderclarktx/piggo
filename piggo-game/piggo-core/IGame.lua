@@ -37,7 +37,6 @@ end
 
 function load(self)
     self:gameLoad()
-    -- assert(#self.state.players >= 1 and self.state.camera and self.state.world)
 end
 
 function update(self)
@@ -63,8 +62,8 @@ function update(self)
     self.state.world:update(1.0/100)
 end
 
-function draw(self)
-    self.gameDraw(self)
+function draw(self, x, y)
+    self.gameDraw(self, x, y)
 
     -- draw all terrain
     for _, terrain in pairs(self.state.terrains) do terrain:draw() end

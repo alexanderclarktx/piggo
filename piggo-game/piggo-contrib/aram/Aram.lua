@@ -2,6 +2,7 @@ local Aram = {}
 local IGame = require "piggo-core.IGame"
 local Terrain = require "piggo-core.Terrain"
 local Minion = require "piggo-contrib.characters.Minion"
+local sti = require "lib.sti.init"
 local load, update, draw, spawnMinions, spawnTerrain
 
 local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
@@ -11,7 +12,6 @@ local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 --   * no recalling
 --   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
-    log:info("aram new")
     local aram = IGame.new(load, update, draw)
     aram.timers = {
         minionSpawn = {
@@ -28,7 +28,10 @@ end
 
 function load(self)
     -- create the terrain
-    self:spawnTerrain()
+    -- self:spawnTerrain()
+    -- map = sti("res/map/map.lua")
+
+    -- sound
 end
 
 function update(self)
@@ -54,8 +57,10 @@ function update(self)
     end
 end
 
-function draw(self)
-    love.graphics.setBackgroundColor(backgroundColor)
+function draw(self, x, y)
+    love.graphics.setColor(1, 1, 1)
+    -- map:draw(-x, -y)
+    -- love.graphics.setBackgroundColor(backgroundColor)
 end
 
 function spawnMinions(self)

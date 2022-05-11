@@ -6,18 +6,17 @@ local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.PlayerController"
 local Skelly = require "piggo-contrib.characters.Skelly"
 -- local socket = require "socket"
+local wsClient = require("lib/wsclient")
 local TableUtils = require "piggo-core.util.TableUtils"
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local sendCommandsToServer, processLatestServerPacket, connectToServer
--- local defaultHost = "localhost"
-local defaultHost = "piggo.io"
+local defaultHost = "localhost"
+-- local defaultHost = "piggo.io"
 local defaultPort = 12345
 
 function Client.new(game, host, port)
     assert(game)
-
-    -- local udp = connectToServer(host or defaultHost, port or defaultPort)
 
     local playerName = "KetoMojito" -- TODO
     local player = Player.new(playerName, Skelly.new(game.state.world, 200, 500, 500))
@@ -37,7 +36,7 @@ function Client.new(game, host, port)
             playerController = PlayerController.new(player),
             port = port or defaultPort,
             serverFrame = nil,
-            -- udp = udp,
+            wsClient = connectToServer(host or defaultHost, port or defaultPort),
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
@@ -63,6 +62,8 @@ end
 function update(self, dt, state)
     self.state.dt = self.state.dt + dt
 
+    self.state.wsClient:update()
+
     -- log:debug(self.lastFrameTime)
     if self.state.dt - self.state.nextFrameTime > 0 then
         if self.state.nextFrameTime == 0 then self.state.nextFrameTime = self.state.dt end
@@ -79,7 +80,7 @@ function update(self, dt, state)
         self:sendCommandsToServer()
 
         -- update game state
-        self.state.game:update(dt)
+        self.state.game:update()
 
         -- TODO
         for _, terrain in ipairs(self.state.game.state.terrains) do
@@ -103,7 +104,7 @@ function draw(self)
     self.state.camera:attach()
 
     -- draw game-specific things
-    self.state.game:draw()
+    self.state.game:draw(self.state.camera.x, self.state.camera.y)
 
     -- debug draw where the server thinks i am
     if debug and self.state.serverFrame then
@@ -136,11 +137,15 @@ function sendCommandsToServer(self)
 
         -- send commands to server
         -- self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
+        -- log:info("sent over connection")
+
+        self.state.wsClient:send(json:encode(self.state.playerController.bufferedCommands))
 
         -- reset command buffer
         self.state.playerController.bufferedCommands = {}
     else
         -- self.state.udp:send(json:encode({}))
+        -- log:info("sent empty over connection")
     end
 end
 
@@ -222,11 +227,18 @@ function handleMouseMoved(self, x, y, state)
     )
 end
 
--- function connectToServer(host, port)
---     local udp = socket.udp()
---     udp:settimeout(0)
---     udp:setpeername(host, port)
---     return udp
--- end
+function connectToServer(host, port)
+    log:info("connecting to server")
+    local z = wsClient.new("localhost", 12345)
+    function z:onmessage(s) log:info("message") end
+    function z:onopen() log:info("connected") end
+    function z:onclose(code, reason) log:warn("close") end
+    function z:onerror(e) log:error("error") end
+    return z
+    -- local udp = socket.tcp()
+    -- udp:settimeout(0)
+    -- udp:setpeername(host, port)
+    -- return udp
+end
 
 return Client
