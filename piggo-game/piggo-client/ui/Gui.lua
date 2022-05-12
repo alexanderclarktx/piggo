@@ -99,7 +99,7 @@ function drawCharges(ability, x, y)
 end
 
 function drawAbilityBackground(x, y)
-    love.graphics.setColor(.6, .3, .8, 0.9)
+    love.graphics.setColor(.1, .3, .8, 0.4)
     love.graphics.rectangle("fill", x, y, boxWidth, boxHeight)
 end
 

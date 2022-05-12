@@ -3,9 +3,10 @@ local IGame = require "piggo-core.IGame"
 local Terrain = require "piggo-core.Terrain"
 local Minion = require "piggo-contrib.characters.Minion"
 local sti = require "lib.sti.init"
-local load, update, draw, spawnMinions, spawnTerrain
 
+local load, update, draw, spawnMinions, spawnTerrain
 local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
+local map = nil
 
 -- rules:
 --   * single lane
@@ -26,13 +27,7 @@ function Aram.new()
     return aram
 end
 
-function load(self)
-    -- create the terrain
-    -- self:spawnTerrain()
-    -- map = sti("res/map/map.lua")
-
-    -- sound
-end
+function load(self) end
 
 function update(self)
     -- kill all npcs that are dead :)
@@ -59,8 +54,8 @@ end
 
 function draw(self, x, y)
     love.graphics.setColor(1, 1, 1)
-    -- map:draw(-x, -y)
-    -- love.graphics.setBackgroundColor(backgroundColor)
+    if map == nil then map = sti("res/map/map.lua") end
+    map:draw(-x, -y)
 end
 
 function spawnMinions(self)

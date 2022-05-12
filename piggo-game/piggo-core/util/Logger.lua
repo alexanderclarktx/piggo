@@ -18,7 +18,7 @@ end
 
 local function writestuff(colorNumber, ...)
     if ... then
-        if JS then
+        if love.system.getOS() == "Web" then
             if type(...) == "userdata" then
                 JS.callJS(consoleLog:format("userdata"))
             else

@@ -1,7 +1,7 @@
 local Server = {}
 local socket = require "socket"
 local json = require "lib.json"
-local wsServer = require "lib.lua-websocket.server"
+local wsserver = require "lib.lua-websocket.wsserver"
 local Player = require "piggo-core.Player"
 local Skelly = require "piggo-contrib.characters.Skelly"
 
@@ -39,7 +39,7 @@ function update(self, dt)
     -- increment time
     self.state.dt = self.state.dt + dt
 
-    wsServer:update()
+    wsserver:update()
 
     -- buffer all data received from the players
     -- while self:bufferPlayerInputs() do end
@@ -150,11 +150,11 @@ end
 
 -- open server socket
 function openSocket(port)
-    wsServer:init({
+    wsserver:init({
         port = 12345,
         hostname = "localhost"
     })
-    -- wsServer.connClass.received = function(self, data) log:warn("ALEX") end
+    -- wsserver.connClass.received = function(self, data) log:warn("ALEX") end
     -- local udp = socket.tcp()
     -- udp:settimeout(0)
     -- udp:setsockname("*", port)

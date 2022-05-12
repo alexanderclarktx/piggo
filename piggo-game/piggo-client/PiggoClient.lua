@@ -3,7 +3,7 @@ local MainMenu = require "piggo-client.ui.MainMenu"
 local socket = require "socket"
 local ripple = require "lib.ripple"
 
-if love.system.getOS() == "web" then require "lib.js" end
+if love.system.getOS() == "Web" then require "lib.js" end
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 
