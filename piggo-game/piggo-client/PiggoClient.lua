@@ -9,10 +9,6 @@ local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 
 local defaultCursorColor = {1, 1, 1}
 
--- local beep = ripple.newSound(love.audio.newSource('res/sound/beep.mp3', 'stream'), {
-    -- loop = true
--- })
-
 -- top level application controller
 function Piggo.new()
     local piggo = {
