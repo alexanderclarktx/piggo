@@ -34,23 +34,23 @@ function update(self, mouseX, mouseY, state)
     if self.state.hovering then state.cursorColor = {1, 0, 0} else state.cursorColor = {1, 1, 1} end
 
     -- are we r-clicking
-    if love.mouse.isDown(2) then
-        if self.state.hovering then
-            self.state.player.state.character.state.weapon:tryAttack(
-                {
-                    x = self.state.player.state.character.state.body:getX(),
-                    y = self.state.player.state.character.state.body:getY()
-                },
-                self.state.hovering
-            )
-        else
-            self.state.player.state.character.state.marker = {x = mouseX, y = mouseY}
-            self:bufferCommand({
-                action = "move",
-                marker = self.state.player.state.character.state.marker
-            }, state)
-        end
-    end
+    -- if love.mouse.isDown(2) then
+    --     if self.state.hovering then
+    --         self.state.player.state.character.state.weapon:tryAttack(
+    --             {
+    --                 x = self.state.player.state.character.state.body:getX(),
+    --                 y = self.state.player.state.character.state.body:getY()
+    --             },
+    --             self.state.hovering
+    --         )
+    --     else
+    --         self.state.player.state.character.state.marker = {x = mouseX, y = mouseY}
+    --         self:bufferCommand({
+    --             action = "move",
+    --             marker = self.state.player.state.character.state.marker
+    --         }, state)
+    --     end
+    -- end
 
     -- local target = nil
     -- self.state.target = target
@@ -86,31 +86,39 @@ end
 function handleKeyPressed(self, key, scancode, isrepeat, mouseX, mouseY, state)
     assert(mouseX, mouseY)
 
-    if key == "q" then
-        self:bufferCommand({action = "cast", ability = "q", mouseX = mouseX, mouseY = mouseY}, state)
+    if self.state.player.state.character.state.abilities[key] then
+        self:bufferCommand({
+            action = "cast",
+            ability = key,
+            mouseX = mouseX, mouseY = mouseY
+        }, state)
     end
-    if key == "w" then
-        self:bufferCommand({action = "cast", ability = "w", mouseX = mouseX, mouseY = mouseY}, state)
-    end
-    if key == "e" then
-        self:bufferCommand({action = "cast", ability = "e", mouseX = mouseX, mouseY = mouseY}, state)
-    end
-    if key == "r" then
-        self:bufferCommand({action = "cast", ability = "r", mouseX = mouseX, mouseY = mouseY}, state)
-    end
-    if key == "s" then
-        self:bufferCommand({action = "stop"}, state)
-    end
+
+    -- if key == "q" then
+    --     self:bufferCommand({action = "cast", ability = "q", mouseX = mouseX, mouseY = mouseY}, state)
+    -- end
+    -- if key == "w" then
+    --     self:bufferCommand({action = "cast", ability = "w", mouseX = mouseX, mouseY = mouseY}, state)
+    -- end
+    -- if key == "e" then
+    --     self:bufferCommand({action = "cast", ability = "e", mouseX = mouseX, mouseY = mouseY}, state)
+    -- end
+    -- if key == "r" then
+    --     self:bufferCommand({action = "cast", ability = "r", mouseX = mouseX, mouseY = mouseY}, state)
+    -- end
+    -- if key == "s" then
+    --     self:bufferCommand({action = "stop"}, state)
+    -- end
 end
 
 function handleMousePressed(self, x, y, mouseButton, state)
-    if mouseButton == 2 then -- rightclick
-        self.state.player.state.character.state.marker = {x = x, y = y}
-        self:bufferCommand({
-            action = "move",
-            marker = self.state.player.state.character.state.marker
-        }, state)
-    end
+    -- if mouseButton == 2 then -- rightclick
+    --     self.state.player.state.character.state.marker = {x = x, y = y}
+    --     self:bufferCommand({
+    --         action = "move",
+    --         marker = self.state.player.state.character.state.marker
+    --     }, state)
+    -- end
 end
 
 function handleMouseMoved(self, x, y, state) end

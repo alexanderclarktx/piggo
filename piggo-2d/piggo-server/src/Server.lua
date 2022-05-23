@@ -12,8 +12,6 @@ local defaultPort = 12345
 function Server.new(game, port)
     assert(game)
 
-    openSocket(port or defaultPort)
-
     game:load()
 
     local server = {
@@ -31,6 +29,8 @@ function Server.new(game, port)
         runFrame = runFrame,
         update = update,
     }
+
+    openSocket(port or defaultPort, server)
 
     return server
 end
@@ -53,23 +53,21 @@ function update(self, dt)
     end
 end
 
-function bufferPlayerInputs(self)
-    -- check for data from players, breaking when nothing's left to receive
-    local playerCommandsJson, msgOrIp, portOrNil = self.state.udp:receivefrom()
-    if playerCommandsJson == nil then return false end
-
+function bufferPlayerInputs(self, playerCommands)
     -- if this player has no record, create their player/character and add them
-    assert(msgOrIp and portOrNil)
-    local playerName = "KetoMojito" -- TODO get from player's connect payload
-    if not self.state.connectedPlayers[playerName] then
-        self:connectPlayer(playerName, msgOrIp, portOrNil)
-    end
+    -- assert(msgOrIp and portOrNil)
+    -- local playerName = "KetoMojito" -- TODO get from player's connect payload
+    -- if not self.state.connectedPlayers[playerName] then
+    --     self:connectPlayer(playerName, msgOrIp, portOrNil)
+    -- end
 
     -- buffer all player commands
-    local playerCommands = json:decode(playerCommandsJson)
-    for _, playerCommand in ipairs(playerCommands) do
+    -- local playerCommands = json:decode(playerCommandsJson)
+    log:info(type(playerCommands))
+    assert(playerCommands.name ~= nil)
+    for _, playerCommand in ipairs(playerCommands.commands) do
         if playerCommand.action ~= nil then
-            table.insert(self.state.connectedPlayers[playerName].commands, playerCommand)
+            table.insert(self.state.connectedPlayers[playerCommands.name].commands, playerCommand)
         end
     end
 
@@ -149,12 +147,17 @@ function createPlayerFramePayload(player)
 end
 
 -- open server socket
-function openSocket(port)
+function openSocket(port, s)
     wsserver:init({
         port = 12345,
         hostname = "localhost"
     })
-    -- wsserver.connClass.received = function(self, data) log:warn("ALEX") end
+    wsserver.s = s
+    wsserver.connClass.received = function(self, data)
+        log:info(data)
+        self.server.s:bufferPlayerInputs(data)
+        -- log:info(#wsserver.conns)
+    end
     -- local udp = socket.tcp()
     -- udp:settimeout(0)
     -- udp:setsockname("*", port)

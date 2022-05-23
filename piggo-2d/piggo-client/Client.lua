@@ -5,6 +5,7 @@ local json = require "lib.json"
 local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.PlayerController"
 local Skelly = require "piggo-contrib.characters.Skelly"
+local Cardflipper = require "piggo-contrib.characters.Cardflipper"
 -- local socket = require "socket"
 local wsClient = require("lib/wsclient")
 local TableUtils = require "piggo-core.util.TableUtils"
@@ -19,7 +20,7 @@ function Client.new(game, host, port)
     assert(game)
 
     local playerName = "KetoMojito" -- TODO
-    local player = Player.new(playerName, Skelly.new(game.state.world, 200, 500, 500))
+    local player = Player.new(playerName, Cardflipper.new(game.state.world, 200, 500, 500))
     game:addPlayer(playerName, player)
 
     local client = {
@@ -36,7 +37,7 @@ function Client.new(game, host, port)
             playerController = PlayerController.new(player),
             port = port or defaultPort,
             serverFrame = nil,
-            wsClient = connectToServer(host or defaultHost, port or defaultPort),
+            -- wsClient = connectToServer(host or defaultHost, port or defaultPort),
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
@@ -62,7 +63,7 @@ end
 function update(self, dt, state)
     self.state.dt = self.state.dt + dt
 
-    self.state.wsClient:update()
+    -- self.state.wsClient:update()
 
     -- log:debug(self.lastFrameTime)
     if self.state.dt - self.state.nextFrameTime > 0 then
@@ -139,7 +140,10 @@ function sendCommandsToServer(self)
         -- self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
         -- log:info("sent over connection")
 
-        self.state.wsClient:send(json:encode(self.state.playerController.bufferedCommands))
+        -- self.state.wsClient:send(json:encode({
+        --     name = self.state.player.state.name,
+        --     commands = self.state.playerController.bufferedCommands
+        -- }))
 
         -- reset command buffer
         self.state.playerController.bufferedCommands = {}

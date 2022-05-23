@@ -6,15 +6,14 @@ local load, update, draw
 local addPlayer, addNpc, handlePlayerCommand, handleMouseMoved
 local serialize, deserialize
 
--- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
--- the state must be initialized with a first player
+-- IGame is a baseclass for all games
 function IGame.new(gameLoad, gameUpdate, gameDraw, gameHandleMouseMoved)
     assert(gameLoad and gameUpdate and gameDraw)
 
     local damageController = DamageController.new()
 
     local iGame = {
-        state = {                                                   --TODO
+        state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = physics.newWorld(),
             frame = 0,
