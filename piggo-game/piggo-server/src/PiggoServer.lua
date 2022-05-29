@@ -16,8 +16,7 @@ function PiggoServer.new()
 end
 
 function load(self)
-    -- self.state.server = Server.new(Aram.new())
-    self.state.server = Server.new(Arena.new())
+    self.state.server = Server.new(Aram.new())
 end
 
 function update(self, dt)

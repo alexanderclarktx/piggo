@@ -6,15 +6,14 @@ local load, update, draw
 local addPlayer, addNpc, handlePlayerCommand, handleMouseMoved
 local serialize, deserialize
 
--- IGame is a baseclass for all games, controlling game logic, gui, player interfaces
--- the state must be initialized with a first player
+-- IGame is a baseclass for all games
 function IGame.new(gameLoad, gameUpdate, gameDraw, gameHandleMouseMoved)
     assert(gameLoad and gameUpdate and gameDraw)
 
     local damageController = DamageController.new()
 
     local iGame = {
-        state = {                                                   --TODO
+        state = {
             players = {}, npcs = {}, hurtboxes = {}, objects = {}, terrains = {},
             world = physics.newWorld(),
             frame = 0,
@@ -37,7 +36,6 @@ end
 
 function load(self)
     self:gameLoad()
-    -- assert(#self.state.players >= 1 and self.state.camera and self.state.world)
 end
 
 function update(self)
@@ -63,8 +61,8 @@ function update(self)
     self.state.world:update(1.0/100)
 end
 
-function draw(self)
-    self.gameDraw(self)
+function draw(self, x, y)
+    self.gameDraw(self, x, y)
 
     -- draw all terrain
     for _, terrain in pairs(self.state.terrains) do terrain:draw() end

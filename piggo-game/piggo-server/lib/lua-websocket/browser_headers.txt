@@ -1,0 +1,32 @@
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Cache-Control: no-cache
+Connection: Upgrade
+Host: localhost:12345
+Origin: http://localhost:8080
+Pragma: no-cache
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+Sec-WebSocket-Key: 5HEotf/HUlTbENgosNGQqg==
+Sec-WebSocket-Protocol: binary
+Sec-WebSocket-Version: 13
+Upgrade: websocket
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36
+
+
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.5
+Accept: */*
+Cache-Control: no-cache
+Connection: keep-alive, Upgrade
+Host: localhost:12345
+Origin: http://localhost:8080
+Pragma: no-cache
+Sec-Fetch-Dest: websocket
+Sec-Fetch-Mode: websocket
+Sec-Fetch-Site: same-site
+Sec-WebSocket-Extensions: permessage-deflate
+Sec-WebSocket-Key: 8BgWK0Wy/alemXO86vDzow==
+Sec-WebSocket-Protocol: binary
+Sec-WebSocket-Version: 13
+Upgrade: websocket
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0

@@ -17,7 +17,7 @@ function Gui.new(player)
 end
 
 function draw(self)
-    if true then drawDebug(self.player) end
+    if log.debugFlag then drawDebug(self.player) end
     drawConsole(self.player)
 end
 
@@ -51,44 +51,23 @@ function drawDebug(player)
 end
 
 function drawConsole(player)
-    local q = {x = love.graphics.getWidth() / 2 - 120, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local w = {x = love.graphics.getWidth() / 2 - 60, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local e = {x = love.graphics.getWidth() / 2, y = love.graphics.getHeight() * consoleHeight - boxHeight}
-    local r = {x = love.graphics.getWidth() / 2 + 60, y = love.graphics.getHeight() * consoleHeight - boxHeight}
+    local offset = 3 * 60
+    for _, key in ipairs({"q", "e", "r", "z", "x", "c"}) do
+        local ability = player.state.character.state.abilities[key]
+        if ability then
+            local x, y = love.graphics.getWidth() / 2 - offset, love.graphics.getHeight() * consoleHeight - boxHeight
 
-    -- ability background
-    drawAbilityBackground(q.x, q.y)
-    drawAbilityBackground(w.x, w.y)
-    drawAbilityBackground(e.x, e.y)
-    drawAbilityBackground(r.x, r.y)
+            drawAbilityBackground(x, y)
+            drawAbilityOutline(x, y, ability.frame, ability.cd)
+            drawCooldownIndicator(x, y, boxWidth, boxHeight, ability.frame, ability.cd)
 
-    -- ability outlines
-    drawAbilityOutline(q.x, q.y, player.state.character.state.abilities.q.frame, player.state.character.state.abilities.q.cd)
-    drawAbilityOutline(w.x, w.y, player.state.character.state.abilities.w.frame, player.state.character.state.abilities.w.cd)
-    drawAbilityOutline(e.x, e.y, player.state.character.state.abilities.e.frame, player.state.character.state.abilities.e.cd)
-    drawAbilityOutline(r.x, r.y, player.state.character.state.abilities.r.frame, player.state.character.state.abilities.r.cd)
-
-    -- cooldown indicators
-    drawCooldownIndicator(q.x, q.y, boxWidth, boxHeight, player.state.character.state.abilities.q.frame, player.state.character.state.abilities.q.cd)
-    drawCooldownIndicator(w.x, w.y, boxWidth, boxHeight, player.state.character.state.abilities.w.frame, player.state.character.state.abilities.w.cd)
-    drawCooldownIndicator(e.x, e.y, boxWidth, boxHeight, player.state.character.state.abilities.e.frame, player.state.character.state.abilities.e.cd)
-    drawCooldownIndicator(r.x, r.y, boxWidth, boxHeight, player.state.character.state.abilities.r.frame, player.state.character.state.abilities.r.cd)
-
-    -- keybinds
-    love.graphics.setColor(.9, .9, .2)
-    love.graphics.print("q", q.x + 5, q.y + 30)
-    love.graphics.print("w", w.x + 5, w.y + 30)
-    love.graphics.print("e", e.x + 5, e.y + 30)
-    love.graphics.print("r", r.x + 5, r.y + 30)
-
-    -- charge abilities
-    love.graphics.setColor(.2, .9, .9)
-    drawCharges(player.state.character.state.abilities.q, q.x + 18, q.y + 30)
-    drawCharges(player.state.character.state.abilities.w, w.x + 18, w.y + 30)
-    drawCharges(player.state.character.state.abilities.e, e.x + 18, e.y + 30)
-    drawCharges(player.state.character.state.abilities.r, r.x + 18, r.y + 30)
+            love.graphics.print(key, x + 5, y + 30)
+            offset = offset - 60
+        end
+    end
 end
 
+-- drawCharges(player.state.character.state.abilities.r, r.x + 18, r.y + 30)
 function drawCharges(ability, x, y)
     if ability.charges then
         love.graphics.print(
@@ -99,7 +78,7 @@ function drawCharges(ability, x, y)
 end
 
 function drawAbilityBackground(x, y)
-    love.graphics.setColor(1, 1, 1, 0.5)
+    love.graphics.setColor(.1, .3, .8, 0.4)
     love.graphics.rectangle("fill", x, y, boxWidth, boxHeight)
 end
 

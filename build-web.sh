@@ -1,6 +1,8 @@
 #!/bin/bash
 set +x
 
+#### builds everything to host game on web
+
 # folders
 ROOT=$(git rev-parse --show-toplevel)
 DOCS="$ROOT/docs"
@@ -22,6 +24,7 @@ npm install
 npx love.js -c -t piggo -m 400000000 $PIGGO_GAME/piggo.love $DOCS
 cp $PIGGO_WEB/lib/consolewrapper.js $DOCS/
 cp $PIGGO_WEB/lib/webdb.js $DOCS/
+cp $PIGGO_WEB/node_modules/web3/dist/web3.min.js $DOCS/
 cp $PIGGO_WEB/src/index.html $DOCS/
 cp $PIGGO_WEB/src/love.css $DOCS/theme/
 cd $DOCS

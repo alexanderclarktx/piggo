@@ -2,7 +2,7 @@ local IMenu = {}
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
-local addText, addTexture, addButton
+local addText, addButton
 
 function IMenu.new(fonts)
     assert(fonts)
@@ -13,8 +13,8 @@ function IMenu.new(fonts)
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
         handleMouseMoved = handleMouseMoved,
-        addText = addText, addTexture = addTexture, addButton = addButton,
-        texts = {}, textures = {}, buttons = {},
+        addText = addText, addButton = addButton,
+        texts = {}, buttons = {},
         fonts = fonts
     }
 
@@ -31,8 +31,6 @@ function addText(self, body, x, y, limit, font)
         font = font
     })
 end
-
-function addTexture() end
 
 function addButton(self, body, x, y, width, height, font, callback)
     assert(body and x and y and width and height and font and callback)
@@ -52,17 +50,6 @@ end
 
 function draw(self)
     local mouseX, mouseY = love.mouse.getPosition()
-
-    -- draw all textures
-    for _, texture in ipairs(self.textures) do
-        -- log:debug(texture)
-
-        -- love.graphics.drawLayer(
-        --     image, frameToDraw,
-        --     self.body:getX(), self.body:getY(),
-        --     0, 4 * self.state.facingRight, 4, 6, 6
-        -- )
-    end
 
     -- draw all buttons
     for _, button in ipairs(self.buttons) do
@@ -98,7 +85,7 @@ function draw(self)
     end
 end
 
-function handleKeyPressed(self, key, scancode, isrepeat, state) end
+function handleKeyPressed(self) end
 
 function handleMousePressed(self, x, y, mouseButton, state)
     for _, button in ipairs(self.buttons) do
