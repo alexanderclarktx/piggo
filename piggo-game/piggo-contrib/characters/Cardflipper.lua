@@ -18,13 +18,11 @@ function Cardflipper.new(world, x, y)
             z = Blink.new(),
             x = Blink.new(),
             c = Blink.new(),
+            v = Rush.new()
         }
     )
 
-    cardflipper.frame = 1
-    cardflipper.frameLast = 0
-    cardflipper.framecd = 13
-    cardflipper.animationFrame = 1
+    cardflipper.state.animationFrame = 1
     cardflipper.image = {
         love.graphics.newImage("res/skelly/skelly1.png"),
         love.graphics.newImage("res/skelly/skelly2.png"),
@@ -62,43 +60,45 @@ function update(self)
         rightSpeed = right * speed
     end
 
+    -- update direction
+    if right > 0 then
+        self.state.facingRight = 1
+    elseif right < 0 then
+        self.state.facingRight = -1
+    end
+
+    -- check if character is moving
+    if up ~= 0 or right ~= 0 then
+        self.state.moving = true
+    else
+        self.state.moving = false 
+    end
+
+    -- update animation frame
+    if self.state.moving then
+        if self.state.frame % 8 == 0 then
+            self.state.animationFrame = (self.state.animationFrame + 1) % 3 + 1    
+        end
+    else
+        self.state.animationFrame = 1
+    end
+
     -- move character
     self.state.body:setPosition(
         self.state.body:getX() + rightSpeed,
         self.state.body:getY() + upSpeed
     )
-
-    -- update animation frame
-    if self.state.frame - self.frameLast > self.framecd then
-        self.frameLast = self.state.frame
-        self.animationFrame = (self.state.frame + 1) % 3 + 1
-    end
 end
 
 function draw(self)
-    -- pick animation frame
-    local frameToDraw = self.animationFrame
-    local velocity = {self.state.body:getLinearVelocity()}
-    if 0 == velocity[1] and 0 == velocity[2] then
-        frameToDraw = 1
-    end
-
     -- draw skelly
     assert(self.state.color)
     love.graphics.setColor(self.state.color)
     love.graphics.draw(
-        self.image[frameToDraw],
+        self.image[self.state.animationFrame],
         self.state.body:getX(), self.state.body:getY(),
         0, 4 * self.state.facingRight, 4, 6, 6
     )
-
-    -- love.graphics.setColor(1, 0, 5)
-    -- love.graphics.circle(
-    --     "line",
-    --     self.state.body:getX(),
-    --     self.state.body:getY(),
-    --     15
-    -- )
 end
 
 return Cardflipper
