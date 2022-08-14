@@ -1,7 +1,6 @@
 local Server = {}
 local socket = require "socket"
 local json = require "lib.json"
-local wsserver = require "lib.lua-websocket.wsserver"
 local Player = require "piggo-core.Player"
 local Skelly = require "piggo-contrib.characters.Skelly"
 
@@ -16,12 +15,12 @@ function Server.new(game, port)
 
     local server = {
         state = {
+            wsserver = require "lib.lua-websocket.wsserver",
             connectedPlayers = {},
             dt = 0,
             framerate = 100,
             game = game,
             nextFrameTime = 0,
-            -- udp = udp,
         },
         bufferPlayerInputs = bufferPlayerInputs,
         connectPlayer = connectPlayer,
@@ -39,10 +38,8 @@ function update(self, dt)
     -- increment time
     self.state.dt = self.state.dt + dt
 
-    wsserver:update()
-
-    -- buffer all data received from the players
-    -- while self:bufferPlayerInputs() do end
+    -- update wsserver
+    self.state.wsserver:update()
 
     -- run game frame on 100fps schedule
     if self.state.dt - self.state.nextFrameTime > 0 then
@@ -53,18 +50,17 @@ function update(self, dt)
     end
 end
 
-function bufferPlayerInputs(self, playerCommands)
+function bufferPlayerInputs(self, playerCommandsJson, conn)
+    local playerCommands = json:decode(playerCommandsJson)
+    assert(playerCommands.name ~= nil)
+    assert(playerCommands.commands ~= nil)
+
     -- if this player has no record, create their player/character and add them
-    -- assert(msgOrIp and portOrNil)
-    -- local playerName = "KetoMojito" -- TODO get from player's connect payload
-    -- if not self.state.connectedPlayers[playerName] then
-    --     self:connectPlayer(playerName, msgOrIp, portOrNil)
-    -- end
+    if not self.state.connectedPlayers[playerCommands.name] then
+        self:connectPlayer(playerCommands.name, conn)
+    end
 
     -- buffer all player commands
-    -- local playerCommands = json:decode(playerCommandsJson)
-    log:info(type(playerCommands))
-    assert(playerCommands.name ~= nil)
     for _, playerCommand in ipairs(playerCommands.commands) do
         if playerCommand.action ~= nil then
             table.insert(self.state.connectedPlayers[playerCommands.name].commands, playerCommand)
@@ -104,19 +100,19 @@ function runFrame(self)
 
     -- send everyone the game and player states
     for _, player in pairs(self.state.connectedPlayers) do
-        -- create player frame payload
-
-        -- send the frame payloads
-        self.state.udp:sendto(json:encode({
+        local payload = json:encode({
             gameFramePayload = gameFramePayload,
             -- playerFramePayload = createPlayerFramePayload(player),
             frame = self.state.game.state.frame
-        }), player.ip, player.port)
+        })
+
+        -- send the frame payloads
+        player.conn:send(payload)
     end
 end
 
 -- connect a new player
-function connectPlayer(self, playerName, msgOrIp, portOrNil)
+function connectPlayer(self, playerName, conn)
     log:info("connecting player", playerName)
 
     -- add the player to the game
@@ -127,8 +123,7 @@ function connectPlayer(self, playerName, msgOrIp, portOrNil)
     -- add player to connectedPlayers
     self.state.connectedPlayers[playerName] = {
         player = player,
-        ip = msgOrIp,
-        port = portOrNil,
+        conn = conn,
         commands = {}
     }
 end
@@ -148,20 +143,14 @@ end
 
 -- open server socket
 function openSocket(port, s)
-    wsserver:init({
+    s.state.wsserver:init({
         port = 12345,
         hostname = "localhost"
     })
-    wsserver.s = s
-    wsserver.connClass.received = function(self, data)
-        log:info(data)
-        self.server.s:bufferPlayerInputs(data)
-        -- log:info(#wsserver.conns)
+    s.state.wsserver.s = s
+    s.state.wsserver.connClass.received = function(self, data)
+        self.server.s:bufferPlayerInputs(data, self)
     end
-    -- local udp = socket.tcp()
-    -- udp:settimeout(0)
-    -- udp:setsockname("*", port)
-    -- return udp
 end
 
 return Server

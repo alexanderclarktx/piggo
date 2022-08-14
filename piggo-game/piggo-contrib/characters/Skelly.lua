@@ -28,11 +28,6 @@ function Skelly.new(world, x, y, hp)
     skelly.frameLast = 0
     skelly.framecd = 13
     skelly.animationFrame = 1
-    skelly.image = {
-        love.graphics.newImage("res/skelly/skelly1.png"),
-        love.graphics.newImage("res/skelly/skelly2.png"),
-        love.graphics.newImage("res/skelly/skelly3.png"),
-    }
 
     return skelly
 end
@@ -46,6 +41,14 @@ function update(self)
 end
 
 function draw(self)
+    if not self.image then
+        skelly.image = {
+            love.graphics.newImage("res/skelly/skelly1.png"),
+            love.graphics.newImage("res/skelly/skelly2.png"),
+            love.graphics.newImage("res/skelly/skelly3.png"),
+        }
+    end
+
     -- pick animation frame
     local frameToDraw = self.animationFrame
     local velocity = {self.state.body:getLinearVelocity()}

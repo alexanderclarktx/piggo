@@ -17,14 +17,3 @@ end
 
 function love.draw() end
 
-function love.keypressed(key, scancode, isrepeat)
-    -- piggo:handleKeyPressed(key, scancode, isrepeat)
-end
-
-function love.mousepressed(x, y, mouseButton)
-    -- piggo:handleMousePressed(x, y, mouseButton)
-end
-
-function love.mousemoved(x, y, dx, dy)
-    -- piggo:handleMouseMoved(x, y)
-end

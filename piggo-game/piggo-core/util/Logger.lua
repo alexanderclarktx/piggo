@@ -18,22 +18,22 @@ end
 
 local function writestuff(colorNumber, ...)
     if ... then
-        if love.system.getOS() == "Web" then
-            if type(...) == "userdata" then
-                JS.callJS(consoleLog:format("userdata"))
-            else
-                JS.callJS(consoleLog:format(...))
-            end
-        else
+        -- if love.system.getOS() == "Web" then
+        --     if type(...) == "userdata" then
+        --         JS.callJS(consoleLog:format("userdata"))
+        --     else
+        --         JS.callJS(consoleLog:format(...))
+        --     end
+        -- else
             io.write(table.concat({
                 "\27[",
                 tostring(colorNumber),
                 "m[",
-                -- debugog.getinfo(2).source:match("%a+.lua"),
+                debugog.getinfo(2).source:match("%a+.lua"),
                 "]\27[00m "
             }))
             print(...)
-        end
+        -- end
     end
     return true
 end

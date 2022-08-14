@@ -6,7 +6,7 @@ local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.PlayerController"
 local Skelly = require "piggo-contrib.characters.Skelly"
 local Cardflipper = require "piggo-contrib.characters.Cardflipper"
--- local socket = require "socket"
+local socket = require "socket"
 local wsClient = require("lib/wsclient")
 local TableUtils = require "piggo-core.util.TableUtils"
 
@@ -20,7 +20,7 @@ function Client.new(game, host, port)
     assert(game)
 
     local playerName = "KetoMojito" -- TODO
-    local player = Player.new(playerName, Cardflipper.new(game.state.world, 200, 500, 500))
+    local player = Player.new(playerName, Cardflipper.new(game.state.world, 200, 500))
     game:addPlayer(playerName, player)
 
     local client = {
@@ -37,7 +37,7 @@ function Client.new(game, host, port)
             playerController = PlayerController.new(player),
             port = port or defaultPort,
             serverFrame = nil,
-            -- wsClient = connectToServer(host or defaultHost, port or defaultPort),
+            wsClient = connectToServer(host or defaultHost, port or defaultPort),
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
@@ -63,7 +63,7 @@ end
 function update(self, dt, state)
     self.state.dt = self.state.dt + dt
 
-    -- self.state.wsClient:update()
+    self.state.wsClient:update()
 
     -- log:debug(self.lastFrameTime)
     if self.state.dt - self.state.nextFrameTime > 0 then
@@ -133,22 +133,20 @@ function sendCommandsToServer(self)
     if #self.state.playerController.bufferedCommands > 0 then
         -- apply commands locally
         for _, command in ipairs(self.state.playerController.bufferedCommands) do
+            log:info("commands locally")
             self.state.game:handlePlayerCommand("KetoMojito", command)
         end
 
         -- send commands to server
-        -- self.state.udp:send(json:encode(self.state.playerController.bufferedCommands))
-        -- log:info("sent over connection")
-
-        -- self.state.wsClient:send(json:encode({
-        --     name = self.state.player.state.name,
-        --     commands = self.state.playerController.bufferedCommands
-        -- }))
+        self.state.wsClient:send(json:encode({
+            name = self.state.player.state.name,
+            commands = self.state.playerController.bufferedCommands
+        }))
+        log:info("sent command to server")
 
         -- reset command buffer
         self.state.playerController.bufferedCommands = {}
     else
-        -- self.state.udp:send(json:encode({}))
         -- log:info("sent empty over connection")
     end
 end
@@ -233,16 +231,12 @@ end
 
 function connectToServer(host, port)
     log:info("connecting to server")
-    local z = wsClient.new("localhost", 12345)
-    function z:onmessage(s) log:info("message") end
+    local z = wsClient.new("localhost", 12345, "/")
+    function z:onmessage(s) log:info("message", s) end
     function z:onopen() log:info("connected") end
     function z:onclose(code, reason) log:warn("close") end
     function z:onerror(e) log:error("error") end
     return z
-    -- local udp = socket.tcp()
-    -- udp:settimeout(0)
-    -- udp:setpeername(host, port)
-    -- return udp
 end
 
 return Client

@@ -71,7 +71,6 @@ local FRAME_PONG = 10
 
 -- private
 function WebSocketConn:readFrameCoroutine()
-	log:info("readFrameCoroutine")
 	while not self.done 
 	and self.server 
 	and self.server.socket:getsockname() 
@@ -92,7 +91,7 @@ function WebSocketConn:readFrameCoroutine()
 			error('readFrameCoroutine got continuation frame')	-- TODO handle continuations
 		elseif opcode == FRAME_TEXT or opcode == FRAME_DATA then	-- new text/binary frame
 			local decoded = self:readFrameCoroutine_DecodeData()
-			print('readFrameCoroutine got',decoded,love.timer.getTime())
+			-- print('readFrameCoroutine got',decoded,love.timer.getTime())
 
 			-- push decoded data into command buffer
 			-- table.insert(self.commandBuffer, decoded)
