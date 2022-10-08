@@ -1,10 +1,10 @@
-local IAbility = {}
+local Ability = {}
 
 local update, draw
 
--- function IAbility.new(abilityName) return IAbility.new(abilityName, cast, update, draw, 10) end
+-- function Ability.new(abilityName) return Ability.new(abilityName, cast, update, draw, 10) end
 
-function IAbility.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abilityCd)
+function Ability.new(abilityName, abilityCast, abilityUpdate, abilityDraw, abilityCd)
     local iAbility = {
         cast = cast, update = update, draw = draw,
         name = abilityName, cd = abilityCd, frame = abilityCd,
@@ -55,4 +55,4 @@ function draw(self)
     self.abilityDraw(self)
 end
 
-return IAbility
+return Ability

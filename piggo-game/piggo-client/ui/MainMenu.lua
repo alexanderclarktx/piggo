@@ -5,7 +5,7 @@ local Aram = require "piggo-contrib.aram.Aram"
 local Arena = require "piggo-contrib.arena.Arena"
 local AutoChess = require "piggo-contrib.autochess.AutoChess"
 
-local onclickARAM, onclickArena, onclickSettings, startServerThread
+local onclickARAM, onclickArena, onclickAutoChess, onclickSettings, startServerThread
 
 function MainMenu.new()
     local menu = IMenu.new({
@@ -35,19 +35,19 @@ end
 -- start the game
 function onclickARAM(state)
     log:info("ARAM")
-    state:setScene(Client.new(Aram.new()))
+    -- state:setScene(Client.new(Aram.new()))
     -- startServerThread("piggo-contrib.aram.Aram")
 end
 
 function onclickArena(state)
     log:info("Arena")
-    state:setScene(Client.new(Arena.new()))
+    -- state:setScene(Client.new(Arena.new()))
     -- startServerThread("piggo-contrib.arena.Arena")
 end
 
 function onclickAutoChess(state)
     log:info("AutoChess")
-    state:setScene(Client.new(AutoChess.new()))
+    -- state:setScene(Client.new(AutoChess.new()))
     -- startServerThread("piggo-contrib.autochess.AutoChess")
 end
 

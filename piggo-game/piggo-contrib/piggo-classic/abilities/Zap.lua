@@ -1,12 +1,12 @@
 local Zap = {}
-local IAbility = require "piggo-core.IAbility"
+local Ability = require "piggo-core.Ability"
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
 
 local cast, update, draw
 
 -- hold down to charge; release for AoE stun and damage
 function Zap.new()
-    local zap = IAbility.new("Skelly Axe", cast, update, draw, 300)
+    local zap = Ability.new("Skelly Axe", cast, update, draw, 300)
 
     zap.charges = 4
     zap.maxCharges = 4

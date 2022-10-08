@@ -1,12 +1,12 @@
-local IWeapon = {}
+local Weapon = {}
 
 local update, tryAttack, spawnProjectile
 
 -- cd is in frames
-function IWeapon.new(isRanged, range, cd)
+function Weapon.new(isRanged, range, cd)
     assert(type(isRanged) == "boolean")
     assert(range > 0 and cd > 0)
-    local iWeapon = {
+    local weapon = {
         state = {
             ranged = isRanged,
             range = range,
@@ -18,7 +18,7 @@ function IWeapon.new(isRanged, range, cd)
         tryAttack = tryAttack,
         spawnProjectile = spawnProjectile
     }
-    return iWeapon
+    return weapon
 end
 
 function update(self)
@@ -55,4 +55,4 @@ function spawnProjectile(self, characterPos, target)
     }
 end
 
-return IWeapon
+return Weapon

@@ -1,6 +1,6 @@
 local Minion = {}
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
-local ICharacter = require "piggo-core.ICharacter"
+local Character = require "piggo-core.Character"
 
 local update, draw
 
@@ -10,7 +10,7 @@ function Minion.new(world, x, y, hp, marker, team)
     assert(type(hp) == "number")
     assert(marker.x and marker.y)
 
-    local minion = ICharacter.new(
+    local minion = Character.new(
         world,
         update, draw,
         x, y, hp, 300, 200, 15,

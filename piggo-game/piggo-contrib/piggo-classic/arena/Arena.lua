@@ -1,5 +1,5 @@
 local Arena = {}
-local IGame = require "piggo-core.IGame"
+local Game = require "piggo-core.Game"
 local Terrain = require "piggo-core.Terrain"
 
 local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
@@ -7,7 +7,7 @@ local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 local load, update, draw, handleMouseMoved, spawnTerrain
 
 function Arena.new()
-    local arena = IGame.new(load, update, draw, handleMouseMoved)
+    local arena = Game.new(load, update, draw, handleMouseMoved)
 
     arena.spawnTerrain = spawnTerrain
 

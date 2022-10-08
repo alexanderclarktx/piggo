@@ -1,7 +1,8 @@
-local PiggoClient = require "piggo-client.PiggoClient"
+-- local PiggoClient = require "piggo-client.PiggoClient"
 local Logger = require "piggo-core.util.Logger"
+local Batto = require "piggo-contrib.ecs.batto.Batto"
 
-local piggo = PiggoClient.new()
+local game = Batto.new()
 
 function love.load(arg)
     -- default render mode
@@ -11,31 +12,31 @@ function love.load(arg)
     log = Logger.new(arg[1] and arg[1] == "--debug")
 
     -- load the game
-    piggo:load()
+    game:load()
 
     -- disable the OS mouse
     love.mouse.setVisible(false)
 end
 
 function love.update(dt)
-    piggo:update(dt)
+    game:update(dt)
 end
 
 function love.draw()
-    piggo:draw()
+    game:draw()
 end
 
-function love.keypressed(key, scancode, isrepeat)
-    piggo:handleKeyPressed(key, scancode, isrepeat)
-end
+-- function love.keypressed(key, scancode, isrepeat)
+--     piggo:handleKeyPressed(key, scancode, isrepeat)
+-- end
 
-function love.mousepressed(x, y, mouseButton)
-    piggo:handleMousePressed(x, y, mouseButton)
-end
+-- function love.mousepressed(x, y, mouseButton)
+--     piggo:handleMousePressed(x, y, mouseButton)
+-- end
 
-function love.mousemoved(x, y, dx, dy)
-    piggo:handleMouseMoved(x, y)
-end
+-- function love.mousemoved(x, y, dx, dy)
+--     piggo:handleMouseMoved(x, y)
+-- end
 
 function love.resize(w, h)
     print(("Window resized to width: %d and height: %d."):format(w, h))

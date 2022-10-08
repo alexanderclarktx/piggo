@@ -1,5 +1,5 @@
 local Rush = {}
-local IAbility = require "piggo-core.IAbility"
+local Ability = require "piggo-core.Ability"
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
 
 local cast, update, draw
@@ -7,7 +7,7 @@ local cast, update, draw
 local rgb = {1, 0, 0, 0.6}
 
 function Rush.new()
-    local rush = IAbility.new("Skelly Ulti", cast, update, draw, 300)
+    local rush = Ability.new("Skelly Ulti", cast, update, draw, 300)
 
     return rush
 end

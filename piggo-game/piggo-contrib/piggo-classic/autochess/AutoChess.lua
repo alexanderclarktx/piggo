@@ -1,5 +1,5 @@
 local AutoChess = {}
-local IGame = require "piggo-core.IGame"
+local Game = require "piggo-core.Game"
 local Terrain = require "piggo-core.Terrain"
 local ChessBoard = require "piggo-contrib.autochess.ChessBoard"
 
@@ -8,7 +8,7 @@ local backgroundColor = {78/256.0, 144/256.0, 244/256.0}
 local load, update, draw, handleMouseMoved, spawnTerrain
 
 function AutoChess.new()
-    local autoChess = IGame.new(load, update, draw, handleMouseMoved)
+    local autoChess = Game.new(load, update, draw, handleMouseMoved)
 
     autoChess.state.chessboard = ChessBoard.new()
 

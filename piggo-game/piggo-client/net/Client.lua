@@ -1,7 +1,7 @@
 local Client = {}
 local camera = require "lib.camera"
-local Gui = require "piggo-client.ui.Gui"
 local json = require "lib.json"
+local Gui = require "piggo-client.ui.Gui"
 local Player = require "piggo-core.Player"
 local PlayerController = require "piggo-client.PlayerController"
 local Skelly = require "piggo-contrib.characters.Skelly"
@@ -12,8 +12,8 @@ local TableUtils = require "piggo-core.util.TableUtils"
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
 local sendCommandsToServer, processLatestServerPacket, connectToServer
-local defaultHost = "localhost"
--- local defaultHost = "piggo.io"
+
+local defaultHost = "localhost" -- "piggo.io"
 local defaultPort = 12345
 
 function Client.new(game, host, port)
@@ -36,8 +36,7 @@ function Client.new(game, host, port)
             player = player,
             playerController = PlayerController.new(player),
             port = port or defaultPort,
-            serverFrame = nil,
-            wsClient = connectToServer(host or defaultHost, port or defaultPort),
+            latestPayload = {frame = 0}
         },
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
@@ -45,6 +44,7 @@ function Client.new(game, host, port)
         load = load, update = update, draw = draw,
         processLatestServerPacket = processLatestServerPacket,
         sendCommandsToServer = sendCommandsToServer,
+        connectToServer = connectToServer
     }
 
     return client
@@ -53,11 +53,15 @@ end
 function load(self)
     self.state.game:load()
 
+    -- lock mouse to window
     love.mouse.setGrabbed(true)
 
     -- camera fade in
     self.state.camera.fade_color = {0, 0, 0, 1}
     self.state.camera:fade(1, {0, 0, 0, 0})
+
+    -- connect to server
+    self.state.wsClient = self:connectToServer(host or defaultHost, port or defaultPort)
 end
 
 function update(self, dt, state)
@@ -108,12 +112,12 @@ function draw(self)
     self.state.game:draw(self.state.camera.x, self.state.camera.y)
 
     -- debug draw where the server thinks i am
-    if debug and self.state.serverFrame then
+    if debug and self.state.latestPayload then
         love.graphics.setColor(0, 1, 0.9, 0.5)
         love.graphics.circle(
             "fill",
-            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.x,
-            self.state.serverFrame.gameFramePayload.players["KetoMojito"].character.y,
+            self.state.latestPayload.gameFramePayload.players["KetoMojito"].character.x,
+            self.state.latestPayload.gameFramePayload.players["KetoMojito"].character.y,
             10
         )
     end
@@ -151,32 +155,27 @@ function sendCommandsToServer(self)
     end
 end
 
-function processLatestServerPacket(self)
-    local latestPayload = nil
-    -- while true do
-    --     -- get packet from the socket
-    --     local packet, _ = self.state.udp:receive()
-    --     if not packet then break end
+function processLatestServerPacket(self, payloadString)
+    if not payloadString then return end
+    local payload = json:decode(payloadString)
 
-    --     -- update latestPayload if this data is newer
-    --     local payload = json:decode(packet)
-    --     if latestPayload == nil or latestPayload.frame < payload.frame then
-    --         latestPayload = payload
-    --     end
-    -- end
-
-    if not latestPayload then return end
-
-    if self.state.game.state.frame - latestPayload.frame < 2 then
-        log:warn("frame +5")
-        self.state.game.state.frame = latestPayload.frame + 5
+    -- only operate on the latest payload
+    if payload.frame <= self.state.latestPayload.frame then
+        return
+    else
+        self.state.latestPayload = payload
     end
+
+    -- if self.state.game.state.frame - latestPayload.frame < 2 then
+    --     log:warn("frame +5")
+    --     self.state.game.state.frame = latestPayload.frame + 5
+    -- end
 
     self.state.serverFrame = latestPayload
 
     if TableUtils.deep_compare(
-        latestPayload.gameFramePayload,
-        self.state.frameBuffer[latestPayload.frame]
+        self.state.latestPayload.gameFramePayload,
+        self.state.frameBuffer[self.state.latestPayload.frame]
     ) then
         -- log:info("frames matched")
     else
@@ -185,17 +184,17 @@ function processLatestServerPacket(self)
         log:warn("client rollback")
         -- frame to roll forward
         -- local frameForward = self.state.game.state.frame
-        local frameForward = latestPayload.frame + 5
+        local frameForward = self.state.latestPayload.frame + 5
 
         -- set the frame counter
-        self.state.game.state.frame = latestPayload.frame
+        self.state.game.state.frame = self.state.latestPayload.frame
 
         -- set the game state
-        self.state.game:deserialize(latestPayload.gameFramePayload)
+        self.state.game:deserialize(self.state.latestPayload.gameFramePayload)
         self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
 
         -- game update
-        for i = latestPayload.frame, frameForward - 1, 1 do
+        for i = self.state.latestPayload.frame, frameForward - 1, 1 do
             self.state.game:update()
             -- TODO move this
             self.state.frameBuffer[self.state.game.state.frame] = self.state.game:serialize()
@@ -229,10 +228,11 @@ function handleMouseMoved(self, x, y, state)
     )
 end
 
-function connectToServer(host, port)
+function connectToServer(self, host, port)
     log:info("connecting to server")
     local z = wsClient.new("localhost", 12345, "/")
-    function z:onmessage(s) log:info("message", s) end
+    z.gameclient = self
+    function z:onmessage(s) self.gameclient:processLatestServerPacket(s) end
     function z:onopen() log:info("connected") end
     function z:onclose(code, reason) log:warn("close") end
     function z:onerror(e) log:error("error") end

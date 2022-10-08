@@ -1,9 +1,9 @@
-local IEffect = {}
+local Effect = {}
 
 local update
 
 -- class for stateful effects on a character
-function IEffect.new(effectUpdate, effectDraw)
+function Effect.new(effectUpdate, effectDraw)
     local effect = {
         update = update, draw = effectDraw,
         effectUpdate = effectUpdate
@@ -16,6 +16,6 @@ function IEffect.new(effectUpdate, effectDraw)
 end
 
 function update(self, dt)
-    log:debug("IEffect update")
+    log:debug("Effect update")
     self.effectUpdate(self, dt)
 end

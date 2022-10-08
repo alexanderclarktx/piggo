@@ -1,4 +1,4 @@
-local IGame = {}
+local Game = {}
 local physics = require 'love.physics'
 local DamageController = require "piggo-core.DamageController"
 
@@ -6,8 +6,8 @@ local load, update, draw
 local addPlayer, addNpc, handlePlayerCommand, handleMouseMoved
 local serialize, deserialize
 
--- IGame is a baseclass for all games
-function IGame.new(gameLoad, gameUpdate, gameDraw, gameHandleMouseMoved)
+-- Game is a baseclass for all games
+function Game.new(gameLoad, gameUpdate, gameDraw, gameHandleMouseMoved)
     assert(gameLoad and gameUpdate and gameDraw)
 
     local damageController = DamageController.new()
@@ -150,4 +150,4 @@ function deserialize(self, framedata)
     end
 end
 
-return IGame
+return Game

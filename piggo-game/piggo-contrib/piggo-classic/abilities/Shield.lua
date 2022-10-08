@@ -1,5 +1,5 @@
 local Shield = {}
-local IAbility = require "piggo-core.IAbility"
+local Ability = require "piggo-core.Ability"
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
 
 local cast, update, draw
@@ -7,7 +7,7 @@ local cast, update, draw
 local rgb = {1, 0, 0, 0.6}
 
 function Shield.new()
-    local shield = IAbility.new("Skelly Shield", cast, update, draw, 300)
+    local shield = Ability.new("Skelly Shield", cast, update, draw, 300)
 
     return shield
 end

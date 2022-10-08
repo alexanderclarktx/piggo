@@ -1,6 +1,6 @@
 local Skelly = {}
 
-local ICharacter = require "piggo-core.ICharacter"
+local Character = require "piggo-core.Character"
 
 local Zap = require "piggo-contrib.abilities.Zap"
 local Shield = require "piggo-contrib.abilities.Shield"
@@ -12,7 +12,7 @@ local update, draw
 function Skelly.new(world, x, y, hp)
     assert(hp > 0 and type(x) == "number" and type(y) == "number")
 
-    local skelly = ICharacter.new(
+    local skelly = Character.new(
         world,
         update, draw,
         x, y, hp, 1000, 350, 20,

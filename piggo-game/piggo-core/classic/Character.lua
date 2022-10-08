@@ -1,12 +1,13 @@
-local ICharacter = {}
+local Character = {}
 local DrawUtils = require "piggo-core.util.DrawUtils"
 local MathUtils = require "piggo-core.util.MathUtils"
 local ShapeUtils = require "piggo-core.util.ShapeUtils"
-local IWeapon = require "piggo-core.IWeapon"
+-- local Weapon = require "piggo-core.Weapon"
+local Inventory = require "piggo-core.Inventory"
 
 local update, draw, serialize, setPosition, submitHurtboxPoly, submitHurtboxCircle
 
-function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
+function Character.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, size, abilities)
     assert(world)
     assert(type(x) == "number")
     assert(type(y) == "number")
@@ -34,7 +35,7 @@ function ICharacter.new(world, charUpdate, charDraw, x, y, hp, maxhp, speed, siz
             abilities = abilities, effects = {},
             body = body, fixture = fixture,
             hurtboxes = {},
-            weapon = IWeapon.new(true, 200, 20)
+            inventory = Inventory.new(),
         },
         charUpdate = charUpdate, charDraw = charDraw,
         update = update, draw = draw,
@@ -185,6 +186,8 @@ function draw(self)
 
     self.charDraw(self)
 
+    self.state.inventory:draw(self.state.body:getX(), self.state.body:getY())
+
     if debug then
         love.graphics.setColor(0, 0, 1, 0.6)
         love.graphics.circle("line", self.state.body:getX(), self.state.body:getY(), self.state.size)
@@ -221,4 +224,4 @@ function submitHurtboxCircle(self, name, damage, x, y, radius)
     )
 end
 
-return ICharacter
+return Character

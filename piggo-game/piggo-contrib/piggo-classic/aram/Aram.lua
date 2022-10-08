@@ -1,5 +1,5 @@
 local Aram = {}
-local IGame = require "piggo-core.IGame"
+local Game = require "piggo-core.Game"
 local Terrain = require "piggo-core.Terrain"
 local Minion = require "piggo-contrib.characters.Minion"
 local sti = require "lib.sti.init"
@@ -13,7 +13,7 @@ local map = nil
 --   * no recalling
 --   * outer tower, inhib tower, inhib, 2 nexus towers, nexus
 function Aram.new()
-    local aram = IGame.new(load, update, draw)
+    local aram = Game.new(load, update, draw)
     aram.timers = {
         minionSpawn = {
             cd = 1000,

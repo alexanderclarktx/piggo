@@ -1,6 +1,6 @@
 local Cardflipper = {}
 
-local ICharacter = require "piggo-core.ICharacter"
+local Character = require "piggo-core.Character"
 
 local Zap = require "piggo-contrib.abilities.Zap"
 local Shield = require "piggo-contrib.abilities.Shield"
@@ -10,7 +10,7 @@ local Rush = require "piggo-contrib.abilities.Rush"
 local update, draw, animation
 
 function Cardflipper.new(world, x, y)
-    local cardflipper = ICharacter.new(
+    local cardflipper = Character.new(
         world,
         update, draw,
         x, y, 100, 1000, 350, 20,
