@@ -27,7 +27,6 @@ function Piggo.new()
         handleMousePressed = handleMousePressed,
         handleMouseMoved = handleMouseMoved,
     }
-
     return piggo
 end
 

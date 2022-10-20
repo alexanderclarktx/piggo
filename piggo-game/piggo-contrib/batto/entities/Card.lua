@@ -1,11 +1,11 @@
 local Card = {}
 
-local Entity = require "piggo-core.ecs.Entity"
-local SuperTypes = require "piggo-contrib.ecs.batto.components.SuperTypes"
-local SubTypes = require "piggo-contrib.ecs.batto.components.SubTypes"
-local Attack = require "piggo-contrib.ecs.batto.components.Attack"
-local Defense = require "piggo-contrib.ecs.batto.components.Defense"
-local Abilities = require "piggo-contrib.ecs.batto.components.Abilities"
+local Entity = require "ecstacy.Entity"
+local SuperTypes = require "piggo-contrib.batto.components.SuperTypes"
+local SubTypes = require "piggo-contrib.batto.components.SubTypes"
+local Attack = require "piggo-contrib.batto.components.Attack"
+local Defense = require "piggo-contrib.batto.components.Defense"
+local Abilities = require "piggo-contrib.batto.components.Abilities"
 
 function Card.new(superTypes, subTypes, attack, defense, abilities)
     local card = {

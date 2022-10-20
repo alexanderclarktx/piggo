@@ -1,20 +1,23 @@
-local Ecstacy = {}
+local EcstacyGame = {}
 
-local Entity = require "piggo-core.ecs.Entity"
+local Entity = require "ecstacy.Entity"
+local System = require "ecstacy.System"
 
 local update, draw, addSystem, addEntity
 
-function Ecstacy.new()
-    local ecstacy = {
+function EcstacyGame.new(load)
+    local ecstacyGame = {
+        load = load,
+        update = update, draw = draw,
+        addSystem = addSystem, addEntity = addEntity,
         entities = {},
         systems = {},
-        update = update, draw = draw,
-        addSystem = addSystem, addEntity = addEntity
     }
-    return ecstacy
+    return ecstacyGame
 end
 
 function addSystem(self, system)
+    log:debug("adding system", System.debug(system))
     table.insert(self.systems, system)
 end
 
@@ -25,19 +28,16 @@ end
 
 function update(self, dt)
     for _, system in ipairs(self.systems) do
-        -- System.debug(system)
-        -- system:update(self.entities)
+        system.update(self.entities)
     end
     for _, entity in ipairs(self.entities) do
-        -- Entity.debug(entity)
     end
 end
 
 function draw(self)
     for _, system in ipairs(self.systems) do
-        print("drawing ", system.name)
-        -- system:draw(self.entities)
+        system.draw(self.entities)
     end
 end
 
-return Ecstacy
+return EcstacyGame

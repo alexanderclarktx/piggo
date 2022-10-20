@@ -1,11 +1,11 @@
 local PlayerSystem = {}
 
-local Health = require "piggo-core.ecs.components.Health"
-local Name = require "piggo-core.ecs.components.Name"
-local Position = require "piggo-core.ecs.components.Position"
-local Size = require "piggo-core.ecs.components.Size"
-local Spell = require "piggo-core.ecs.components.Spell"
-local Velocity = require "piggo-core.ecs.components.Velocity"
+local Health = require "piggo-core.components.Health"
+local Name = require "piggo-core.components.Name"
+local Position = require "piggo-core.components.Position"
+local Size = require "piggo-core.components.Size"
+local Spell = require "piggo-core.components.Spell"
+local Velocity = require "piggo-core.components.Velocity"
 
 local update, draw
 

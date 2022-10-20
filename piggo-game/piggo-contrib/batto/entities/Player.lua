@@ -1,15 +1,11 @@
 local Player = {}
 
-local Entity = require "piggo-core.ecs.Entity"
--- local Name = require "piggo-contrib.ecs.batto.components.Name"
--- local Health = require "piggo-contrib.ecs.batto.components.Health"
+local Entity = require "ecstacy.Entity"
+local Name = require "piggo-core.components.Name"
 
 function Player.new(name, health)
-    local player = {
-        -- name = Name.new(name),
-        -- health = Health.new(health),
-    }
-    return Entity.new("player", player)
+    local name = Name.new("bobb")
+    return Entity.new("player", {name})
 end
 
 return Player

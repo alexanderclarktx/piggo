@@ -1,8 +1,9 @@
 -- local PiggoClient = require "piggo-client.PiggoClient"
 local Logger = require "piggo-core.util.Logger"
-local Batto = require "piggo-contrib.ecs.batto.Batto"
+local BattoGame = require "piggo-contrib.batto.BattoGame"
+local RacerGame = require "piggo-contrib.racer.RacerGame"
 
-local game = Batto.new()
+local game = RacerGame.new()
 
 function love.load(arg)
     -- default render mode

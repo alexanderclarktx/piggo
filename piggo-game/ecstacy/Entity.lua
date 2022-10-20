@@ -1,6 +1,6 @@
 local Entity = {}
 
-local Component = "piggo-game.piggo-core.ecs.Component"
+local Component = require "ecstacy.Component"
 
 function Entity.new(type, components)
     local entity = {
@@ -13,17 +13,19 @@ function Entity.new(type, components)
             log:warn("invalid entity. duplicate component type")
             love.event.quit()
         end
-        entity.ctypes.add(component.type)
+        table.insert(entity.ctypes, component.type)
     end
     return entity
 end
 
 function Entity.debug(entity)
-    return string.format("{type: %s, components: [%s]}", entity.type, "nothing")
-    -- print("type", entity.type)
-    -- for _, component in ipairs(entity.components) do
-    --     Component.debug(component)
-    -- end
+    components = {}
+    for _, component in ipairs(entity.components) do
+        table.insert(components, Component.debug(component))
+    end
+    componentsString = table.concat(components, ", ")
+
+    return string.format("{type:%s, components:[%s]}", entity.type, componentsString)
 end
 
 -- function Entity.contains(entity, types)
