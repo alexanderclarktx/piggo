@@ -106,8 +106,33 @@
     <script async type="text/javascript" src="love.js" onload="applicationLoad(this)"></script>
     <script src="consolewrapper.js"></script>
     <script src="webdb.js"></script>
-    <footer>
-      <p>Built with <a href="https://github.com/Davidobot/love.js">love.js</a> <button onclick="goFullScreen();">Go Fullscreen</button><br>Hint: Reload the page if screen is blank</p>
-    </footer>
+    <script>
+      window.onload(async () => {
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum)
+          try {
+            await ethereum.enable()
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      })
+      async function login() {
+        if (window.web3) {
+          try {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            console.log(accounts)
+          } catch (error) {
+            console.error(error)
+          }
+        } else {
+          alert("no ethereum wallet available")
+        }
+      }
+    </script>
+    <header>
+      <button onclick="goFullScreen();">fullscreen</button>
+      <button onclick="login();">login</button>
+    </header>
   </body>
 </html>

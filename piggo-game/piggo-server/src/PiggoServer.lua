@@ -8,7 +8,7 @@ local load, update
 function PiggoServer.new()
     local piggoServer = {
         state = {
-            -- game = "ARAM" -- TODO
+            game = "ARAM" -- TODO
         },
         load = load, update = update
     }
@@ -16,8 +16,7 @@ function PiggoServer.new()
 end
 
 function load(self)
-    -- self.state.server = Server.new(Aram.new())
-    self.state.server = Server.new(Arena.new())
+    self.state.server = Server.new(Aram.new())
 end
 
 function update(self, dt)

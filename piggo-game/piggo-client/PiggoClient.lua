@@ -1,10 +1,13 @@
 local Piggo = {}
 local MainMenu = require "piggo-client.ui.MainMenu"
 local socket = require "socket"
+local ripple = require "lib.ripple"
 
-require "lib/js" -- JS
+if love.system.getOS() == "Web" then require "lib.js" end
 
 local load, update, draw, handleKeyPressed, handleMousePressed, handleMouseMoved
+
+local defaultCursorColor = {1, 1, 1}
 
 -- top level application controller
 function Piggo.new()
@@ -16,14 +19,14 @@ function Piggo.new()
                 love.graphics.setNewFont(12)
                 scene:load()
                 self.scene = scene
-            end
+            end,
+            cursorColor = defaultCursorColor
         },
         load = load, update = update, draw = draw,
         handleKeyPressed = handleKeyPressed,
         handleMousePressed = handleMousePressed,
         handleMouseMoved = handleMouseMoved,
     }
-
     return piggo
 end
 
@@ -46,7 +49,7 @@ function load(self)
 end
 
 function update(self, dt)
-    JS.retrieveData(dt)
+    if JS then JS.retrieveData(dt) end
 
     self.state.scene:update(dt, self.state)
 end
@@ -54,9 +57,13 @@ end
 function draw(self)
     self.state.scene:draw()
 
+    -- cursor
     local mouseX, mouseY = love.mouse.getPosition()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.circle("fill", mouseX, mouseY, 5)
+    love.graphics.setColor(self.state.cursorColor)
+    love.graphics.circle("fill", mouseX, mouseY, 3)
+    love.graphics.setColor(defaultCursorColor)
+    love.graphics.circle("line", mouseX, mouseY, 4)
+    love.graphics.circle("line", mouseX, mouseY, 5)
 end
 
 function handleKeyPressed(self, key, scancode, isrepeat)
